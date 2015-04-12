@@ -1,9 +1,10 @@
 package lpool.logic;
 
 public class Ball {
-
-	public Ball() {
-		// TODO Auto-generated constructor stub
+	Vector2D pos;
+	
+	public Ball(Vector2D pos) {
+		this.pos = pos;
 	}
 
 }
