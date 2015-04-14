@@ -32,8 +32,8 @@ public class Ball {
 		FixtureDef fd1 = new FixtureDef();
 		fd1.shape = cs;
 		fd1.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		fd1.friction = 1.0f;
-		fd1.restitution = 0.7f;
+		fd1.friction = 0.05f;
+		fd1.restitution = 0.8f;
 		fd1.filter.categoryBits = cat;
 		fd1.filter.maskBits = cat;
 		
@@ -42,7 +42,7 @@ public class Ball {
 		fd2.shape = cs;
 		fd2.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
 		fd2.friction = 1.0f;
-		fd2.restitution = 0.1f;
+		fd2.restitution = 0.5f;
 		fd2.filter.categoryBits = cat;
 		fd2.filter.maskBits = Border.cat;
 		
@@ -54,7 +54,7 @@ public class Ball {
 		Random r = new Random();
 		body.applyLinearImpulse(new Vector2(r.nextFloat() * force - force / 2, r.nextFloat() * force - force / 2), new Vector2(0, 0), false);
 		body.setLinearDamping(0.5f);
-		body.setAngularDamping(1.0f);
+		body.setAngularDamping(10.0f);
 		body.setBullet(true);
 		
 		this.number = number;

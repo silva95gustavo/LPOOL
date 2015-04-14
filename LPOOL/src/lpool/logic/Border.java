@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Border {
-	public static final short cat = 0x0001;
+	public static final short cat = 0x0002;
 	public static final float width = 2.74f;
 	public static final float height = width / 2;
 	public static final float border = 0.07f;
@@ -19,7 +19,7 @@ public class Border {
 	private Body bottom;
 	
 	public Border(World world) {
-		float rest = 0.1f;
+		float rest = 0.5f;
 		
 		// RIGHT
 		BodyDef bd = new BodyDef();
@@ -34,6 +34,8 @@ public class Border {
 		fd.density = 5f;
 		fd.friction = 1.0f;
 		fd.restitution = rest;
+		fd.filter.categoryBits = cat;
+		fd.filter.maskBits = Ball.cat;
 		
 		right = world.createBody(bd);
 		right.createFixture(fd);
@@ -52,6 +54,8 @@ public class Border {
 		fd.density = 5f;
 		fd.friction = 0.7f;
 		fd.restitution = rest;
+		fd.filter.categoryBits = cat;
+		fd.filter.maskBits = Ball.cat;
 		
 		top = world.createBody(bd);
 		top.createFixture(fd);
@@ -70,6 +74,8 @@ public class Border {
 		fd.density = 59999999f;
 		fd.friction = 1.0f;
 		fd.restitution = rest;
+		fd.filter.categoryBits = cat;
+		fd.filter.maskBits = Ball.cat;
 		
 		left = world.createBody(bd);
 		left.createFixture(fd);
@@ -88,6 +94,8 @@ public class Border {
 		fd.density = 5f;
 		fd.friction = 1.0f;
 		fd.restitution = rest;
+		fd.filter.categoryBits = cat;
+		fd.filter.maskBits = Ball.cat;
 		
 		bottom = world.createBody(bd);
 		bottom.createFixture(fd);

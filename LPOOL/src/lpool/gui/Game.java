@@ -35,8 +35,6 @@ public class Game extends JPanel{
 		ActionListener myTimerListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Ball[] balls1 = match.getBalls1();
-				Ball[] balls2 = match.getBalls2();
 				match.tick(deltaT);
 				repaint();
 			}
