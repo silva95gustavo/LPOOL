@@ -7,7 +7,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 public class Match {
-	public static final int ballsPerPlayer = 7;
+	public static final int ballsPerPlayer = 30;
 	
 	private Vec2 gravity;
 	private World world;
@@ -20,7 +20,7 @@ public class Match {
 	public Match() {
 		gravity = new Vec2(0, 0);
 		world = new World(gravity, false);
-		Settings.velocityThreshold = 0.01f;
+		Settings.velocityThreshold = 0.000000001f;
 		
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
@@ -32,7 +32,7 @@ public class Match {
 		}
 		blackBall = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), 8);
 		
-		//border = new Border(world);
+		border = new Border(world);
 		
 	}
 	
@@ -45,6 +45,8 @@ public class Match {
 			balls2[i].tick();
 		}
 		blackBall.tick();
+		
+		world.drawDebugData();
 	}
 
 	public Ball getBlackBall() {

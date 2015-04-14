@@ -8,7 +8,11 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -23,7 +27,8 @@ import lpool.logic.Match;
 public class Game extends JPanel{
 	private int FPS = 60;
 	private float deltaT = (float)1/FPS;
-	Match match = new Match();
+	private Match match = new Match();
+	private BufferedImage table;
 
 	public Game(JFrame parent)
 	{
@@ -37,6 +42,13 @@ public class Game extends JPanel{
 			}
 		};
 
+		try {
+			table = ImageIO.read(new File("res/table.png"));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
 		Timer myTimer = new Timer((int)(deltaT * 1000), myTimerListener);
 		myTimer.start();
 	}
@@ -45,6 +57,10 @@ public class Game extends JPanel{
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		
+		// Draw background
+		 g.drawImage(table, 0, 0, this.getWidth(), this.getHeight(), null);
+		
 		Ball[] balls1 = match.getBalls1();
 		Ball[] balls2 = match.getBalls2();
 		for (int i = 0; i < match.ballsPerPlayer; i++)

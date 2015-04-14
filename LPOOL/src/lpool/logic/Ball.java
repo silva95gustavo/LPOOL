@@ -12,7 +12,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 public class Ball {
-	static public final float radius = 0.028575f;
+	static public final float radius = 0.028575f * 1.3f;
 	static public final float mass = 0.163f;
 	private int number;
 	
@@ -30,13 +30,17 @@ public class Ball {
 		fd.shape = cs;
 		fd.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
 		fd.friction = 1.0f;
-		fd.restitution = 0.8f;
+		fd.restitution = 0.7f;
+		
+		float force = 0.87441024f;
 		
 		body = world.createBody(bd);
 		body.createFixture(fd);
 		Random r = new Random();
-		body.applyForce(new Vec2(r.nextFloat() * 10f, r.nextFloat() * 10f), new Vec2(0, 0));
-		body.setLinearDamping(0.3f);
+		body.applyLinearImpulse(new Vec2(r.nextFloat() * force - force / 2, r.nextFloat() * force - force / 2), new Vec2(0, 0));
+		body.setLinearDamping(0.5f);
+		body.setAngularDamping(1.0f);
+		body.setBullet(true);
 		
 		this.number = number;
 	}
@@ -52,6 +56,9 @@ public class Ball {
 	
 	public void tick()
 	{
-		//body.setLinearDamping(0.5f);
+		if (body.getLinearVelocity().lengthSquared() < 0.002)
+		{
+			body.setLinearVelocity(new Vec2(0, 0));
+		}
 	}
 }
