@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
@@ -18,7 +19,7 @@ import lpool.logic.Match;
 @SuppressWarnings("serial")
 public class Game extends JPanel{
 	private int FPS = 60;
-	private double deltaT = (double)1/FPS;
+	private float deltaT = (float)1/FPS;
 	Match match = new Match();
 
 	public Game(JFrame parent)
@@ -28,12 +29,7 @@ public class Game extends JPanel{
 			public void actionPerformed(ActionEvent arg0) {
 				Ball[] balls1 = match.getBalls1();
 				Ball[] balls2 = match.getBalls2();
-				for (int i = 0; i < match.ballsPerPlayer; i++)
-				{
-					balls1[i].tick(deltaT);
-					balls2[i].tick(deltaT);
-				}
-				match.getBlackBall().tick(deltaT);
+				match.tick(deltaT);
 				repaint();
 			}
 		};
@@ -57,9 +53,12 @@ public class Game extends JPanel{
 		drawBall(g, blackBall, Color.BLACK);
 	}
 
-	private void drawBall(Graphics g, Ball blackBall, Color c) {
-		g.setColor(c);
-		g.fillOval((int)blackBall.getPos().x, (int)blackBall.getPos().y, 20, 20);
+	private void drawBall(Graphics g, Ball ball, Color c) {
+		Graphics2D g2d = (Graphics2D)g;
+
+		g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING,   RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setPaint(c);
+		g2d.fillOval((int)ball.getPosition().x, (int)ball.getPosition().y, 20, 20);
 	}
 
 	public static void main(String[] args) {
