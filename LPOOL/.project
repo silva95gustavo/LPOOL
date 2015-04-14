@@ -3,6 +3,8 @@
 	<name>LPOOL</name>
 	<comment></comment>
 	<projects>
+		<project>LPOOL Server-core</project>
+		<project>LPOOL Server-desktop</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

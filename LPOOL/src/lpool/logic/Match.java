@@ -2,14 +2,13 @@ package lpool.logic;
 
 import java.util.Random;
 
-import org.jbox2d.common.Settings;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.World;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class Match {
-	public static final int ballsPerPlayer = 30;
+	public static final int ballsPerPlayer = 7;
 	
-	private Vec2 gravity;
+	private Vector2 gravity;
 	private World world;
 	
 	private Ball[] balls1;
@@ -18,19 +17,19 @@ public class Match {
 	private Border border;
 	
 	public Match() {
-		gravity = new Vec2(0, 0);
+		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
-		Settings.velocityThreshold = 0.000000001f;
+		World.setVelocityThreshold(0.00001f);
 		
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
 		Random r = new Random();
 		for (int i = 0; i < ballsPerPlayer; i++)
 		{
-			balls1[i] = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 1);
-			balls2[i] = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 9);
+			balls1[i] = new Ball(world, new Vector2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 1);
+			balls2[i] = new Ball(world, new Vector2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 9);
 		}
-		blackBall = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), 8);
+		blackBall = new Ball(world, new Vector2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), 8);
 		
 		border = new Border(world);
 		
@@ -45,8 +44,6 @@ public class Match {
 			balls2[i].tick();
 		}
 		blackBall.tick();
-		
-		world.drawDebugData();
 	}
 
 	public Ball getBlackBall() {

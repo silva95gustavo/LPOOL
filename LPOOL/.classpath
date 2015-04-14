@@ -2,8 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="libs/jbox2d-library-2.1.2.2.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-api-1.7.12.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.12.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-1.5.5.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-box2d-1.5.5.jar"/>
+	<classpathentry kind="lib" path="libs/libgdx-utils-0.10.0.jar"/>
+	<classpathentry kind="lib" path="libs/libgdx-utils-box2d-0.10.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LPOOL Server-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LPOOL Server-desktop"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

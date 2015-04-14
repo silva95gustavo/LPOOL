@@ -1,14 +1,14 @@
 package lpool.logic;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.dynamics.World;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class Border {
+	public static final short cat = 0x0001;
 	public static final float width = 2.74f;
 	public static final float height = width / 2;
 	public static final float border = 0.07f;
@@ -19,10 +19,12 @@ public class Border {
 	private Body bottom;
 	
 	public Border(World world) {
+		float rest = 0.1f;
+		
 		// RIGHT
 		BodyDef bd = new BodyDef();
 		bd.position.set(width - border, height / 2);
-		bd.type = BodyType.STATIC;
+		bd.type = BodyType.StaticBody;
 		
 		PolygonShape ps = new PolygonShape();
 		ps.setAsBox(border, height);
@@ -31,7 +33,7 @@ public class Border {
 		fd.shape = ps;
 		fd.density = 5f;
 		fd.friction = 1.0f;
-		fd.restitution = 0.0001f;
+		fd.restitution = rest;
 		
 		right = world.createBody(bd);
 		right.createFixture(fd);
@@ -40,7 +42,7 @@ public class Border {
 		// TOP
 		bd = new BodyDef();
 		bd.position.set(0, 0);
-		bd.type = BodyType.STATIC;
+		bd.type = BodyType.StaticBody;
 		
 		ps = new PolygonShape();
 		ps.setAsBox(width, border);
@@ -49,7 +51,7 @@ public class Border {
 		fd.shape = ps;
 		fd.density = 5f;
 		fd.friction = 0.7f;
-		fd.restitution = -99999999f;
+		fd.restitution = rest;
 		
 		top = world.createBody(bd);
 		top.createFixture(fd);
@@ -58,7 +60,7 @@ public class Border {
 		// LEFT
 		bd = new BodyDef();
 		bd.position.set(0, 0);
-		bd.type = BodyType.STATIC;
+		bd.type = BodyType.StaticBody;
 		
 		ps = new PolygonShape();
 		ps.setAsBox(border, height);
@@ -67,7 +69,7 @@ public class Border {
 		fd.shape = ps;
 		fd.density = 59999999f;
 		fd.friction = 1.0f;
-		fd.restitution = 0.1f;
+		fd.restitution = rest;
 		
 		left = world.createBody(bd);
 		left.createFixture(fd);
@@ -76,7 +78,7 @@ public class Border {
 		// BOTTOM
 		bd = new BodyDef();
 		bd.position.set(0, height - border);
-		bd.type = BodyType.STATIC;
+		bd.type = BodyType.StaticBody;
 		
 		ps = new PolygonShape();
 		ps.setAsBox(width, border);
@@ -85,7 +87,7 @@ public class Border {
 		fd.shape = ps;
 		fd.density = 5f;
 		fd.friction = 1.0f;
-		fd.restitution = 0.0001f;
+		fd.restitution = rest;
 		
 		bottom = world.createBody(bd);
 		bottom.createFixture(fd);

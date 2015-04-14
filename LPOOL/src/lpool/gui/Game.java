@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import org.jbox2d.common.Vec2;
+import com.badlogic.gdx.math.Vector2;
 
 import lpool.logic.Ball;
 import lpool.logic.Border;
@@ -72,17 +72,17 @@ public class Game extends JPanel{
 		drawBall(g, blackBall, Color.BLACK);
 	}
 	
-	private Vec2 physicsToPixel(Vec2 v)
+	private Vector2 physicsToPixel(Vector2 v)
 	{
-		Vec2 v2 = new Vec2();
+		Vector2 v2 = new Vector2();
 		v2.x = v.x * this.getWidth() / Border.width;
 		v2.y = v.y * this.getHeight() / Border.height;
 		return v2;
 	}
 
 	private void drawBall(Graphics g, Ball ball, Color c) {
-		Vec2 ballPosPixel = physicsToPixel(ball.getPosition());
-		Vec2 ballRadiusPixel = physicsToPixel(new Vec2(Ball.radius, Ball.radius));
+		Vector2 ballPosPixel = physicsToPixel(ball.getPosition());
+		Vector2 ballRadiusPixel = physicsToPixel(new Vector2(Ball.radius, Ball.radius));
 		
 		Graphics2D g2d = (Graphics2D)g;
 		g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING,   RenderingHints.VALUE_ANTIALIAS_ON);
