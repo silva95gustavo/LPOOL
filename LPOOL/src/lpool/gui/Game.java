@@ -13,7 +13,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import org.jbox2d.common.Vec2;
+
 import lpool.logic.Ball;
+import lpool.logic.Border;
 import lpool.logic.Match;
 
 @SuppressWarnings("serial")
@@ -52,13 +55,24 @@ public class Game extends JPanel{
 		Ball blackBall = match.getBlackBall();
 		drawBall(g, blackBall, Color.BLACK);
 	}
+	
+	private Vec2 physicsToPixel(Vec2 v)
+	{
+		Vec2 v2 = new Vec2();
+		v2.x = v.x * this.getWidth() / Border.width;
+		v2.y = v.y * this.getHeight() / Border.height;
+		return v2;
+	}
 
 	private void drawBall(Graphics g, Ball ball, Color c) {
+		System.out.println("ballPos: " + ball.getPosition() + " radius: " + Ball.radius);
+		Vec2 ballPosPixel = physicsToPixel(ball.getPosition());
+		Vec2 ballRadiusPixel = physicsToPixel(new Vec2(Ball.radius, Ball.radius));
+		
 		Graphics2D g2d = (Graphics2D)g;
-
 		g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING,   RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setPaint(c);
-		g2d.fillOval((int)ball.getPosition().x, (int)ball.getPosition().y, 20, 20);
+		g2d.fillOval((int)(ballPosPixel.x - ballRadiusPixel.x), (int)(ballPosPixel.y - ballRadiusPixel.y), (int)(2 * ballRadiusPixel.x), (int)(2 * ballRadiusPixel.y));
 	}
 
 	public static void main(String[] args) {
@@ -67,7 +81,7 @@ public class Game extends JPanel{
 		f.setPreferredSize(new Dimension(500,500));
 		JPanel panel = new Game(f);
 		f.getContentPane().add(panel);
-		f.pack();
+		f.setSize(800, 400);
 		f.setVisible(true);
 		panel.requestFocus();      
 	}

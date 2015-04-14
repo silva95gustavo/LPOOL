@@ -26,9 +26,9 @@ public class Match {
 		for (int i = 0; i < ballsPerPlayer; i++)
 		{
 			balls1[i] = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 1);
-			balls2[i] = new Ball(world, new Vec2(r.nextFloat() * 300, r.nextFloat() * 300), i + 9);
+			balls2[i] = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 9);
 		}
-		blackBall = new Ball(world, new Vec2(r.nextFloat() * 300, r.nextFloat() * 300), 8);
+		blackBall = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), 8);
 		
 		border = new Border(world);
 		
