@@ -65,7 +65,6 @@ public class Game extends JPanel{
 	}
 
 	private void drawBall(Graphics g, Ball ball, Color c) {
-		System.out.println("ballPos: " + ball.getPosition() + " radius: " + Ball.radius);
 		Vec2 ballPosPixel = physicsToPixel(ball.getPosition());
 		Vec2 ballRadiusPixel = physicsToPixel(new Vec2(Ball.radius, Ball.radius));
 		

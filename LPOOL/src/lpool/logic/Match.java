@@ -2,6 +2,7 @@ package lpool.logic;
 
 import java.util.Random;
 
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
@@ -19,6 +20,7 @@ public class Match {
 	public Match() {
 		gravity = new Vec2(0, 0);
 		world = new World(gravity, false);
+		Settings.velocityThreshold = 0.01f;
 		
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
@@ -30,7 +32,7 @@ public class Match {
 		}
 		blackBall = new Ball(world, new Vec2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), 8);
 		
-		border = new Border(world);
+		//border = new Border(world);
 		
 	}
 	

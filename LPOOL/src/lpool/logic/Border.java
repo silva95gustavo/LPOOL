@@ -17,7 +17,7 @@ public class Border {
 	public Border(World world) {
 		BodyDef bd = new BodyDef();
 		bd.position.set(0, 0);
-		bd.type = BodyType.DYNAMIC;
+		bd.type = BodyType.STATIC;
 		
 		Vec2[] vertices = {
 				new Vec2(- width / 2, height / 2),

@@ -3,6 +3,7 @@ package lpool.logic;
 import java.util.Random;
 
 import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -29,7 +30,7 @@ public class Ball {
 		fd.shape = cs;
 		fd.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
 		fd.friction = 1.0f;
-		fd.restitution = 1.0f;
+		fd.restitution = 0.8f;
 		
 		body = world.createBody(bd);
 		body.createFixture(fd);
