@@ -68,6 +68,8 @@ public class Game extends JPanel{
 		}
 		Ball blackBall = match.getBlackBall();
 		drawBall(g, blackBall, Color.BLACK);
+		Ball cueBall = match.getCueBall();
+		drawBall(g, cueBall, Color.WHITE);
 	}
 	
 	private Vector2 physicsToPixel(Vector2 v)
