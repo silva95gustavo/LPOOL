@@ -54,7 +54,7 @@ public class Ball {
 		Random r = new Random();
 		if (number == 0)
 			//body.applyLinearImpulse(new Vector2(r.nextFloat() * force - force / 2, r.nextFloat() * force - force / 2), new Vector2(0, 0), false);
-			body.applyLinearImpulse(new Vector2(-force, 0), new Vector2(0, 0), true);
+			//body.applyLinearImpulse(new Vector2(-force, 0), new Vector2(0, 0), true);
 		body.setLinearDamping(0.5f);
 		body.setAngularDamping(10.0f);
 		body.setBullet(true);
@@ -77,5 +77,10 @@ public class Ball {
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 		}
+	}
+	
+	public void makeShot(float angle, float force)
+	{
+		body.applyLinearImpulse(new Vector2(force, 0).rotate(angle), new Vector2(0, 0), true);
 	}
 }

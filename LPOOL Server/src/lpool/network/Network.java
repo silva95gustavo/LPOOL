@@ -8,7 +8,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Network {
-	private final int maxClients;
+	public final int maxClients;
 	private int numClients;
 	private ServerSocket serverSocket;
 	private Connector con;
@@ -83,6 +83,7 @@ public class Network {
 			{
 				numClients++;
 				comms[i] = new Communication(client);
+				clientConnEvents.add(i);
 				return true; // Success
 			}
 		}
@@ -124,6 +125,22 @@ public class Network {
 			return null;
 		else
 			return clientConnEvents.poll();
+	}
+	
+	public boolean isClientCommQueueEmpty(int clientID)
+	{
+		if (comms[clientID] == null)
+			return true;
+		
+		return comms[clientID].getClientCommEvents().isEmpty();
+	}
+	
+	public String pollClientCommQueue(int clientID)
+	{
+		if (isClientCommQueueEmpty(clientID))
+			return null;
+		else
+			return comms[clientID].getClientCommEvents().poll();
 	}
 
 	public boolean isClientConnected(int clientID) {

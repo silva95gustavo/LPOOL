@@ -29,17 +29,15 @@ import lpool.network.Connector;
 public class Game extends JPanel{
 	private int FPS = 60;
 	private float deltaT = (float)1/FPS;
-	private Match match = new Match();
 	private BufferedImage table;
-	private lpool.logic.Game g = new lpool.logic.Game();
+	private lpool.logic.Game game = new lpool.logic.Game();
 
 	public Game(JFrame parent)
 	{
 		ActionListener myTimerListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				match.tick(deltaT);
-				g.tick(deltaT);
+				game.tick(deltaT);
 				repaint();
 			}
 		};
@@ -63,16 +61,18 @@ public class Game extends JPanel{
 		// Draw background
 		 g.drawImage(table, 0, 0, this.getWidth(), this.getHeight(), null);
 		
-		Ball[] balls1 = match.getBalls1();
-		Ball[] balls2 = match.getBalls2();
-		for (int i = 0; i < match.ballsPerPlayer; i++)
+		Match m = game.getMatch();
+		 
+		Ball[] balls1 = m.getBalls1();
+		Ball[] balls2 = m.getBalls2();
+		for (int i = 0; i < m.ballsPerPlayer; i++)
 		{
 			drawBall(g, balls1[i], Color.RED);
 			drawBall(g, balls2[i], Color.BLUE);
 		}
-		Ball blackBall = match.getBlackBall();
+		Ball blackBall = m.getBlackBall();
 		drawBall(g, blackBall, Color.BLACK);
-		Ball cueBall = match.getCueBall();
+		Ball cueBall = m.getCueBall();
 		drawBall(g, cueBall, Color.WHITE);
 	}
 	
