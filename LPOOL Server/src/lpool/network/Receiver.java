@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class Receiver extends Thread {
 	private Socket s;
-
+	public volatile boolean finished = false;
 	public Receiver(Socket s) {
 		this.s = s;
 	}
@@ -15,14 +15,21 @@ public class Receiver extends Thread {
 	public void run()
 	{
 		try {
-			while (true)
+			while (!finished)
 			{
 				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-				System.out.println(br.readLine());
+				String str = br.readLine();
+				if (str == null)
+					stopMe();
 			}
 			// TODO
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void stopMe()
+	{
+		finished = true;
 	}
 }

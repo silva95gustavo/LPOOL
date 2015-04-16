@@ -7,12 +7,22 @@ public class Game extends EventChecker{
 	
 	public Game() {
 		super(numPlayers);
+		network.startConnecting();
+	}
+	
+	public void tick(float dt)
+	{
+		network.tick();
 	}
 
 	@Override
 	protected void conEvent(int clientID) {
-		// TODO Auto-generated method stub
-		
+		if (network.isClientConnected(clientID))
+			System.out.println("Client #" + clientID + " connected!");
+		else
+		{
+			System.out.println("Client #" + clientID + " disconnected!");
+		}
 	}
 
 	@Override

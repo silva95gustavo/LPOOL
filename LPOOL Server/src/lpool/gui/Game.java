@@ -31,6 +31,7 @@ public class Game extends JPanel{
 	private float deltaT = (float)1/FPS;
 	private Match match = new Match();
 	private BufferedImage table;
+	private lpool.logic.Game g = new lpool.logic.Game();
 
 	public Game(JFrame parent)
 	{
@@ -38,6 +39,7 @@ public class Game extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				match.tick(deltaT);
+				g.tick(deltaT);
 				repaint();
 			}
 		};
@@ -100,8 +102,6 @@ public class Game extends JPanel{
 		f.getContentPane().add(panel);
 		f.setSize(800, 400);
 		f.setVisible(true);
-		panel.requestFocus();      
-		Connector c = new Connector(2);
-		c.start();
+		panel.requestFocus();
 	}
 }

@@ -1,22 +1,23 @@
 package lpool.network;
 
 public abstract class EventChecker {
-	private Connector con;
+	protected Network network;
 	
 	public EventChecker(int maxPlayers)
 	{
-		this.con = new Connector(maxPlayers);
-	}
-	
-	protected void startConnector(int maxPlayers)
-	{
-		con.start();
+		this.network = new Network(maxPlayers);
 	}
 	
 	protected boolean triggerEvents()
 	{
-		if (con == null)
+		if (network == null)
 			return false;
+		
+		while (!network.isClientConnQueueEmpty())
+		{
+			int clientID = network.pollClientConnQueue().intValue();
+			conEvent(clientID);
+		}
 		
 		// TODO
 		return true;
