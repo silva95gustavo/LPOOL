@@ -8,13 +8,11 @@ public class Connector extends Thread {
 	private ServerSocket s;
 	private final int maxClients;
 	private int numClients;
-	private Socket[] clients;
 	private Communicator[] comms;
 
 	public Connector(int maxClients) {
 		this.maxClients = maxClients;
 		this.numClients = 0;
-		this.clients = new Socket[maxClients];
 		this.comms = new Communicator[maxClients];
 
 		try {
@@ -47,20 +45,19 @@ public class Connector extends Thread {
 			return false; // Too many clients
 		}
 		
-		for (int i = 0; i < clients.length; i++)
+		for (int i = 0; i < comms.length; i++)
 		{
-			if (clients[i] == null)
+			if (comms[i] == null)
 				continue;
 			
-			if (client.getInetAddress().getHostAddress().equals(clients[i].getInetAddress().getHostAddress()))
+			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress()))
 				return false; // Client already connected
 		}
 		
-		for (int i = 0; i < clients.length; i++)
+		for (int i = 0; i < comms.length; i++)
 		{
-			if (clients[i] == null)
+			if (comms[i] == null)
 			{
-				clients[i] = client;
 				numClients++;
 				comms[i] = new Communicator(client);
 				comms[i].start();
@@ -75,21 +72,20 @@ public class Connector extends Thread {
 		if (clientID >= maxClients)
 			return false;
 		
-		if (clients[clientID] == null)
+		if (comms[clientID] == null)
 			return false;
 		
 		try {
-			clients[clientID].close();
+			comms[clientID].getSocket().close();
 		} catch (IOException e) {
 			// Do nothing
 		}
-		clients[clientID] = null;
 		comms[clientID] = null;
 		return true;
 	}
 
 	public boolean isClientConnected(int clientID)
 	{
-		return clients[clientID] != null;
+		return comms[clientID] != null;
 	}
 }

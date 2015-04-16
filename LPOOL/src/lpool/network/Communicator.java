@@ -6,7 +6,7 @@ import java.util.Queue;
 public class Communicator extends Thread{
 	private Socket s;
 	private Receiver r;
-	private Queue queue;
+	private Queue<String> queue;
 	
 	public Communicator(Socket s) {
 		this.s = s;
@@ -17,5 +17,10 @@ public class Communicator extends Thread{
 	public void run()
 	{
 		r.start();
+	}
+	
+	public Socket getSocket()
+	{
+		return s;
 	}
 }
