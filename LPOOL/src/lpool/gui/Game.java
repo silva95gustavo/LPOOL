@@ -18,10 +18,12 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import com.badlogic.gdx.math.Vector2;
+import com.jcraft.jorbis.Info;
 
 import lpool.logic.Ball;
 import lpool.logic.Border;
 import lpool.logic.Match;
+import lpool.network.Connector;
 
 @SuppressWarnings("serial")
 public class Game extends JPanel{
@@ -99,5 +101,7 @@ public class Game extends JPanel{
 		f.setSize(800, 400);
 		f.setVisible(true);
 		panel.requestFocus();      
+		Connector c = new Connector(2);
+		c.start();
 	}
 }
