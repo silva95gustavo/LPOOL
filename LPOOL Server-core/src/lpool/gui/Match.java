@@ -18,21 +18,19 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import com.badlogic.gdx.math.Vector2;
-import com.jcraft.jorbis.Info;
 
 import lpool.logic.Ball;
 import lpool.logic.Border;
-import lpool.logic.Match;
 import lpool.network.Connector;
 
 @SuppressWarnings("serial")
-public class Game extends JPanel{
+public class Match extends JPanel{
 	private int FPS = 60;
 	private float deltaT = (float)1/FPS;
 	private BufferedImage table;
 	private lpool.logic.Game game = new lpool.logic.Game();
 
-	public Game(JFrame parent)
+	public Match(JFrame parent)
 	{
 		ActionListener myTimerListener = new ActionListener() {
 			@Override
@@ -61,7 +59,7 @@ public class Game extends JPanel{
 		// Draw background
 		g.drawImage(table, 0, 0, this.getWidth(), this.getHeight(), null);
 		
-		Match m = game.getMatch();
+		lpool.logic.Match m = game.getMatch();
 		 
 		Ball[] balls1 = m.getBalls1();
 		Ball[] balls2 = m.getBalls2();
@@ -104,7 +102,7 @@ public class Game extends JPanel{
 		JFrame f = new JFrame("LPOOL");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		f.setPreferredSize(new Dimension(500,500));
-		JPanel panel = new Game(f);
+		JPanel panel = new Match(f);
 		f.getContentPane().add(panel);
 		f.setSize(800, 400);
 		f.setVisible(true);

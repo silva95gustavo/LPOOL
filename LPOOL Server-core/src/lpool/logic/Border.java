@@ -1,7 +1,5 @@
 package lpool.logic;
 
-//import lpool.gdx.desktop.InternalLoader;
-import lpool.gdx.desktop.InternalLoader;
 import aurelienribon.bodyeditor.BodyEditorLoader;
 
 import com.badlogic.gdx.Gdx;
@@ -28,7 +26,8 @@ public class Border {
 		float rest = 0.5f;
 		
 		//FileHandle fh = 
-		BodyEditorLoader loader = InternalLoader.loadBodyFromJSON("lpool.json");
+		//BodyEditorLoader loader = InternalLoader.loadBodyFromJSON("lpool.json");
+		System.out.println(Gdx.files.internal("lpool.json"));
 		
 		/*// RIGHT
 		BodyDef bd = new BodyDef();
