@@ -23,6 +23,7 @@ public class Network {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		System.out.println("Server socket successfully started.");
 		this.clientSockets = new ConcurrentLinkedQueue<Socket>();
 		this.con = new Connector(serverSocket, maxClients, clientSockets);
 		this.comms = new Communication[maxClients];

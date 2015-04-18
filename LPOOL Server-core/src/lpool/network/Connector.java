@@ -17,6 +17,7 @@ public class Connector extends Thread {
 	@Override
 	public void run()
 	{
+		System.out.println("Connector started");
 		try {
 			while (true)
 			{

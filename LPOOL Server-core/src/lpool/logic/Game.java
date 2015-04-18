@@ -1,5 +1,6 @@
 package lpool.logic;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import lpool.network.EventChecker;
@@ -56,6 +57,10 @@ public class Game extends EventChecker{
 				float force = (float)sc.nextLong() / 1000;
 				match.makeShot(force);
 			}
+		}
+		catch (NoSuchElementException e)
+		{
+			
 		}
 	}
 }
