@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="output" path="bin"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
-	<classpathentry sourcepath="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.5.5/23a5d06da04fd9a381aa225425722facf7de96c1/gdx-1.5.5-sources.jar" kind="lib" path="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.5.5/9896d723afaeaae8229546119f9abffac5f8dbc7/gdx-1.5.5.jar" exported="true"/>
-	<classpathentry sourcepath="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d/1.5.5/a293e269341d905ebe0c596b4afd42f44f03b5d2/gdx-box2d-1.5.5-sources.jar" kind="lib" path="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d/1.5.5/8931a097fc80279c6b9ee695560a85c1e280c7ea/gdx-box2d-1.5.5.jar" exported="true"/>
-	<classpathentry sourcepath="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/net.dermetfan.libgdx-utils/libgdx-utils/0.10.0/e9b319eb12346f65317d9e5c2e6eab68c162f4b0/libgdx-utils-0.10.0-sources.jar" kind="lib" path="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/net.dermetfan.libgdx-utils/libgdx-utils/0.10.0/eb6a9e55e3772869234a682f377ed22bfca2282e/libgdx-utils-0.10.0.jar" exported="true"/>
-	<classpathentry sourcepath="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/net.dermetfan.libgdx-utils/libgdx-utils-box2d/0.10.0/ddf37479662f3dbbbc4caee8d64ea2206163300e/libgdx-utils-box2d-0.10.0-sources.jar" kind="lib" path="C:/Users/Gustavo/.gradle/caches/modules-2/files-2.1/net.dermetfan.libgdx-utils/libgdx-utils-box2d/0.10.0/9512f5d98a87922ebc6d68c703d6eb13cd3e7eb4/libgdx-utils-box2d-0.10.0.jar" exported="true"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/gdx-1.5.5.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-box2d-1.5.5.jar"/>
+	<classpathentry kind="lib" path="libs/libgdx-utils-0.10.0.jar"/>
+	<classpathentry kind="lib" path="libs/libgdx-utils-box2d-0.10.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

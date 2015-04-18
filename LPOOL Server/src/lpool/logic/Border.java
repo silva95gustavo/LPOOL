@@ -1,10 +1,15 @@
 package lpool.logic;
 
+//import lpool.gdx.desktop.InternalLoader;
+import lpool.gdx.desktop.InternalLoader;
+import aurelienribon.bodyeditor.BodyEditorLoader;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Border {
@@ -17,11 +22,15 @@ public class Border {
 	private Body top;
 	private Body left;
 	private Body bottom;
+	private Body body;
 	
 	public Border(World world) {
 		float rest = 0.5f;
 		
-		// RIGHT
+		//FileHandle fh = 
+		BodyEditorLoader loader = InternalLoader.loadBodyFromJSON("lpool.json");
+		
+		/*// RIGHT
 		BodyDef bd = new BodyDef();
 		bd.position.set(width - border, height / 2);
 		bd.type = BodyType.StaticBody;
@@ -98,7 +107,25 @@ public class Border {
 		fd.filter.maskBits = Ball.cat;
 		
 		bottom = world.createBody(bd);
-		bottom.createFixture(fd);
+		bottom.createFixture(fd);*/
+		
+		// 1. Create a BodyDef, as usual.
+	    BodyDef bd = new BodyDef();
+	    bd.position.set(0, 0);
+	    bd.type = BodyType.StaticBody;
+	 
+	    // 2. Create a FixtureDef, as usual.
+	    FixtureDef fd = new FixtureDef();
+	    fd.density = 5f;
+	    fd.restitution = rest;
+		fd.filter.categoryBits = cat;
+		fd.filter.maskBits = Ball.cat;
+	 
+	    // 3. Create a Body, as usual.
+	    body = world.createBody(bd);
+	 
+	    // 4. Create the body fixture automatically by using the loader.
+	    //loader.attachFixture(body, "lpool", fd, width);
 	}
 
 }

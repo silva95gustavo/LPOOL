@@ -59,7 +59,7 @@ public class Game extends JPanel{
 		super.paintComponent(g);
 		
 		// Draw background
-		 g.drawImage(table, 0, 0, this.getWidth(), this.getHeight(), null);
+		g.drawImage(table, 0, 0, this.getWidth(), this.getHeight(), null);
 		
 		Match m = game.getMatch();
 		 
@@ -74,6 +74,12 @@ public class Game extends JPanel{
 		drawBall(g, blackBall, Color.BLACK);
 		Ball cueBall = m.getCueBall();
 		drawBall(g, cueBall, Color.WHITE);
+		
+		float cueAngle = m.getCueAngle();
+		Vector2 cueBallPos = physicsToPixel(cueBall.getPosition());
+		Vector2 cue = new Vector2(1000, 0).rotate(cueAngle * 180f / (float)Math.PI).add(cueBallPos);
+		g.setColor(Color.WHITE);
+		g.drawLine((int)cueBallPos.x, (int)cueBallPos.y, (int)cue.x, (int)cue.y);
 	}
 	
 	private Vector2 physicsToPixel(Vector2 v)

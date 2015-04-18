@@ -1,23 +1,26 @@
 package lpool.logic;
 
+import java.util.Scanner;
+
 import lpool.network.EventChecker;
 
 public class Game extends EventChecker{
 	public static final int numPlayers = 2;
 	private Match match = new Match();
-	
+	private float last;
+
 	public Game() {
 		super(numPlayers);
 		network.startConnecting();
 	}
-	
+
 	public void tick(float dt)
 	{
 		match.tick(dt);
 		network.tick();
 		triggerEvents();
 	}
-	
+
 	public Match getMatch()
 	{
 		return match;
@@ -34,6 +37,25 @@ public class Game extends EventChecker{
 	@Override
 	protected void commEvent(int clientID, String msg) {
 		System.out.println("Client #" + clientID + " sent the following message: " + msg);
-		match.makeShot(Float.parseFloat(msg));
+		try
+		{
+			float angle = Float.parseFloat(msg);
+			/*if (Math.abs(angle - last) < 0.1)
+			{
+				System.out.println("Angle: " + angle + " Turning " + (- 0.2f * angle * Math.abs(angle)));
+				match.setCueAngle(match.getCueAngle() - 0.2f * angle * Math.abs(angle));
+			}
+			last -= (angle - last) * 1f;*/
+			match.setCueAngle(angle);
+		}
+		catch(NumberFormatException e)
+		{
+			Scanner sc = new Scanner(msg);
+			if (sc.next().equals("FIRE"))
+			{
+				float force = (float)sc.nextLong() / 1000;
+				match.makeShot(force);
+			}
+		}
 	}
 }

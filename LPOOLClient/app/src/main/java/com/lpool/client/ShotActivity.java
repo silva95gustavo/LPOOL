@@ -5,11 +5,24 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.TextView;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ShotActivity extends ActionBarActivity implements SensorEventListener {
@@ -20,6 +33,13 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     float[] mGravity;
     float[] mGeomagnetic;
 
+    private volatile Socket socket;
+
+    public float angle = (float)Math.PI;
+    private int i = 0;
+    private long startTime = System.currentTimeMillis();
+    private long lastSensorReadTime = System.currentTimeMillis();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +47,40 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        senMagnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        new Thread(new ClientThread()).start();
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                while (true) {
+                    if (socket == null)
+                        continue;
+                    PrintWriter out = null;
+                    try {
+                        out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                        out.println(String.valueOf(angle));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, 100, 50);
+    }
+
+    class ClientThread implements Runnable {
+        @Override
+        public void run() {
+            try {
+                InetAddress serverAddr = InetAddress.getByName("192.168.1.69");
+                socket = new Socket(serverAddr, 69);
+            } catch (UnknownHostException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
     }
 
 
@@ -56,33 +109,63 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event)
     {
-        boolean success = false;
-        float orientation[] = new float[3];
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-            mGravity = event.values;
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-            mGeomagnetic = event.values;
-        if (mGravity != null && mGeomagnetic != null) {
-            float R[] = new float[9];
-            float I[] = new float[9];
-            success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-            if (success) {
-                SensorManager.getOrientation(R, orientation);
-            }
-        }
+        float[] g = new float[3];
+        g = event.values.clone();
 
-        if (!success)
+        float norm_Of_g = (float)Math.sqrt(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
+
+// Normalize the accelerometer vector
+        g[0] = g[0] / norm_Of_g;
+        g[1] = g[1] / norm_Of_g;
+        g[2] = g[2] / norm_Of_g;
+
+        float rotation = (float)(Math.atan2(g[0], g[1]) - Math.PI / 2);
+        angle -= (float)(rotation * Math.abs(rotation) * (System.currentTimeMillis() - lastSensorReadTime) * 0.02f);
+        System.out.println("factor: " + System.currentTimeMillis());
+        lastSensorReadTime = System.currentTimeMillis();
+
+        if (socket == null)
             return;
 
         TextView tv1 = (TextView) findViewById(R.id.textView1);
-        tv1.setText(String.valueOf(orientation[0]));
+        tv1.setText(String.valueOf(rotation));
 
         TextView tv2 = (TextView) findViewById(R.id.textView2);
-        tv2.setText(String.valueOf(orientation[1]));
+        tv2.setText(String.valueOf(angle));
 
         TextView tv3 = (TextView) findViewById(R.id.textView3);
-        tv3.setText(String.valueOf(orientation[2]));
+        tv3.setText(String.valueOf(event.values[2]));
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+
+        int action = MotionEventCompat.getActionMasked(event);
+
+        if (action == MotionEvent.ACTION_DOWN) {
+            startTime = System.currentTimeMillis();
+
+            return true;
+        }
+        else if (action == MotionEvent.ACTION_UP)
+        {
+            if (socket == null)
+                return true;
+
+            long difference = System.currentTimeMillis() - startTime;
+
+            PrintWriter out = null;
+            try {
+                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                out.println("FIRE " + difference);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        else
+            return super.onTouchEvent(event);
     }
 
     @Override
@@ -93,11 +176,9 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("resumed with delay " + SensorManager.SENSOR_DELAY_FASTEST);
         // register this class as a listener for the orientation and
         // accelerometer sensors
-        sensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(this, senMagnetometer, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class Match {
 	private Ball cueBall;
 	private Border border;
 	
-	private float cueAngle;
+	private float cueAngle = (float)Math.PI;
 
 	public Match() {
 		gravity = new Vector2(0, 0);
@@ -90,5 +90,10 @@ public class Match {
 	public void makeShot(float force)
 	{
 		cueBall.makeShot(cueAngle, force);
+	}
+	
+	public float getCueAngle()
+	{
+		return cueAngle;
 	}
 }

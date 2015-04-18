@@ -52,7 +52,7 @@ public class Ball {
 		body.createFixture(fd1);
 		body.createFixture(fd2);
 		Random r = new Random();
-		if (number == 0)
+		//if (number == 0)
 			//body.applyLinearImpulse(new Vector2(r.nextFloat() * force - force / 2, r.nextFloat() * force - force / 2), new Vector2(0, 0), false);
 			//body.applyLinearImpulse(new Vector2(-force, 0), new Vector2(0, 0), true);
 		body.setLinearDamping(0.5f);
@@ -73,7 +73,7 @@ public class Ball {
 	
 	public void tick()
 	{
-		if (body.getLinearVelocity().len2() < 0.002)
+		if (body.getLinearVelocity().len2() < 0.001)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 		}
@@ -81,6 +81,6 @@ public class Ball {
 	
 	public void makeShot(float angle, float force)
 	{
-		body.applyLinearImpulse(new Vector2(force, 0).rotate(angle), new Vector2(0, 0), true);
+		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), new Vector2(0, 0), true);
 	}
 }
