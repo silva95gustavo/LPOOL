@@ -40,6 +40,7 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     private int i = 0;
     private long startTime = System.currentTimeMillis();
     private long lastSensorReadTime = System.currentTimeMillis();
+    private boolean shooting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
                         return;
                     //PrintWriter out = null;
                     //try {
+                if (!shooting)
                        out.println(String.valueOf(angle));
                     //} catch (IOException e) {
                         //e.printStackTrace();
@@ -110,6 +112,8 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event)
     {
+        if (shooting)
+            return;
         float[] g = new float[3];
         g = event.values.clone();
 
@@ -145,11 +149,12 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
         if (action == MotionEvent.ACTION_DOWN) {
             startTime = System.currentTimeMillis();
-
+            shooting = true;
             return true;
         }
         else if (action == MotionEvent.ACTION_UP)
         {
+            shooting = false;
             if (socket == null)
                 return true;
 
