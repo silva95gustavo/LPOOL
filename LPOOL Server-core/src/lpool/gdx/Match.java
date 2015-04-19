@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 import lpool.logic.Ball;
-import lpool.logic.Border;
+import lpool.logic.Table;
 
 public class Match implements Screen{
 	private int width;
@@ -78,8 +78,8 @@ public class Match implements Screen{
 	private Vector2 physicsToPixel(Vector2 v)
 	{
 		Vector2 v2 = new Vector2();
-		v2.x = v.x * width / Border.width;
-		v2.y = v.y * height / Border.height;
+		v2.x = v.x * width / Table.width;
+		v2.y = v.y * height / Table.height;
 		return v2;
 	}
 

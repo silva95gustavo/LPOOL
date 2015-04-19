@@ -15,7 +15,7 @@ public class Match {
 	private Ball[] balls2;
 	private Ball blackBall;
 	private Ball cueBall;
-	private Border border;
+	private Table border;
 	
 	private float cueAngle = (float)Math.PI;
 
@@ -29,27 +29,27 @@ public class Match {
 		Random r = new Random();
 		if (ballsPerPlayer == 7)
 		{
-			balls1[0] = new Ball(world, new Vector2(Border.width / 4, Border.height / 2), 1);
-			balls2[0] = new Ball(world, new Vector2(Border.width / 4 - 2* Ball.radius, Border.height / 2 - Ball.radius), 9);
-			balls1[1] = new Ball(world, new Vector2(Border.width / 4 - 2 * Ball.radius, Border.height / 2 + Ball.radius), 2);
-			balls2[1] = new Ball(world, new Vector2(Border.width / 4 - 4 * Ball.radius, Border.height / 2 - 2 * Ball.radius), 10);
-			balls1[2] = new Ball(world, new Vector2(Border.width / 4 - 4 * Ball.radius, Border.height / 2), 3);
-			balls2[2] = new Ball(world, new Vector2(Border.width / 4 - 4 * Ball.radius, Border.height / 2 + 2 * Ball.radius), 11);
+			balls1[0] = new Ball(world, new Vector2(Table.width / 4, Table.height / 2), 1);
+			balls2[0] = new Ball(world, new Vector2(Table.width / 4 - 2* Ball.radius, Table.height / 2 - Ball.radius), 9);
+			balls1[1] = new Ball(world, new Vector2(Table.width / 4 - 2 * Ball.radius, Table.height / 2 + Ball.radius), 2);
+			balls2[1] = new Ball(world, new Vector2(Table.width / 4 - 4 * Ball.radius, Table.height / 2 - 2 * Ball.radius), 10);
+			balls1[2] = new Ball(world, new Vector2(Table.width / 4 - 4 * Ball.radius, Table.height / 2), 3);
+			balls2[2] = new Ball(world, new Vector2(Table.width / 4 - 4 * Ball.radius, Table.height / 2 + 2 * Ball.radius), 11);
 			ballsPerPlayer = 3;
 		}
 		else
 		{
 			for (int i = 0; i < ballsPerPlayer; i++)
 			{
-				balls1[i] = new Ball(world, new Vector2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 1);
-				balls2[i] = new Ball(world, new Vector2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), i + 9);
+				balls1[i] = new Ball(world, new Vector2(r.nextFloat() * Table.width, r.nextFloat() * Table.height), i + 1);
+				balls2[i] = new Ball(world, new Vector2(r.nextFloat() * Table.width, r.nextFloat() * Table.height), i + 9);
 			}
 		}
 
-		blackBall = new Ball(world, new Vector2(r.nextFloat() * Border.width, r.nextFloat() * Border.height), 8);
-		cueBall = new Ball(world, new Vector2(3 * Border.width / 4, Border.height / 2), 0);
+		blackBall = new Ball(world, new Vector2(r.nextFloat() * Table.width, r.nextFloat() * Table.height), 8);
+		cueBall = new Ball(world, new Vector2(3 * Table.width / 4, Table.height / 2), 0);
 		
-		border = new Border(world);
+		border = new Table(world);
 
 	}
 
@@ -62,6 +62,7 @@ public class Match {
 			balls2[i].tick();
 		}
 		blackBall.tick();
+		cueBall.tick();
 	}
 
 	public Ball getBlackBall() {

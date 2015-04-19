@@ -44,7 +44,7 @@ public class Ball {
 		fd2.friction = 1.0f;
 		fd2.restitution = 0.5f;
 		fd2.filter.categoryBits = cat;
-		fd2.filter.maskBits = Border.cat;
+		fd2.filter.maskBits = Table.cat;
 		
 		float force = 0.87441024f * 3f;
 		

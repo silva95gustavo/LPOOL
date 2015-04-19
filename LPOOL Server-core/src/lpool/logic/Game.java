@@ -1,6 +1,5 @@
 package lpool.logic;
 
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import lpool.network.EventChecker;
@@ -40,7 +39,7 @@ public class Game extends EventChecker{
 		System.out.println("Client #" + clientID + " sent the following message: " + msg);
 		try
 		{
-			float angle = Float.parseFloat(msg);
+			float angle = -Float.parseFloat(msg);
 			/*if (Math.abs(angle - last) < 0.1)
 			{
 				System.out.println("Angle: " + angle + " Turning " + (- 0.2f * angle * Math.abs(angle)));
@@ -52,15 +51,12 @@ public class Game extends EventChecker{
 		catch(NumberFormatException e)
 		{
 			Scanner sc = new Scanner(msg);
-			if (sc.next().equals("FIRE"))
+			if (sc.hasNext() && sc.next().equals("FIRE") && sc.hasNextFloat())
 			{
 				float force = (float)sc.nextLong() / 1000;
 				match.makeShot(force);
 			}
-		}
-		catch (NoSuchElementException e)
-		{
-			
+			sc.close();
 		}
 	}
 }
