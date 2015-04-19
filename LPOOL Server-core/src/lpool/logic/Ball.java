@@ -46,15 +46,9 @@ public class Ball {
 		fd2.filter.categoryBits = cat;
 		fd2.filter.maskBits = Table.cat;
 		
-		float force = 0.87441024f * 3f;
-		
 		body = world.createBody(bd);
 		body.createFixture(fd1);
 		body.createFixture(fd2);
-		Random r = new Random();
-		//if (number == 0)
-			//body.applyLinearImpulse(new Vector2(r.nextFloat() * force - force / 2, r.nextFloat() * force - force / 2), new Vector2(0, 0), false);
-			//body.applyLinearImpulse(new Vector2(-force, 0), new Vector2(0, 0), true);
 		body.setLinearDamping(0.5f);
 		body.setAngularDamping(10.0f);
 		body.setBullet(true);
@@ -73,7 +67,7 @@ public class Ball {
 	
 	public void tick()
 	{
-		if (body.getLinearVelocity().len2() < 0.001)
+		if (body.getLinearVelocity().len2() < 0.00025)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 		}
