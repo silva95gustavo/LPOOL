@@ -18,6 +18,8 @@ public class Match implements Screen{
 	private int width;
 	private int height;
 
+	private OrthographicCamera camera;
+	
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private Texture table;
@@ -28,6 +30,10 @@ public class Match implements Screen{
 	{
 		this.width = width;
 		this.height = height;
+		
+		camera = new OrthographicCamera(width, height);
+		camera.position.set(new Vector2(width / 2, height / 2), 0);
+		camera.update();
 		
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
@@ -40,15 +46,18 @@ public class Match implements Screen{
 	public void render(float delta)
 	{
 		game.tick(delta);
-
+		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
 		// Draw background
-		batch.draw(table, 0, 0, width, height);
+		batch.draw(table, 0, 0, physicsToPixel(Table.width), physicsToPixel(Table.height));
 		batch.end();
 
+		shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 		shapeRenderer.begin(ShapeType.Filled);
 		
 		lpool.logic.Match m = game.getMatch();
@@ -70,17 +79,20 @@ public class Match implements Screen{
 		Vector2 cue = new Vector2(1000, 0).rotate(cueAngle * 180f / (float)Math.PI).add(cueBallPos);
 		
 		shapeRenderer.setColor(Color.WHITE);
-		shapeRenderer.line(cueBallPos,  cue);
+		shapeRenderer.line(cueBallPos, cue);
 		
 		shapeRenderer.end();
 	}
 
+	private float physicsToPixel(float x)
+	{
+		return x * (float)width / Table.width;
+	}
+	
 	private Vector2 physicsToPixel(Vector2 v)
 	{
-		Vector2 v2 = new Vector2();
-		v2.x = v.x * width / Table.width;
-		v2.y = v.y * height / Table.height;
-		return v2;
+		return v.scl((float)width / Table.width);
+		
 	}
 
 	private void drawBall(Ball ball, Color c) {
@@ -88,8 +100,7 @@ public class Match implements Screen{
 		Vector2 ballRadiusPixel = physicsToPixel(new Vector2(Ball.radius, Ball.radius));
 
 		shapeRenderer.setColor(c);
-		shapeRenderer.circle(ballPosPixel.x, ballPosPixel.y, 30);
-		//shapeRenderer.rect(0, 0, 50, 50);
+		shapeRenderer.circle(ballPosPixel.x, ballPosPixel.y, ballRadiusPixel.x);
 	}
 
 	@Override
