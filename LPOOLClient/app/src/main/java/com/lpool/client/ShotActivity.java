@@ -34,6 +34,7 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     float[] mGeomagnetic;
 
     private volatile Socket socket;
+    private PrintWriter out = null;
 
     public float angle = (float)Math.PI;
     private int i = 0;
@@ -54,17 +55,16 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                while (true) {
                     if (socket == null)
-                        continue;
-                    PrintWriter out = null;
-                    try {
-                        out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                        out.println(String.valueOf(angle));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                        return;
+                    if (out == null)
+                        return;
+                    //PrintWriter out = null;
+                    //try {
+                       out.println(String.valueOf(angle));
+                    //} catch (IOException e) {
+                        //e.printStackTrace();
+                    //}
             }
         }, 100, 50);
     }
@@ -75,6 +75,7 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
             try {
                 InetAddress serverAddr = InetAddress.getByName("192.168.1.69");
                 socket = new Socket(serverAddr, 69);
+                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
@@ -121,7 +122,6 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
         float rotation = (float)(Math.atan2(g[0], g[1]) - Math.PI / 2);
         angle -= (float)(rotation * Math.abs(rotation) * (System.currentTimeMillis() - lastSensorReadTime) * 0.02f);
-        System.out.println("factor: " + System.currentTimeMillis());
         lastSensorReadTime = System.currentTimeMillis();
 
         if (socket == null)
@@ -155,13 +155,15 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
             long difference = System.currentTimeMillis() - startTime;
 
-            PrintWriter out = null;
-            try {
-                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            if (out == null)
+                return true;
+            //PrintWriter out = null;
+            //try {
+                //out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                 out.println("FIRE " + difference);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+           // } catch (IOException e) {
+                //e.printStackTrace();
+            //}
             return true;
         }
         else
