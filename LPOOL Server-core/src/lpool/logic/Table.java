@@ -11,12 +11,8 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Table {
 	public static final short cat = 0x0002;
 	public static final float width = 2.74f;
-	public static final float height = width / 2;
+	public static final float height = width * 0.547953964f;
 	
-	private Body right;
-	private Body top;
-	private Body left;
-	private Body bottom;
 	private Body body;
 	
 	public Table(World world) {

@@ -19,7 +19,7 @@ public class Match implements Screen{
 	private int height;
 
 	private OrthographicCamera camera;
-	
+
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private Texture table;
@@ -30,26 +30,26 @@ public class Match implements Screen{
 	{
 		this.width = width;
 		this.height = height;
-		
+
 		camera = new OrthographicCamera(width, height);
-		camera.position.set(new Vector2(width / 2, height / 2), 0);
+		camera.position.set(physicsToPixel(new Vector2(Table.width / 2, Table.height / 2)), 0);
 		camera.update();
-		
+
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		table = new Texture("table.png");
-		
+
 		game =  new lpool.logic.Game();
 	}
-	
+
 	@Override
 	public void render(float delta)
 	{
 		game.tick(delta);
-		
+
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
@@ -59,9 +59,9 @@ public class Match implements Screen{
 
 		shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 		shapeRenderer.begin(ShapeType.Filled);
-		
-		lpool.logic.Match m = game.getMatch();
 
+		lpool.logic.Match m = game.getMatch();
+		
 		Ball[] balls1 = m.getBalls1();
 		Ball[] balls2 = m.getBalls2();
 		for (int i = 0; i < m.ballsPerPlayer; i++)
@@ -75,11 +75,11 @@ public class Match implements Screen{
 		drawBall(cueBall, Color.WHITE);
 
 		float cueAngle = m.getCueAngle();
-		Vector2 cueBallPos = physicsToPixel(cueBall.getPosition());
-		Vector2 cue = new Vector2(1000, 0).rotate(cueAngle * 180f / (float)Math.PI).add(cueBallPos);
-		
+		Vector2 cueBallPos = physicsToPixel(cueBall.getPosition().cpy());
+		Vector2 cue = new Vector2(1000, 0).rotateRad(cueAngle).add(cueBallPos);
+
 		shapeRenderer.setColor(Color.WHITE);
-		shapeRenderer.line(cueBallPos, cue);
+		shapeRenderer.rectLine(cueBallPos, cue, 2);
 		
 		shapeRenderer.end();
 	}
@@ -88,11 +88,11 @@ public class Match implements Screen{
 	{
 		return x * (float)width / Table.width;
 	}
-	
+
 	private Vector2 physicsToPixel(Vector2 v)
 	{
-		return v.scl((float)width / Table.width);
-		
+		return v.cpy().scl((float)width / Table.width);
+
 	}
 
 	private void drawBall(Ball ball, Color c) {
@@ -100,7 +100,7 @@ public class Match implements Screen{
 		Vector2 ballRadiusPixel = physicsToPixel(new Vector2(Ball.radius, Ball.radius));
 
 		shapeRenderer.setColor(c);
-		shapeRenderer.circle(ballPosPixel.x, ballPosPixel.y, ballRadiusPixel.x);
+		shapeRenderer.circle(ballPosPixel.x, ballPosPixel.y, physicsToPixel(Ball.radius));
 	}
 
 	@Override
