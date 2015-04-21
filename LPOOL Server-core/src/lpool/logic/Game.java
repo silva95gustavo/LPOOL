@@ -1,5 +1,8 @@
 package lpool.logic;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.Scanner;
 
 import lpool.network.EventChecker;
@@ -8,6 +11,11 @@ public class Game extends EventChecker{
 	public static final int numPlayers = 2;
 	private Match match = new Match();
 	private float last;
+
+	public enum ProtocolCmd {
+		ANGLE, // angle
+		FIRE // force
+	};
 
 	public Game() {
 		super(numPlayers);
@@ -35,28 +43,38 @@ public class Game extends EventChecker{
 	}
 
 	@Override
-	protected void commEvent(int clientID, String msg) {
-		System.out.println("Client #" + clientID + " sent the following message: " + msg);
-		try
-		{
-			float angle = -Float.parseFloat(msg);
-			/*if (Math.abs(angle - last) < 0.1)
+	protected void commEvent(int clientID, byte[] msg) {
+		final ByteArrayInputStream bais = new ByteArrayInputStream(msg);
+		final DataInputStream dais = new DataInputStream(bais);
+		try {
+			int aaa = dais.readInt();
+			if (aaa < 0 || aaa >= ProtocolCmd.values().length)
+				return;
+			System.out.println("Command: " + aaa);
+			ProtocolCmd cmd = ProtocolCmd.values()[aaa];
+			switch (cmd)
 			{
+			case ANGLE:
+			{
+				float angle = -dais.readFloat();
 				System.out.println("Angle: " + angle + " Turning " + (- 0.2f * angle * Math.abs(angle)));
 				match.setCueAngle(match.getCueAngle() - 0.2f * angle * Math.abs(angle));
+				last = angle;
+				match.setCueAngle(angle);
+				break;
 			}
-			last -= (angle - last) * 1f;*/
-			match.setCueAngle(angle);
-		}
-		catch(NumberFormatException e)
-		{
-			Scanner sc = new Scanner(msg);
-			if (sc.hasNext() && sc.next().equals("FIRE") && sc.hasNextFloat())
+			case FIRE:
 			{
-				float force = (float)sc.nextLong() / 1000;
+				float force = dais.readFloat();
 				match.makeShot(force);
+				break;
 			}
-			sc.close();
+			default:
+				break;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

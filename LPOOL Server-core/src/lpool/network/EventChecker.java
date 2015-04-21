@@ -1,5 +1,7 @@
 package lpool.network;
 
+import java.net.DatagramPacket;
+
 public abstract class EventChecker {
 	protected Network network;
 
@@ -19,13 +21,12 @@ public abstract class EventChecker {
 			conEvent(clientID);
 		}
 
-		for (int clientID = 0; clientID < network.maxClients; clientID++)
+		Integer clientID = new Integer(0);
+		byte[] msg;
+		while ((msg = network.pollClientCommQueue(clientID)) != null)
 		{
-			while (!network.isClientCommQueueEmpty(clientID))
-			{
-				String msg = network.pollClientCommQueue(clientID);
-				commEvent(clientID, msg);
-			}
+			System.out.println("Client #" + clientID + " sent " + new String(msg));
+			commEvent(clientID, msg);
 		}
 
 		// TODO
@@ -33,5 +34,5 @@ public abstract class EventChecker {
 	}
 
 	protected abstract void conEvent(int clientID);
-	protected abstract void commEvent(int clientID, String msg);
+	protected abstract void commEvent(int clientID, byte[] msg);
 }

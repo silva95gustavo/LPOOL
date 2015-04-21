@@ -1,6 +1,9 @@
 package lpool.network;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -11,14 +14,23 @@ public class Network {
 	public final int maxClients;
 	private int numClients;
 	private ServerSocket serverSocket;
+	private DatagramSocket UDPServerSocket;
 	private Connector con;
-	private ConcurrentLinkedQueue<Socket> clientSockets;
+	private DatagramReceiver dg;
 	private Communication[] comms;
+
 	private Queue<Integer> clientConnEvents;
+	private Queue<Integer> clientCommEvents;
+
+	private Queue<DatagramPacket> clientCommPackets;
+
+	private ConcurrentLinkedQueue<Socket> clientSockets;
+	private ConcurrentLinkedQueue<DatagramPacket> UDPreceived;
 
 	public Network(int maxClients) {
 		try {
-			this.serverSocket = new ServerSocket(69);
+			this.serverSocket = new ServerSocket(6900);
+			this.UDPServerSocket = new DatagramSocket(6900);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -26,10 +38,15 @@ public class Network {
 		System.out.println("Server socket successfully started.");
 		this.clientSockets = new ConcurrentLinkedQueue<Socket>();
 		this.con = new Connector(serverSocket, maxClients, clientSockets);
+		this.UDPreceived = new ConcurrentLinkedQueue<DatagramPacket>();
+		dg = new DatagramReceiver(UDPServerSocket, UDPreceived);
+		dg.start();
 		this.comms = new Communication[maxClients];
 		this.maxClients = maxClients;
 		this.numClients = 0;
 		this.clientConnEvents = new LinkedList<Integer>();
+		this.clientCommEvents = new LinkedList<Integer>();
+		this.clientCommPackets = new LinkedList<DatagramPacket>();
 	}
 
 	public void tick()
@@ -46,7 +63,7 @@ public class Network {
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < maxClients; i++)
 		{
 			if (comms[i] != null)
@@ -56,6 +73,22 @@ public class Network {
 					kickClient(i);
 					clientConnEvents.add(i);
 				}
+			}
+		}
+
+		readUDP();
+	}
+
+	private void readUDP()
+	{
+		while (!UDPreceived.isEmpty())
+		{
+			DatagramPacket dp = UDPreceived.poll();
+			int clientID = addressToID(dp.getAddress());
+			if (isClientConnected(clientID))
+			{
+				clientCommEvents.add(clientID);
+				clientCommPackets.add(dp);
 			}
 		}
 	}
@@ -109,17 +142,17 @@ public class Network {
 		numClients--;
 		return true;
 	}
-	
+
 	public void startConnecting()
 	{
 		con.start();
 	}
-	
+
 	public boolean isClientConnQueueEmpty()
 	{
 		return clientConnEvents.isEmpty();
 	}
-	
+
 	public Integer pollClientConnQueue()
 	{
 		if (clientConnEvents.isEmpty())
@@ -127,24 +160,51 @@ public class Network {
 		else
 			return clientConnEvents.poll();
 	}
-	
-	public boolean isClientCommQueueEmpty(int clientID)
+
+	public boolean isClientCommQueueEmpty()
 	{
-		if (comms[clientID] == null)
-			return true;
-		
-		return comms[clientID].getClientCommEvents().isEmpty();
+		return clientCommEvents.isEmpty();
 	}
-	
-	public String pollClientCommQueue(int clientID)
+
+	public byte[] pollClientCommQueue(Integer clientID)
 	{
-		if (isClientCommQueueEmpty(clientID))
-			return null;
+		if (!isClientCommQueueEmpty())
+		{
+			clientID = clientCommEvents.poll();
+			return clientCommPackets.poll().getData();
+		}
 		else
-			return comms[clientID].getClientCommEvents().poll();
+		{
+			for (int i = 0; i < maxClients; i++)
+			{
+				if (isClientConnected(i))
+				{
+					ConcurrentLinkedQueue<String> q = comms[clientID].getClientCommEvents();
+					if (q.isEmpty())
+						continue;
+					clientID = i;
+					return q.poll().getBytes();
+				}
+			}
+		}
+		return null;
 	}
 
 	public boolean isClientConnected(int clientID) {
-		return comms[clientID] != null;
+		return clientID >= 0 && clientID < maxClients && comms[clientID] != null;
+	}
+
+	public int addressToID(InetAddress ip)
+	{
+		String hostAddress = ip.getHostAddress();
+		for (int i = 0; i < maxClients; i++)
+		{
+			if (!isClientConnected(i))
+				continue;
+
+			if (comms[i].getSocket().getInetAddress().getHostAddress().equals(hostAddress))
+				return i;
+		}
+		return -1;
 	}
 }
