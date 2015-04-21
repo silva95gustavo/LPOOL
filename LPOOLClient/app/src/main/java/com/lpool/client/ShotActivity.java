@@ -14,18 +14,28 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.lpool.client.ShotActivity.ProtocolCmd.*;
+
 
 public class ShotActivity extends ActionBarActivity implements SensorEventListener {
+    private static final String serverIP = "172.30.53.16";
+    private static final int serverPort = 6900;
+    private static final int FPS = 20;
+
     private SensorManager sensorManager;
     private Sensor senAccelerometer;
     private Sensor senMagnetometer;
@@ -34,13 +44,20 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     float[] mGeomagnetic;
 
     private volatile Socket socket;
-    private PrintWriter out = null;
+
+    // UDP
+    private DatagramSocket datagramSocket;
 
     public float angle = (float)Math.PI;
     private int i = 0;
     private long startTime = System.currentTimeMillis();
     private long lastSensorReadTime = System.currentTimeMillis();
     private boolean shooting = false;
+
+    public enum ProtocolCmd {
+        ANGLE, // angle
+        FIRE // force
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,28 +73,34 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                    if (socket == null)
-                        return;
-                    if (out == null)
-                        return;
-                    //PrintWriter out = null;
-                    //try {
-                if (!shooting)
-                       out.println(String.valueOf(angle));
-                    //} catch (IOException e) {
-                        //e.printStackTrace();
-                    //}
+                if (socket == null || datagramSocket == null)
+                    return;
+                if (shooting)
+                    return;
+                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                final DataOutputStream daos = new DataOutputStream(baos);
+                try {
+                    daos.writeInt(ProtocolCmd.ANGLE.ordinal());
+                    daos.writeFloat(angle);
+                    daos.close();
+                    byte[] sendData = baos.toByteArray();
+                    baos.close();
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(serverIP), serverPort);
+                    datagramSocket.send(sendPacket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }, 100, 50);
+        }, 100, 1000/FPS);
     }
 
     class ClientThread implements Runnable {
         @Override
         public void run() {
             try {
-                InetAddress serverAddr = InetAddress.getByName("192.168.1.69");
-                socket = new Socket(serverAddr, 69);
-                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                InetAddress serverAddr = InetAddress.getByName(serverIP);
+                socket = new Socket(serverAddr, serverPort);
+                datagramSocket = new DatagramSocket(serverPort);
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
@@ -160,15 +183,17 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
             long difference = System.currentTimeMillis() - startTime;
 
-            if (out == null)
-                return true;
-            //PrintWriter out = null;
-            //try {
-                //out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                out.println("FIRE " + difference);
-           // } catch (IOException e) {
-                //e.printStackTrace();
-            //}
+            try {
+                PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                //pw.writeInt(ProtocolCmd.FIRE.ordinal());
+                //pw.writeFloat(difference / 1000);
+                //pwt.flush();
+                pw.println("HERP DERP!");
+                System.out.println("Firing...");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return true;
         }
         else
