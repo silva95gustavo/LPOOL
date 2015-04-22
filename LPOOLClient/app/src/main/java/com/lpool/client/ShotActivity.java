@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
@@ -25,6 +26,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,10 +53,12 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     private DatagramSocket datagramSocket;
 
     public float angle = (float)Math.PI;
-    private int i = 0;
+    private int counter = 0;
     private long startTime = System.currentTimeMillis();
     private long lastSensorReadTime = System.currentTimeMillis();
     private boolean shooting = false;
+    private float accelerometerLast = 0;
+    private float gravity[] = new float[3];
 
     public enum ProtocolCmd {
         ANGLE, // angle
@@ -63,6 +69,7 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shot);
+
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -75,17 +82,10 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
             public void run() {
                 if (socket == null || datagramSocket == null)
                     return;
-                if (shooting)
-                    return;
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                final DataOutputStream daos = new DataOutputStream(baos);
                 try {
-                    daos.writeInt(ProtocolCmd.ANGLE.ordinal());
-                    daos.writeFloat(angle);
-                    daos.close();
-                    byte[] sendData = baos.toByteArray();
-                    baos.close();
-                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(serverIP), serverPort);
+                    String data = new String(ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + counter++ + '\n');
+                    byte[] msg = data.getBytes();
+                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
                     datagramSocket.send(sendPacket);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -142,6 +142,19 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
         float norm_Of_g = (float)Math.sqrt(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
 
+
+        final float alpha = 0.8f;
+
+        gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+        gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+        gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+        float linear_acceleration[] = new float[3];
+        linear_acceleration[0] = event.values[0] - gravity[0];
+        linear_acceleration[1] = event.values[1] - gravity[1];
+        linear_acceleration[2] = event.values[2] - gravity[2];
+
+        accelerometerLast = (float)Math.sqrt(linear_acceleration[0] * linear_acceleration[0] + linear_acceleration[1] * linear_acceleration[1] + linear_acceleration[2] * linear_acceleration[2]);
 // Normalize the accelerometer vector
         g[0] = g[0] / norm_Of_g;
         g[1] = g[1] / norm_Of_g;
@@ -185,10 +198,8 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
             try {
                 PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                //pw.writeInt(ProtocolCmd.FIRE.ordinal());
-                //pw.writeFloat(difference / 1000);
-                //pwt.flush();
-                pw.println("HERP DERP!");
+                //pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + (float)difference / 1000);
+                pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + accelerometerLast);
                 System.out.println("Firing...");
             } catch (IOException e) {
                 e.printStackTrace();
