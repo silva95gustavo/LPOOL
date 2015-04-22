@@ -36,7 +36,8 @@ import static com.lpool.client.ShotActivity.ProtocolCmd.*;
 
 
 public class ShotActivity extends ActionBarActivity implements SensorEventListener {
-    private static final String serverIP = "172.30.53.16";
+
+    private static String serverIP = "192.168.1.68";
     private static final int serverPort = 6900;
     private static final int FPS = 20;
 
@@ -229,5 +230,13 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
         // unregister listener
         super.onPause();
         sensorManager.unregisterListener(this);
+    }
+
+    public static String getServerIP() {
+        return serverIP;
+    }
+
+    public static void setServerIP(String serverIP) {
+        ShotActivity.serverIP = serverIP;
     }
 }
