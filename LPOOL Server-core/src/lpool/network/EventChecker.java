@@ -22,10 +22,9 @@ public abstract class EventChecker {
 		}
 
 		Integer clientID = new Integer(0);
-		byte[] msg;
+		String msg;
 		while ((msg = network.pollClientCommQueue(clientID)) != null)
 		{
-			System.out.println("Client #" + clientID + " sent " + new String(msg));
 			commEvent(clientID, msg);
 		}
 
@@ -34,5 +33,5 @@ public abstract class EventChecker {
 	}
 
 	protected abstract void conEvent(int clientID);
-	protected abstract void commEvent(int clientID, byte[] msg);
+	protected abstract void commEvent(int clientID, String msg);
 }

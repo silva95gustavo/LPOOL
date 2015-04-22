@@ -160,18 +160,13 @@ public class Network {
 		else
 			return clientConnEvents.poll();
 	}
-
-	public boolean isClientCommQueueEmpty()
+	
+	public String pollClientCommQueue(Integer clientID)
 	{
-		return clientCommEvents.isEmpty();
-	}
-
-	public byte[] pollClientCommQueue(Integer clientID)
-	{
-		if (!isClientCommQueueEmpty())
+		if (!clientCommEvents.isEmpty())
 		{
 			clientID = clientCommEvents.poll();
-			return clientCommPackets.poll().getData();
+			return new String(clientCommPackets.poll().getData());
 		}
 		else
 		{
@@ -183,7 +178,7 @@ public class Network {
 					if (q.isEmpty())
 						continue;
 					clientID = i;
-					return q.poll().getBytes();
+					return q.poll();
 				}
 			}
 		}

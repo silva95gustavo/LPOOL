@@ -33,7 +33,7 @@ public class Ball {
 		fd1.shape = cs;
 		fd1.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
 		fd1.friction = 0.05f;
-		fd1.restitution = 0.75f;
+		fd1.restitution = 0.80f;
 		fd1.filter.categoryBits = cat;
 		fd1.filter.maskBits = cat;
 		
