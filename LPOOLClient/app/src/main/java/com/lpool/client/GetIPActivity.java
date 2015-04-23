@@ -7,11 +7,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class GetIPActivity extends ActionBarActivity {
+
+    private String ip_to_connect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +33,38 @@ public class GetIPActivity extends ActionBarActivity {
     public void connectToServerIp(View v)
     {
         EditText et1 = (EditText) findViewById(R.id.ipField);
-        String ip = et1.getText().toString();
-        if(isValidIP(ip)) {
-            ShotActivity.setServerIP(ip);
+        ip_to_connect = et1.getText().toString();
+        if(isValidIP(ip_to_connect)) {
+            ShotActivity.setServerIP(ip_to_connect);
             startActivity(new Intent(GetIPActivity.this, ShotActivity.class));
         }
         else
             Toast.makeText(this, "Connection Failed." + '\n' + "The IP entered is invalid.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void readIPFromQR(View v)
+    {
+        IntentIntegrator integrator = new IntentIntegrator(GetIPActivity.this);
+        integrator.addExtra("SCAN_WIDTH", 640);
+        integrator.addExtra("SCAN_HEIGHT", 480);
+        integrator.addExtra("SCAN_MODE", "QR_CODE_MODE");
+        integrator.addExtra("PROMPT_MESSAGE", "Scan the code on the server PC");    // Initial scanning message
+        integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        String contents;
+        if (result != null) {
+            contents = result.getContents();
+            if (contents == null) {
+                Toast.makeText(this, "Unable to read QR Code", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            EditText et1 = (EditText) findViewById(R.id.ipField);
+            et1.setText(contents);
+        }
     }
 
     private boolean isValidIP(String ip)
