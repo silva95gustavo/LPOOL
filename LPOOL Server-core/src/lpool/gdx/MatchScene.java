@@ -36,13 +36,13 @@ public class MatchScene implements Screen{
 	private OrthographicCamera camera;
 	
 	private PerspectiveCamera camera3D;
-	private Model ballModel;
 	private ModelBatch modelBatch = new ModelBatch();
 	private Environment environment;
 
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private ModelInstance table;
+	private lpool.gdx.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
 
 	private lpool.logic.Game game;
@@ -63,24 +63,29 @@ public class MatchScene implements Screen{
         camera3D.far = 300f;
         camera3D.update();
         
-        modelInstances = new Array<ModelInstance>();
-        
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
         environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.9f, -0.4f, -0.6f, -1f));
-        ModelBuilder modelBuilder = new ModelBuilder();
-        ballModel = modelBuilder.createSphere(Ball.radius * 2, Ball.radius * 2, Ball.radius * 2, 80, 80, new Material(ColorAttribute.createDiffuse(Color.BLUE), ColorAttribute.createSpecular(Color.WHITE)), Usage.Position | Usage.Normal);
-
+        
+        ballModels = new lpool.gdx.BallModel[16];
+        for (int i = 0; i < ballModels.length; i++)
+        {
+        	ballModels[i] = new BallModel(i);
+        }
+        
+        modelInstances = new Array<ModelInstance>();
+        
+        ObjLoader loader = new ObjLoader();
+        
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-		ObjLoader loader = new ObjLoader();
 		Model tableModel = loader.loadModel(Gdx.files.internal("table2.obj"));
 		table = new ModelInstance(tableModel, Table.width / 2, Table.height / 2, 0);
 		table.transform.scl(0.027f);
 		table.transform.rotateRad(new Vector3(1, 0, 0), (float)Math.PI/2);
 		
-		game =  new lpool.logic.Game();
+		game = new lpool.logic.Game();
 	}
 
 	@Override
@@ -90,13 +95,6 @@ public class MatchScene implements Screen{
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-		/*batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-
-		// Draw background
-		batch.draw(table, 0, 0, physicsToPixel(Table.width), physicsToPixel(Table.height));
-		batch.end();*/
 		
 		lpool.logic.Match m = game.getMatch();
 		
@@ -109,11 +107,11 @@ public class MatchScene implements Screen{
 		modelInstances.add(table);
 		for (int i = 0; i < m.ballsPerPlayer; i++)
 		{
-			draw3DBall(balls1[i], Color.RED, modelInstances);
-			draw3DBall(balls2[i], Color.BLUE, modelInstances);
+			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition()));
+			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition()));
 		}
-		draw3DBall(m.getBlackBall(), Color.BLACK, modelInstances);
-		draw3DBall(m.getCueBall(), Color.WHITE, modelInstances);
+		modelInstances.add(ballModels[m.getBlackBall().getNumber()].instanciateModel(m.getBlackBall().getPosition()));
+		modelInstances.add(ballModels[m.getCueBall().getNumber()].instanciateModel(m.getCueBall().getPosition()));
 		modelBatch.render(modelInstances, environment);
         modelBatch.end();
 		
@@ -138,20 +136,6 @@ public class MatchScene implements Screen{
 
 	}
 	
-	private void draw3DBall(Ball ball, Color c, Array<ModelInstance> modelInstances)
-	{
-		ModelInstance ballModelInstance = new ModelInstance(ballModel, ball.getPosition().x, ball.getPosition().y, 0);
-		modelInstances.add(ballModelInstance);
-	}
-
-	private void drawBall(Ball ball, Color c) {
-		Vector2 ballPosPixel = physicsToPixel(ball.getPosition());
-		Vector2 ballRadiusPixel = physicsToPixel(new Vector2(Ball.radius, Ball.radius));
-
-		shapeRenderer.setColor(c);
-		shapeRenderer.circle(ballPosPixel.x, ballPosPixel.y, physicsToPixel(Ball.radius));
-	}
-
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
