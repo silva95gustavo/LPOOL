@@ -18,8 +18,7 @@ public class GameProject extends Game {
 		Gdx.graphics.setDisplayMode(width, height, true);
 		
 		batch = new SpriteBatch();
-		img = new Texture("table.png");
 		
-		setScreen(new Match(width, height));
+		setScreen(new MatchScene(width, height));
 	}
 }
