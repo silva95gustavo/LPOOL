@@ -1,7 +1,5 @@
 package lpool.logic;
 
-import java.util.Random;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,9 +8,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-
 public class Ball {
-	static public final float radius = 0.028575f * 1.3f;
+	static public final float radius = 0.028575f;
 	static public final float mass = 0.163f;
 	public static final short cat = 0x0001;
 	

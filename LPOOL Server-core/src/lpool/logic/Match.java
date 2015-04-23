@@ -29,9 +29,10 @@ public class Match {
 		int columnILast = -1;
 		for (int i = 0; i < ballsPerPlayer * 2 + 1; i++)
 		{
-			Ball ball = new Ball(world, new Vector2(Table.width / 4 - column * x, Table.height / 2 - (i - columnILast - 1 - column) * Ball.radius), 10);
+			System.out.println("n: " + (i + 1) + " x: " + (Table.width / 3 - column * x) + " y: " + (Table.height / 2 + (i - columnILast - (column + 0.5f) / 2) * 2f * Ball.radius));
+			Ball ball = new Ball(world, new Vector2(Table.width / 3 - column * x, Table.height / 2 + (i - columnILast - (column + 0.5f) / 2 - 0.75f) * 2f * Ball.radius), i + 1);
 			if (i % 2 == 0 && i != 2)
-				balls1[((i > 2) ? i - 1 : i) / 2] = ball;
+				balls1[((i > 2) ? (i - 1) : i) / 2] = ball;
 			else
 				balls2[i / 2] = ball;
 			if (i - columnILast == column + 1)
@@ -41,14 +42,14 @@ public class Match {
 			}
 		}
 		
-		blackBall = new Ball(world, new Vector2(Table.width / 4 - x, Table.height / 2), 8);
+		blackBall = new Ball(world, new Vector2(Table.width / 3 - x, Table.height / 2), 8);
 	}
 	
 	public Match() {
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
 		World.setVelocityThreshold(0.00001f);
-
+		
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
 		
