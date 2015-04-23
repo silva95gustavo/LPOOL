@@ -22,7 +22,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:keepScreenOn="true"
             android:icon="@mipmap/app_icon"
             android:name=".ShotActivity"
             android:label="@string/shot_act_name" >

@@ -31,8 +31,10 @@ public class GetIPActivity extends ActionBarActivity {
     {
         EditText et1 = (EditText) findViewById(R.id.ipField);
         String ip = et1.getText().toString();
-        if(isValidIP(ip))
+        if(isValidIP(ip)) {
+            ShotActivity.setServerIP(ip);
             startActivity(new Intent(GetIPActivity.this, ShotActivity.class));
+        }
         else
             Toast.makeText(this, "Connection Failed." + '\n' + "The IP entered is invalid.", Toast.LENGTH_SHORT).show();
     }
