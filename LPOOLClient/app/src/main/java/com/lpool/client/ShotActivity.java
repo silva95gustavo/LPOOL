@@ -37,7 +37,7 @@ import static com.lpool.client.ShotActivity.ProtocolCmd.*;
 
 public class ShotActivity extends ActionBarActivity implements SensorEventListener {
 
-    private static String serverIP = "192.168.1.68";
+    private static String serverIP = "192.168.1.69";
     private static final int serverPort = 6900;
     private static final int FPS = 20;
 
@@ -199,8 +199,8 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
             try {
                 PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                //pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + (float)difference / 1000);
-                pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + accelerometerLast);
+                pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + (float)difference / 1000);
+                //pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + accelerometerLast);
                 System.out.println("Firing...");
             } catch (IOException e) {
                 e.printStackTrace();
