@@ -87,11 +87,11 @@ public class Match {
 		world.step(dt, 6, 2);
 		for (int i = 0; i < ballsPerPlayer; i++)
 		{
-			balls1[i].tick();
-			balls2[i].tick();
+			balls1[i].tick(dt);
+			balls2[i].tick(dt);
 		}
-		blackBall.tick();
-		cueBall.tick();
+		blackBall.tick(dt);
+		cueBall.tick(dt);
 	}
 
 	public Ball getBlackBall() {

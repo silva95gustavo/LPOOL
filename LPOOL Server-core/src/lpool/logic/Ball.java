@@ -1,6 +1,7 @@
 package lpool.logic;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -14,10 +15,13 @@ public class Ball {
 	public static final short cat = 0x0001;
 	
 	private int number;
+	private Vector2 rotation2D;
 	
 	private Body body;
 	
 	public Ball(World world, Vector2 position, int number) {
+		rotation2D = new Vector2(0, 0);
+		
 		BodyDef bd = new BodyDef();
 		bd.position.set(position);
 		bd.type = BodyType.DynamicBody;
@@ -46,8 +50,8 @@ public class Ball {
 		body = world.createBody(bd);
 		body.createFixture(fd1);
 		body.createFixture(fd2);
-		body.setLinearDamping(0.5f);
-		body.setAngularDamping(10.0f);
+		body.setLinearDamping(0.4f);
+		body.setAngularDamping(100.0f);
 		body.setBullet(true);
 		
 		this.number = number;
@@ -62,12 +66,19 @@ public class Ball {
 		return body.getPosition();
 	}
 	
-	public void tick()
+	public Vector3 getAngle()
+	{
+		return new Vector3(rotation2D.y, rotation2D.x, body.getAngle());
+	}
+	
+	public void tick(float deltaT)
 	{
 		if (body.getLinearVelocity().len2() < 0.00025)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 		}
+		Vector2 angular_velocity = body.getLinearVelocity().cpy().scl(deltaT / radius);
+		rotation2D = rotation2D.add(-angular_velocity.y, angular_velocity.x);
 	}
 	
 	public void makeShot(float angle, float force)
