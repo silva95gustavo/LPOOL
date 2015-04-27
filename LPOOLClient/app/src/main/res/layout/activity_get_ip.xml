@@ -36,4 +36,14 @@
         android:layout_marginTop="48dp"
         android:onClick="connectToServerIp"
         android:nestedScrollingEnabled="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Read IP From QR Code"
+        android:id="@+id/btnReadQR"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:onClick="readIPFromQR" />
 </RelativeLayout>
