@@ -32,7 +32,7 @@ public class BallModel {
 		}
 	}
 
-	public ModelInstance instanciateModel(Vector2 position, Vector3 rotation)
+	public ModelInstance instanciateModel(Vector2 position, Quaternion rotation)
 	{
 		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, 0);
 		if (number > 0 && number <= 15)
@@ -40,6 +40,7 @@ public class BallModel {
 			ballModelInstance.transform.scl(0.027f);
 			Matrix4 rotationMatrix = new Matrix4();
 			rotationMatrix.setFromEulerAngles((float)Math.toDegrees(rotation.x), (float)Math.toDegrees(rotation.y), 0);
+			rotationMatrix.set(new Vector3(position.x, position.y, 0), rotation);
 			ballModelInstance.transform.mul(rotationMatrix);
 		}
 		return ballModelInstance;

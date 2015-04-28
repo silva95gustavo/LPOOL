@@ -1,5 +1,6 @@
 package lpool.logic;
 
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,12 +16,12 @@ public class Ball {
 	public static final short cat = 0x0001;
 	
 	private int number;
-	private Vector2 rotation2D;
+	private Quaternion rotation;
 	
 	private Body body;
 	
 	public Ball(World world, Vector2 position, int number) {
-		rotation2D = new Vector2(0, 0);
+		rotation = new Quaternion();
 		
 		BodyDef bd = new BodyDef();
 		bd.position.set(position);
@@ -66,9 +67,9 @@ public class Ball {
 		return body.getPosition();
 	}
 	
-	public Vector3 getAngle()
+	public Quaternion getRotation()
 	{
-		return new Vector3(rotation2D.y, rotation2D.x, body.getAngle());
+		return rotation;
 	}
 	
 	public void tick(float deltaT)
@@ -77,8 +78,10 @@ public class Ball {
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 		}
-		Vector2 angular_velocity = body.getLinearVelocity().cpy().scl(deltaT / radius);
-		rotation2D = rotation2D.add(-angular_velocity.y, angular_velocity.x);
+		Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
+		Vector3 rotatingAxis = Vector3.Z.crs(velocity.nor());
+		float rotationAmount = velocity.scl(deltaT / radius).len();
+		rotation.add(new Quaternion(rotatingAxis, rotationAmount));
 	}
 	
 	public void makeShot(float angle, float force)

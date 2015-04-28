@@ -107,11 +107,11 @@ public class MatchScene implements Screen{
 		modelInstances.add(table);
 		for (int i = 0; i < m.ballsPerPlayer; i++)
 		{
-			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition(), balls1[i].getAngle()));
-			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition(), balls2[i].getAngle()));
+			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition(), balls1[i].getRotation()));
+			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition(), balls2[i].getRotation()));
 		}
-		modelInstances.add(ballModels[m.getBlackBall().getNumber()].instanciateModel(m.getBlackBall().getPosition(), m.getBlackBall().getAngle()));
-		modelInstances.add(ballModels[m.getCueBall().getNumber()].instanciateModel(m.getCueBall().getPosition(), m.getCueBall().getAngle()));
+		modelInstances.add(ballModels[m.getBlackBall().getNumber()].instanciateModel(m.getBlackBall().getPosition(), m.getBlackBall().getRotation()));
+		modelInstances.add(ballModels[m.getCueBall().getNumber()].instanciateModel(m.getCueBall().getPosition(), m.getCueBall().getRotation()));
 		modelBatch.render(modelInstances, environment);
         modelBatch.end();
 		
