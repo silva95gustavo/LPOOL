@@ -81,7 +81,9 @@ public class Ball {
 		Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
 		Vector3 rotatingAxis = Vector3.Z.crs(velocity.nor());
 		float rotationAmount = velocity.scl(deltaT / radius).len();
-		rotation.add(new Quaternion(rotatingAxis, rotationAmount));
+		Quaternion dRotation = new Quaternion(rotatingAxis, rotationAmount);
+		dRotation.set(rotatingAxis, rotationAmount);
+		rotation = rotation.mulLeft(dRotation);
 	}
 	
 	public void makeShot(float angle, float force)
