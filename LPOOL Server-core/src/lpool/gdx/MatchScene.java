@@ -107,11 +107,11 @@ public class MatchScene implements Screen{
 		modelInstances.add(table);
 		for (int i = 0; i < m.ballsPerPlayer; i++)
 		{
-			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition()));
-			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition()));
+			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition(), balls1[i].getRotation()));
+			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition(), balls2[i].getRotation()));
 		}
-		modelInstances.add(ballModels[m.getBlackBall().getNumber()].instanciateModel(m.getBlackBall().getPosition()));
-		modelInstances.add(ballModels[m.getCueBall().getNumber()].instanciateModel(m.getCueBall().getPosition()));
+		modelInstances.add(ballModels[m.getBlackBall().getNumber()].instanciateModel(m.getBlackBall().getPosition(), m.getBlackBall().getRotation()));
+		modelInstances.add(ballModels[m.getCueBall().getNumber()].instanciateModel(m.getCueBall().getPosition(), m.getCueBall().getRotation()));
 		modelBatch.render(modelInstances, environment);
         modelBatch.end();
 		
@@ -120,7 +120,7 @@ public class MatchScene implements Screen{
 		float cueAngle = m.getCueAngle();
 
 		shapeRenderer.setColor(Color.WHITE);
-		shapeRenderer.rectLine(m.getCueBall().getPosition(), new Vector2(1, 0).rotateRad(cueAngle).add(m.getCueBall().getPosition()), 0.01f);
+		shapeRenderer.rectLine(m.getCueBall().getPosition(), new Vector2(1, 0).rotateRad(cueAngle).add(m.getCueBall().getPosition()), 0.005f);
 		
 		shapeRenderer.end();
 	}

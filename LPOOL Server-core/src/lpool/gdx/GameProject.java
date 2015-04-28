@@ -15,7 +15,7 @@ public class GameProject extends Game {
 	public void create () {
 		width = Gdx.graphics.getDesktopDisplayMode().width;
 		height = Gdx.graphics.getDesktopDisplayMode().height;
-		Gdx.graphics.setDisplayMode(width, height, true);
+		Gdx.graphics.setDisplayMode(width, height, false);
 		
 		batch = new SpriteBatch();
 		
