@@ -24,18 +24,18 @@ public class Game extends EventChecker{
 
 	public Game() {
 		super(numPlayers);
-		
+
 		match = new Match();
 		angleVar = 0;
 		lastAngle = (float)Math.PI;
 		lastAngleTime = System.currentTimeMillis();
-		
+
 		network.startConnecting();
 	}
 
 	public void tick(float dt)
 	{
-		//interpolateAngle(dt);
+		interpolateAngle(dt);
 		match.tick(dt);
 		network.tick();
 		triggerEvents();
@@ -78,14 +78,15 @@ public class Game extends EventChecker{
 				break;
 			float angle = -sc.nextFloat();
 			long currTime = System.currentTimeMillis();
-			
+
 			if (currTime - lastAngleTime < 10)
 				angleVar = 0; // Don't interpolate
 			else
+			{
 				angleVar = (float)((angle - lastAngle) / ((double)currTime/1000 - (double)lastAngleTime/1000));
-			
-			lastAngleTime = currTime;
-			lastAngle = angle;
+				lastAngleTime = currTime;
+				lastAngle = angle;
+			}
 			match.setCueAngle(angle);
 			System.out.println("i: " + sc.next());
 			break;
@@ -103,7 +104,7 @@ public class Game extends EventChecker{
 		}
 		sc.close();
 	}
-	
+
 	private void interpolateAngle(float dt)
 	{
 		match.setCueAngle(match.getCueAngle() + angleVar * dt);

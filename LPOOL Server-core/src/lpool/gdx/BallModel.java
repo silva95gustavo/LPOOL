@@ -15,6 +15,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class BallModel {
+	private static final float scale = 0.027f;
+	private static final Vector3 scaleVec = new Vector3(scale, scale, scale);
 	private int number;
 	private Model model;
 
@@ -37,11 +39,7 @@ public class BallModel {
 		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, 0);
 		if (number > 0 && number <= 15)
 		{
-			ballModelInstance.transform.scl(0.027f);
-			Matrix4 rotationMatrix = new Matrix4();
-			//rotationMatrix.setFromEulerAngles((float)Math.toDegrees(rotation.x), (float)Math.toDegrees(rotation.y), 0);
-			rotationMatrix.set(new Vector3(position.x, position.y, 0), rotation);
-			ballModelInstance.transform.mul(rotationMatrix);
+			ballModelInstance.transform.set(new Vector3(position.x, position.y, 0), rotation, scaleVec);
 		}
 		return ballModelInstance;
 	}

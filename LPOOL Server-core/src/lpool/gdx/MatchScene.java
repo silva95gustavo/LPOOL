@@ -120,7 +120,7 @@ public class MatchScene implements Screen{
 		float cueAngle = m.getCueAngle();
 
 		shapeRenderer.setColor(Color.WHITE);
-		shapeRenderer.rectLine(m.getCueBall().getPosition(), new Vector2(1, 0).rotateRad(cueAngle).add(m.getCueBall().getPosition()), 0.01f);
+		shapeRenderer.rectLine(m.getCueBall().getPosition(), new Vector2(1, 0).rotateRad(cueAngle).add(m.getCueBall().getPosition()), 0.005f);
 		
 		shapeRenderer.end();
 	}
