@@ -41,7 +41,7 @@ public class MatchScene implements Screen{
 
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
-	private ModelInstance table;
+	private Texture table;
 	private lpool.gdx.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
 
@@ -52,17 +52,10 @@ public class MatchScene implements Screen{
 		this.width = width;
 		this.height = height;
 
-		camera = new OrthographicCamera(width, height);
-		camera.position.set(physicsToPixel(new Vector2(Table.width / 2, Table.height / 2)), 0);
+		camera = new OrthographicCamera(1.5f * Table.width, 1.5f * Table.height);
+		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
 		camera.update();
 		
-		camera3D = new PerspectiveCamera(30, width, height);
-        camera3D.position.set(Table.width / 2, Table.height / 2, 4f);
-        camera3D.lookAt(Table.width / 2, Table.height / 2, 0f);
-        camera3D.near = 0.00001f;
-        camera3D.far = 300f;
-        camera3D.update();
-        
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
         environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.9f, -0.4f, -0.6f, -1f));
@@ -81,10 +74,7 @@ public class MatchScene implements Screen{
 		shapeRenderer = new ShapeRenderer();
 
 		Model tableModel = loader.loadModel(Gdx.files.internal("table2.obj"));
-		table = new ModelInstance(tableModel, Table.width / 2, Table.height / 2, 0);
-		table.transform.scl(0.027f);
-		table.transform.rotateRad(new Vector3(1, 0, 0), (float)Math.PI/2);
-		
+		table = new Texture("table.png");
 		game = new lpool.logic.Game();
 	}
 
@@ -100,11 +90,14 @@ public class MatchScene implements Screen{
 		
 		Ball[] balls1 = m.getBalls1();
 		Ball[] balls2 = m.getBalls2();
-
-		Gdx.gl.glViewport(0, 0, width, height);
-		modelBatch.begin(camera3D);
+		
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(table, 0, 0, Table.width, Table.height);
+		batch.end();
+		
+		modelBatch.begin(camera);
 		modelInstances.clear();
-		modelInstances.add(table);
 		for (int i = 0; i < m.ballsPerPlayer; i++)
 		{
 			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition(), balls1[i].getRotation()));
@@ -115,7 +108,7 @@ public class MatchScene implements Screen{
 		modelBatch.render(modelInstances, environment);
         modelBatch.end();
 		
-		shapeRenderer.setProjectionMatrix(camera3D.combined);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeType.Filled);
 		float cueAngle = m.getCueAngle();
 
@@ -123,17 +116,6 @@ public class MatchScene implements Screen{
 		shapeRenderer.rectLine(m.getCueBall().getPosition(), new Vector2(1, 0).rotateRad(cueAngle).add(m.getCueBall().getPosition()), 0.005f);
 		
 		shapeRenderer.end();
-	}
-
-	private float physicsToPixel(float x)
-	{
-		return x * (float)width / Table.width;
-	}
-
-	private Vector2 physicsToPixel(Vector2 v)
-	{
-		return v.cpy().scl((float)width / Table.width);
-
 	}
 	
 	@Override

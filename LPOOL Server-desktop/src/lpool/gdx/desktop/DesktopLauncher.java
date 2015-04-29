@@ -1,7 +1,9 @@
 package lpool.gdx.desktop;
 
+
 import lpool.gdx.GameProject;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 

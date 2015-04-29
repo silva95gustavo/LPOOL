@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Table {
 	public static final short cat = 0x0002;
-	private static final float border = 0.1387f;
+	private static final float border = 0.125f;
 	public static final float height = 1.1f + 2 * border;
 	public static final float width = (height - 2 * border) * 2 + 2 * border;
 	
@@ -37,7 +37,7 @@ public class Table {
 	    body = world.createBody(bd);
 	 
 	    // 4. Create the body fixture automatically by using the loader.
-	    loader.attachFixture(body, "Table", fd, width);
+	    loader.attachFixture(body, "table", fd, width);
 	}
 
 }
