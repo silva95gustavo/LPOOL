@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -44,10 +45,12 @@ public class MatchScene implements Screen{
 	private Texture table;
 	private lpool.gdx.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
+	
+	private Sprite qr_sprite;
 
 	private lpool.logic.Game game;
 
-	public MatchScene(int width, int height)
+	public MatchScene(int width, int height, String qr_dir)
 	{
 		this.width = width;
 		this.height = height;
@@ -76,6 +79,12 @@ public class MatchScene implements Screen{
 		Model tableModel = loader.loadModel(Gdx.files.internal("table2.obj"));
 		table = new Texture("table.png");
 		game = new lpool.logic.Game();
+		
+		qr_sprite = null;
+		if(qr_dir != "") {
+			Texture tex = new Texture(qr_dir);
+			qr_sprite = new Sprite(tex);
+		}
 	}
 
 	@Override

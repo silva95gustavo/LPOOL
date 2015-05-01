@@ -3,7 +3,10 @@ package lpool.zxing;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Hashtable;
+
+import javax.imageio.ImageIO;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -14,7 +17,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 public class QRGenerator {
 
-	public static BufferedImage generateFromString(String text) {
+	public static boolean generateFromStringToFile(String text, String filepath, String filetype) {
 		
 		int size = 125;
 		try {
@@ -22,31 +25,40 @@ public class QRGenerator {
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
 			BitMatrix byteMatrix = qrCodeWriter.encode(text,BarcodeFormat.QR_CODE, size, size, hintMap);
-			int CrunchifyWidth = byteMatrix.getWidth();
-			BufferedImage image = new BufferedImage(CrunchifyWidth, CrunchifyWidth,
+			int imageWidth = byteMatrix.getWidth();
+			BufferedImage image = new BufferedImage(imageWidth, imageWidth,
 					BufferedImage.TYPE_INT_RGB);
 			image.createGraphics();
 
 			Graphics2D graphics = (Graphics2D) image.getGraphics();
 			graphics.setColor(Color.WHITE);
-			graphics.fillRect(0, 0, CrunchifyWidth, CrunchifyWidth);
+			graphics.fillRect(0, 0, imageWidth, imageWidth);
 			graphics.setColor(Color.BLACK);
 
-			for (int i = 0; i < CrunchifyWidth; i++) {
-				for (int j = 0; j < CrunchifyWidth; j++) {
+			for (int i = 0; i < imageWidth; i++) {
+				for (int j = 0; j < imageWidth; j++) {
 					if (byteMatrix.get(i, j)) {
 						graphics.fillRect(i, j, 1, 1);
 					}
 				}
 			}
-
-			return image;
+			
+			try {
+				File destFile = new File(filepath);
+				ImageIO.write(image, filetype, destFile);
+			} catch (Exception e) {
+				System.err.println("Unable to save generated QR code to specified file/filetype");
+				e.printStackTrace();
+				return false;
+			}
 				
 		} catch (WriterException e) {
+			System.err.println("Unable to generate QR code");
 			e.printStackTrace();
+			return false;
 		}
 		
-		return null;
+		return true;
 	}  
 
 }

@@ -202,4 +202,7 @@ public class Network {
 		}
 		return -1;
 	}
+
+	public int getNumClients() {return numClients;}
+	
 }
