@@ -103,7 +103,7 @@ public class MatchScene implements Screen, Observer{
 		
 		modelBatch.begin(camera);
 		modelInstances.clear();
-		for (int i = 0; i < m.ballsPerPlayer; i++)
+		for (int i = 0; i < Match.ballsPerPlayer; i++)
 		{
 			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition(), balls1[i].getRotation()));
 			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition(), balls2[i].getRotation()));
