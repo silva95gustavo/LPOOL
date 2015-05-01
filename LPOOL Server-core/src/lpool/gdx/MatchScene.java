@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -45,10 +46,12 @@ public class MatchScene implements Screen, Observer{
 	private Texture table;
 	private lpool.gdx.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
+	
+	private Sprite qr_sprite;
 
 	private lpool.logic.Game game;
 
-	public MatchScene(lpool.logic.Game game)
+	public MatchScene(lpool.logic.Game game, int width, int height, String qr_dir)
 	{
 		camera = new OrthographicCamera(Table.width, Table.width * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
 		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
@@ -70,9 +73,14 @@ public class MatchScene implements Screen, Observer{
 		shapeRenderer = new ShapeRenderer();
 
 		table = new Texture("table.png");
-		
 		this.game = game;
 		game.getMatch().addColisionObserver(this);
+		
+		qr_sprite = null;
+		if(qr_dir != "") {
+			Texture tex = new Texture(qr_dir);
+			qr_sprite = new Sprite(tex);
+		}
 	}
 
 	@Override

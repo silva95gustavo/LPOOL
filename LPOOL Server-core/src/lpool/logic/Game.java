@@ -108,4 +108,5 @@ public class Game extends EventChecker{
 	{
 		match.setCueAngle(match.getCueAngle() + angleVar * dt);
 	}
+
 }

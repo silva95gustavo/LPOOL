@@ -14,7 +14,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 
-
 public class GetIPActivity extends ActionBarActivity {
 
     private String ip_to_connect;
@@ -24,6 +23,10 @@ public class GetIPActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_ip);
         //super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        // TODO: REMOVE LATER
+        ip_to_connect = "192.168.1.68";
+        updateIPLabel();
     }
 
 
@@ -48,26 +51,30 @@ public class GetIPActivity extends ActionBarActivity {
 
     public void readIPFromQR(View v)
     {
-        IntentIntegrator integrator = new IntentIntegrator(GetIPActivity.this);
-        integrator.addExtra("SCAN_WIDTH", 640);
-        integrator.addExtra("SCAN_HEIGHT", 480);
-        integrator.addExtra("SCAN_MODE", "QR_CODE_MODE");
-        integrator.addExtra("PROMPT_MESSAGE", "Scan the code on the server PC");    // Initial scanning message
-        integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
+        IntentIntegrator.initiateScan(this);
+    }
+
+    private void updateIPLabel()
+    {
+        EditText et1 = (EditText) findViewById(R.id.ipField);
+        et1.setText(ip_to_connect);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        String contents;
-        if (result != null) {
-            contents = result.getContents();
-            if (contents == null) {
-                Toast.makeText(this, "Unable to read QR Code", Toast.LENGTH_SHORT).show();
-                return;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                String text = result.getContents().toString();
+                Toast.makeText(this, "Scanned: " + text, Toast.LENGTH_LONG).show();
+                ip_to_connect = text;
+                updateIPLabel();
             }
-            EditText et1 = (EditText) findViewById(R.id.ipField);
-            et1.setText(contents);
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
