@@ -1,13 +1,13 @@
 package lpool.gdx;
 
+import lpool.gdx.assets.Sounds;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameProject extends Game {
-	SpriteBatch batch;
-	Texture img;
 	int width;
 	int height;
 	
@@ -15,10 +15,9 @@ public class GameProject extends Game {
 	public void create () {
 		width = Gdx.graphics.getDesktopDisplayMode().width;
 		height = Gdx.graphics.getDesktopDisplayMode().height;
-		//Gdx.graphics.setDisplayMode(width, height, false);
+		Gdx.graphics.setDisplayMode(width, height, false);
 		
-		batch = new SpriteBatch();
-		
-		setScreen(new MatchScene(width, height));
+		lpool.logic.Game game = new lpool.logic.Game();
+		setScreen(new MatchScene(game));
 	}
 }

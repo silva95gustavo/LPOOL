@@ -25,26 +25,14 @@ public class BallModel {
 
 	public BallModel(int number) {
 		this.number = number;
-		if (number > 0 && number <= 15)
-		{
-			//ObjLoader loader = new ObjLoader();
-			G3dModelLoader loader = new G3dModelLoader(new JsonReader());
-			this.model = loader.loadModel(Gdx.files.internal("balls/" + number + ".g3dj"));
-		}
-		else
-		{
-			float diameter = 2 * lpool.logic.Ball.radius;
-			this.model = new ModelBuilder().createSphere(diameter, diameter, diameter, 16, 16, new Material(ColorAttribute.createDiffuse(Color.WHITE), ColorAttribute.createSpecular(Color.WHITE)), Usage.Position | Usage.Normal);
-		}
+		G3dModelLoader loader = new G3dModelLoader(new JsonReader());
+		this.model = loader.loadModel(Gdx.files.internal("balls/" + number + ".g3dj"));
 	}
 
 	public ModelInstance instanciateModel(Vector2 position, Quaternion rotation)
 	{
-		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, 0);
-		if (number > 0 && number <= 15)
-		{
-			ballModelInstance.transform.set(new Vector3(position.x, position.y, lpool.logic.Ball.radius/2), rotation, scaleVec);
-		}
+		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, lpool.logic.Ball.radius / 2);
+		ballModelInstance.transform.set(new Vector3(position.x, position.y, lpool.logic.Ball.radius / 2), rotation, scaleVec);
 		return ballModelInstance;
 	}
 

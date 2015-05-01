@@ -1,5 +1,8 @@
 package lpool.gdx;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
@@ -23,19 +26,17 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
 
+import lpool.gdx.assets.Sounds;
 import lpool.logic.Ball;
 import lpool.logic.Match;
 import lpool.logic.Table;
 
-public class MatchScene implements Screen{
-	private int width;
-	private int height;
-
+public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
 	
-	private PerspectiveCamera camera3D;
 	private ModelBatch modelBatch = new ModelBatch();
 	private Environment environment;
 
@@ -47,12 +48,9 @@ public class MatchScene implements Screen{
 
 	private lpool.logic.Game game;
 
-	public MatchScene(int width, int height)
+	public MatchScene(lpool.logic.Game game)
 	{
-		this.width = width;
-		this.height = height;
-
-		camera = new OrthographicCamera(1.5f * Table.width, 1.5f * Table.height);
+		camera = new OrthographicCamera(Table.width, Table.width * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
 		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
 		camera.update();
 		
@@ -68,14 +66,13 @@ public class MatchScene implements Screen{
         
         modelInstances = new Array<ModelInstance>();
         
-        ObjLoader loader = new ObjLoader();
-        
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-		Model tableModel = loader.loadModel(Gdx.files.internal("table2.obj"));
 		table = new Texture("table.png");
-		game = new lpool.logic.Game();
+		
+		this.game = game;
+		game.getMatch().addColisionObserver(this);
 	}
 
 	@Override
@@ -138,8 +135,6 @@ public class MatchScene implements Screen{
 
 	@Override
 	public void resize(int width, int height) {
-		this.width = width;
-		this.height = height;
 	}
 
 	@Override
@@ -152,5 +147,13 @@ public class MatchScene implements Screen{
 	public void show() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void update(Observable o, Object obj) {
+		Contact contact = (Contact)obj;
+		Vector2 impactVelocity = contact.getFixtureA().getBody().getLinearVelocity().cpy().sub(contact.getFixtureB().getBody().getLinearVelocity());
+		System.out.println("Collision: " + impactVelocity.len());
+		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len2());
 	}
 }

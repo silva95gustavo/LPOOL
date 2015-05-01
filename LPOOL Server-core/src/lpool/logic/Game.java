@@ -88,7 +88,6 @@ public class Game extends EventChecker{
 				lastAngle = angle;
 			}
 			match.setCueAngle(angle);
-			System.out.println("i: " + sc.next());
 			break;
 		}
 		case FIRE:
