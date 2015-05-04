@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.UBJsonReader;
 
 public class BallModel {
-	private static final float scale = 0.027f;
+	private static final float scale = 0.025f;
 	private static final Vector3 scaleVec = new Vector3(scale, scale, scale);
 	private int number;
 	private Model model;
@@ -31,8 +31,8 @@ public class BallModel {
 
 	public ModelInstance instanciateModel(Vector2 position, Quaternion rotation)
 	{
-		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, lpool.logic.Ball.radius / 2);
-		ballModelInstance.transform.set(new Vector3(position.x, position.y, lpool.logic.Ball.radius / 2), rotation, scaleVec);
+		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, 0);
+		ballModelInstance.transform.set(new Vector3(position.x, position.y, 0), rotation, scaleVec);
 		return ballModelInstance;
 	}
 

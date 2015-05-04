@@ -82,7 +82,7 @@ public class Ball {
 		{
 			Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
 			Vector3 rotatingAxis = velocity.cpy().nor().crs(Vector3.Z);
-			float rotationAmount = 40 * velocity.len() * deltaT / radius; // TODO Find out why we need to multiply by a value around 40
+			float rotationAmount = 45 * velocity.len() * deltaT / radius; // TODO Find out why we need to multiply by a value around 40
 			Quaternion dRotation = new Quaternion(rotatingAxis, rotationAmount);
 			rotation.mulLeft(dRotation);
 		}

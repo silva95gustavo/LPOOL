@@ -1,7 +1,5 @@
 package lpool.gdx;
 
-import lpool.gdx.assets.Sounds;
-
 import java.net.Inet4Address;
 
 import lpool.zxing.QRGenerator;

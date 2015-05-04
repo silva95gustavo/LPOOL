@@ -53,7 +53,7 @@ public class MatchScene implements Screen, Observer{
 
 	public MatchScene(lpool.logic.Game game, int width, int height, String qr_dir)
 	{
-		camera = new OrthographicCamera(Table.width, Table.width * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
+		camera = new OrthographicCamera(Table.width, Table.width * height / width);
 		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
 		camera.update();
 		
@@ -143,6 +143,9 @@ public class MatchScene implements Screen, Observer{
 
 	@Override
 	public void resize(int width, int height) {
+		camera.viewportWidth = Table.width;
+		camera.viewportHeight = Table.width * height / width;
+		camera.update();
 	}
 
 	@Override
@@ -161,7 +164,6 @@ public class MatchScene implements Screen, Observer{
 	public void update(Observable o, Object obj) {
 		Contact contact = (Contact)obj;
 		Vector2 impactVelocity = contact.getFixtureA().getBody().getLinearVelocity().cpy().sub(contact.getFixtureB().getBody().getLinearVelocity());
-		System.out.println("Collision: " + impactVelocity.len());
 		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len2());
 	}
 }
