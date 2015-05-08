@@ -124,6 +124,7 @@ public class Ball {
 		}
 		else
 		{
+			System.out.println("I'm number " + number);
 			ballsToBeDeleted.add(body);
 		}
 	}

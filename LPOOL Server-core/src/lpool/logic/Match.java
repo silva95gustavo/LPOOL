@@ -39,38 +39,37 @@ public class Match implements Observer{
 
 	private Ball createBall(World world, int x, int y, int number)
 	{
-		return new Ball(world, new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius), number, ballsToBeDeleted);
+		Ball ball = new Ball(world, new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius), number, ballsToBeDeleted);
+		if (number == 0)
+			cueBall = ball;
+		else if (number < 8)
+			balls1[number - 1] = ball;
+		else if (number == 8)
+			blackBall = ball;
+		else if (number < 16)
+			balls2[number - 9] = ball;
+		else return null;
+		return balls[number] = ball;
 	}
 	
 	private void createBalls()
 	{		
-		cueBall = createBall(world, 25, 0, 0);
-		balls1[0] = createBall(world, 0, 0, 1);
-		balls1[1] = createBall(world, -1, 1, 3);
-		balls2[0] = createBall(world, -1, -1, 11);
-		balls2[1] = createBall(world, -2, 2, 14);
-		blackBall = createBall(world, -2, 0, 8);
-		balls1[2] = createBall(world, -2, -2, 6);
-		balls2[2] = createBall(world, -3, 3, 9);
-		balls1[3] = createBall(world, -3, 1, 4);
-		balls2[3] = createBall(world, -3, -1, 15);
-		balls2[4] = createBall(world, -3, -3, 13);
-		balls2[5] = createBall(world, -4, 4, 12);
-		balls1[4] = createBall(world, -4, 2, 5);
-		balls2[6] = createBall(world, -4, 0, 10);
-		balls1[5] = createBall(world, -4, -2, 2);
-		balls1[6] = createBall(world, -4, -4, 7);
-		
-		balls[0] = cueBall;
-		for (int i = 0; i < ballsPerPlayer; i++)
-		{
-			balls[i + 1] = balls1[i];
-		}
-		balls[8] = blackBall;
-		for (int i = 0; i < ballsPerPlayer; i++)
-		{
-			balls[i + 9] = balls2[i];
-		}
+		createBall(world, 25, 0, 0);
+		createBall(world, 0, 0, 1);
+		createBall(world, -1, 1, 3);
+		createBall(world, -1, -1, 11);
+		createBall(world, -2, 2, 14);
+		createBall(world, -2, 0, 8);
+		createBall(world, -2, -2, 6);
+		createBall(world, -3, 3, 9);
+		createBall(world, -3, 1, 4);
+		createBall(world, -3, -1, 15);
+		createBall(world, -3, -3, 13);
+		createBall(world, -4, 4, 12);
+		createBall(world, -4, 2, 5);
+		createBall(world, -4, 0, 10);
+		createBall(world, -4, -2, 2);
+		createBall(world, -4, -4, 7);
 	}
 	
 	public Match() {
@@ -198,6 +197,7 @@ public class Match implements Observer{
 	
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
+		System.out.println("derp: " + ballNumber);
 		balls[ballNumber].setOnTable(false);
 	}
 }
