@@ -1,7 +1,12 @@
 package lpool.logic;
 
+import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Observer;
+import java.util.Queue;
 import java.util.Random;
+
+import lpool.gdx.assets.Sounds;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -13,16 +18,19 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Match{
+public class Match implements Observer{
 	public static int ballsPerPlayer = 7;
 
 	private Vector2 gravity;
 	private World world;
+	private Queue<Body> ballsToBeDeleted;
 
 	private Ball[] balls1;
 	private Ball[] balls2;
 	private Ball blackBall;
 	private Ball cueBall;
+	private Ball[] balls;
+	
 	private Table border;
 	
 	private float cueAngle = (float)Math.PI;
@@ -31,11 +39,11 @@ public class Match{
 
 	private Ball createBall(World world, int x, int y, int number)
 	{
-		return new Ball(world, new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius), number);
+		return new Ball(world, new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius), number, ballsToBeDeleted);
 	}
 	
 	private void createBalls()
-	{
+	{		
 		cueBall = createBall(world, 25, 0, 0);
 		balls1[0] = createBall(world, 0, 0, 1);
 		balls1[1] = createBall(world, -1, 1, 3);
@@ -52,6 +60,17 @@ public class Match{
 		balls2[6] = createBall(world, -4, 0, 10);
 		balls1[5] = createBall(world, -4, -2, 2);
 		balls1[6] = createBall(world, -4, -4, 7);
+		
+		balls[0] = cueBall;
+		for (int i = 0; i < ballsPerPlayer; i++)
+		{
+			balls[i + 1] = balls1[i];
+		}
+		balls[8] = blackBall;
+		for (int i = 0; i < ballsPerPlayer; i++)
+		{
+			balls[i + 9] = balls2[i];
+		}
 	}
 	
 	public Match() {
@@ -59,9 +78,12 @@ public class Match{
 		world = new World(gravity, false);
 		World.setVelocityThreshold(0.00001f);
 		world.setContactListener(observableCollision = new ObservableCollision());
+		addColisionObserver(this);
+		ballsToBeDeleted = new LinkedList<Body>();
 		
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
+		balls = new Ball[ballsPerPlayer * 2 + 2];
 		
 		createBalls();
 		
@@ -72,13 +94,14 @@ public class Match{
 	public void tick(float dt)
 	{
 		world.step(dt, 6, 2);
-		for (int i = 0; i < ballsPerPlayer; i++)
+		while (!ballsToBeDeleted.isEmpty())
 		{
-			balls1[i].tick(dt);
-			balls2[i].tick(dt);
+			world.destroyBody(ballsToBeDeleted.poll());
 		}
-		blackBall.tick(dt);
-		cueBall.tick(dt);
+		for (int i = 0; i < balls.length; i++)
+		{
+			balls[i].tick(dt);
+		}
 	}
 
 	public Ball getBlackBall() {
@@ -97,6 +120,11 @@ public class Match{
 
 	public Ball getCueBall() {
 		return cueBall;
+	}
+	
+	public Ball[] getBalls()
+	{
+		return balls;
 	}
 	
 	public void setCueAngle(float angle)
@@ -145,5 +173,31 @@ public class Match{
 	public void addColisionObserver(Observer o)
 	{
 		observableCollision.addObserver(o);
+	}
+
+	@Override
+	public void update(Observable o, Object obj) {
+		Contact contact = (Contact)obj;
+		
+		BodyInfo userDataA = ((BodyInfo)contact.getFixtureA().getBody().getUserData());
+		BodyInfo userDataB = ((BodyInfo)contact.getFixtureB().getBody().getUserData());
+		switch (userDataA.getType())
+		{
+		case BALL:
+			if (userDataB.getType() == BodyInfo.Type.HOLE)
+				ballInHoleHandler(userDataA.getID(), userDataB.getID());
+			break;
+		case TABLE:
+			break;
+		case HOLE:
+			if (userDataB.getType() == BodyInfo.Type.BALL)
+				ballInHoleHandler(userDataB.getID(), userDataA.getID());
+			break;
+		}
+	}
+	
+	private void ballInHoleHandler(int ballNumber, int holeNumber)
+	{
+		balls[ballNumber].setOnTable(false);
 	}
 }

@@ -93,9 +93,6 @@ public class MatchScene implements Screen, Observer{
 		
 		lpool.logic.Match m = game.getMatch();
 		
-		Ball[] balls1 = m.getBalls1();
-		Ball[] balls2 = m.getBalls2();
-		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(table, 0, 0, Table.width, Table.height);
@@ -103,13 +100,12 @@ public class MatchScene implements Screen, Observer{
 		
 		modelBatch.begin(camera);
 		modelInstances.clear();
-		for (int i = 0; i < Match.ballsPerPlayer; i++)
+		Ball[] balls = m.getBalls();
+		for (int i = 0; i < balls.length; i++)
 		{
-			modelInstances.add(ballModels[balls1[i].getNumber()].instanciateModel(balls1[i].getPosition(), balls1[i].getRotation()));
-			modelInstances.add(ballModels[balls2[i].getNumber()].instanciateModel(balls2[i].getPosition(), balls2[i].getRotation()));
+			if (balls[i].isOnTable())
+				modelInstances.add(ballModels[balls[i].getNumber()].instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
 		}
-		modelInstances.add(ballModels[m.getBlackBall().getNumber()].instanciateModel(m.getBlackBall().getPosition(), m.getBlackBall().getRotation()));
-		modelInstances.add(ballModels[m.getCueBall().getNumber()].instanciateModel(m.getCueBall().getPosition(), m.getCueBall().getRotation()));
 		modelBatch.render(modelInstances, environment);
         modelBatch.end();
 		
