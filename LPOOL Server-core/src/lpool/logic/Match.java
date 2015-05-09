@@ -30,11 +30,11 @@ public class Match implements Observer{
 	private Ball blackBall;
 	private Ball cueBall;
 	private Ball[] balls;
-	
+
 	private Table border;
-	
+
 	private float cueAngle = (float)Math.PI;
-	
+
 	private ObservableCollision observableCollision;
 
 	private Ball createBall(World world, int x, int y, int number)
@@ -51,7 +51,7 @@ public class Match implements Observer{
 		else return null;
 		return balls[number] = ball;
 	}
-	
+
 	private void createBalls()
 	{		
 		createBall(world, 25, 0, 0);
@@ -71,7 +71,7 @@ public class Match implements Observer{
 		createBall(world, -4, -2, 2);
 		createBall(world, -4, -4, 7);
 	}
-	
+
 	public Match() {
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
@@ -79,13 +79,13 @@ public class Match implements Observer{
 		world.setContactListener(observableCollision = new ObservableCollision());
 		addColisionObserver(this);
 		ballsToBeDeleted = new LinkedList<Body>();
-		
+
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
 		balls = new Ball[ballsPerPlayer * 2 + 2];
-		
+
 		createBalls();
-		
+
 		border = new Table(world);
 
 	}
@@ -120,27 +120,27 @@ public class Match implements Observer{
 	public Ball getCueBall() {
 		return cueBall;
 	}
-	
+
 	public Ball[] getBalls()
 	{
 		return balls;
 	}
-	
+
 	public void setCueAngle(float angle)
 	{
 		cueAngle = angle;
 	}
-	
+
 	public void makeShot(float force)
 	{
 		cueBall.makeShot(cueAngle, force);
 	}
-	
+
 	public float getCueAngle()
 	{
 		return cueAngle;
 	}
-	
+
 	public Vector2[] predictShot()
 	{
 		/*
@@ -149,19 +149,43 @@ public class Match implements Observer{
 		 * 1 - 2nd ball position
 		 * 2 - cue ball prediction
 		 * 3 - 2nd ball prediction
-		 * result will be null if the raycast finds no balls in the way
+		 * 4 - aiming point
+		 * all results must be checked for not being null
 		 */
 		final boolean[] b = new boolean[1];
 		b[0] = false;
-		final Vector2[] result = new Vector2[4];
+		final Vector2[] result = new Vector2[5];
 		RayCastCallback callBack = new RayCastCallback() {
 			float smallestDistance;
-			
+			boolean foundAimingPoint = false;
+			float closestAP;
+
 			@Override
 			public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction)
 			{
 				if (fixture.getUserData() == null)
 					return -1;
+				if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL || ((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.TABLE)
+				{
+					if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL && ((BodyInfo)fixture.getUserData()).getID() == 0)
+						return -1;
+					float distance = point.dst2(cueBall.getPosition());
+					if (foundAimingPoint)
+					{
+						if (distance < closestAP)
+						{
+							result[4] = point.cpy();
+							closestAP = distance;
+						}
+					}
+					else
+					{
+						foundAimingPoint = true;
+						result[4] = point.cpy();
+						closestAP = distance;
+					}
+					return 1;
+				}
 				if (((BodyInfo)fixture.getUserData()).getType() != BodyInfo.Type.BALL_SENSOR)
 					return -1;
 				if (((BodyInfo)fixture.getUserData()).getID() == 0)
@@ -180,12 +204,16 @@ public class Match implements Observer{
 		};
 		float diagonal = (float)((new Vector2(Table.width, Table.height)).len());
 		world.rayCast(callBack, cueBall.getPosition(), cueBall.getPosition().cpy().add(new Vector2(1, 0).scl(diagonal).rotateRad(cueAngle)));
-		if (b[0])
-			return result;
-		else
-			return null;
+		if (!b[0])
+		{
+			result[0] = null;
+			result[1] = null;
+			result[2] = null;
+			result[3] = null;
+		}
+		return result;
 	}
-	
+
 	public void addColisionObserver(Observer o)
 	{
 		observableCollision.addObserver(o);
@@ -194,13 +222,13 @@ public class Match implements Observer{
 	@Override
 	public void update(Observable o, Object obj) {
 		Contact contact = (Contact)obj;
-		
+
 		BodyInfo userDataA = ((BodyInfo)contact.getFixtureA().getUserData());
 		BodyInfo userDataB = ((BodyInfo)contact.getFixtureB().getUserData());
-		
+
 		if (userDataA == null || userDataB == null)
 			return;
-		
+
 		switch (userDataA.getType())
 		{
 		case BALL:
@@ -219,7 +247,7 @@ public class Match implements Observer{
 			break;
 		}
 	}
-	
+
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
 		balls[ballNumber].setOnTable(false);

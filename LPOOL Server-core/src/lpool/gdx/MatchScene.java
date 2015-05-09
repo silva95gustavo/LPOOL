@@ -112,18 +112,17 @@ public class MatchScene implements Screen, Observer{
 
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(Color.WHITE);
+
 		float cueAngle = m.getCueAngle();
 
-		shapeRenderer.setColor(Color.WHITE);
-		shapeRenderer.rectLine(m.getCueBall().getPosition(), new Vector2(1, 0).rotateRad(cueAngle).add(m.getCueBall().getPosition()), 0.005f);
-
 		Vector2[] prediction = m.predictShot();
-		if (prediction != null)
-		{
-			shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(0.15f)), 0.0025f); // Cue ball
+		if (prediction[4] != null)
+			shapeRenderer.rectLine(m.getCueBall().getPosition(), prediction[4], 0.005f); // Aiming line
+		if (prediction[0] != null && prediction[2] != null)
+			shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(0.075f)), 0.0025f); // Cue ball
+		if (prediction[1] != null && prediction[3] != null)
 			shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f)), 0.0025f); // 2nd ball
-		}
-
 
 		shapeRenderer.end();
 	}

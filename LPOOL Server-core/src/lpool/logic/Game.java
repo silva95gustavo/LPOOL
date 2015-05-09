@@ -35,7 +35,7 @@ public class Game extends EventChecker{
 
 	public void tick(float dt)
 	{
-		interpolateAngle(dt);
+		//interpolateAngle(dt);
 		match.tick(dt);
 		network.tick();
 		triggerEvents();
