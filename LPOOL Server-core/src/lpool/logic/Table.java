@@ -49,10 +49,11 @@ public class Table {
 	 
 	    // 3. Create a Body, as usual.
 	    body = world.createBody(bd);
-	    body.setUserData(new BodyInfo(BodyInfo.Type.TABLE, 0));
 	 
 	    // 4. Create the body fixture automatically by using the loader.
 	    loader.attachFixture(body, "table", fd, width);
+	    
+	    body.getFixtureList().get(body.getFixtureList().size - 1).setUserData(new BodyInfo(BodyInfo.Type.TABLE, 0)); 
 	}
 	
 	private void createHole(World world, int number, float x, float y)
@@ -65,7 +66,7 @@ public class Table {
 		cs.setRadius(holeRadius - Ball.radius);
 		
 		holes[number] = world.createBody(bd);
-		holes[number].createFixture(cs, 1f);
+		holes[number].createFixture(cs, 1f).setUserData(new BodyInfo(BodyInfo.Type.HOLE, number));
 		holes[number].setUserData(new BodyInfo(BodyInfo.Type.HOLE, number));
 	}
 

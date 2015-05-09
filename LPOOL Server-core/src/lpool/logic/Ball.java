@@ -25,8 +25,10 @@ public class Ball {
 	private Body body;
 	private FixtureDef ballBallFixtureDef;
 	private FixtureDef ballBorderFixtureDef;
+	private FixtureDef sensorFixtureDef;
 	private Fixture ballBallFixture;
 	private Fixture ballBorderFixture;
+	private Fixture sensorFixture;
 	
 	private Queue<Body> ballsToBeDeleted;
 
@@ -45,7 +47,7 @@ public class Ball {
 		ballBallFixtureDef.shape = cs;
 		ballBallFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
 		ballBallFixtureDef.friction = 0.05f;
-		ballBallFixtureDef.restitution = 0.80f;
+		ballBallFixtureDef.restitution = 0.95f;
 		ballBallFixtureDef.filter.categoryBits = cat;
 		ballBallFixtureDef.filter.maskBits = cat;
 
@@ -54,14 +56,24 @@ public class Ball {
 		ballBorderFixtureDef.shape = cs;
 		ballBorderFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
 		ballBorderFixtureDef.friction = 1.0f;
-		ballBorderFixtureDef.restitution = 0.5f;
+		ballBorderFixtureDef.restitution = 0.6f;
 		ballBorderFixtureDef.filter.categoryBits = cat;
 		ballBorderFixtureDef.filter.maskBits = Table.cat;
-
+		
+		CircleShape cs2 = new CircleShape(); // Sensor
+		cs2.setRadius(2 * radius);
+		sensorFixtureDef = new FixtureDef();
+		sensorFixtureDef.shape = cs2;
+		sensorFixtureDef.isSensor = true;
+		
 		body = world.createBody(bd);
 		ballBallFixture = body.createFixture(ballBallFixtureDef);
+		ballBallFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
 		ballBorderFixture = body.createFixture(ballBorderFixtureDef);
-		body.setLinearDamping(0.4f);
+		ballBorderFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
+		sensorFixture = body.createFixture(sensorFixtureDef);
+		sensorFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL_SENSOR, number));
+		body.setLinearDamping(0.5f);
 		body.setAngularDamping(100.0f);
 		body.setBullet(true);
 		body.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
@@ -76,12 +88,17 @@ public class Ball {
 
 	public Vector2 getPosition()
 	{
-		return body.getPosition();
+		return body.getPosition().cpy();
 	}
 
 	public Quaternion getRotation()
 	{
 		return rotation.cpy();
+	}
+	
+	public Vector2 getVelocity()
+	{
+		return body.getLinearVelocity().cpy();
 	}
 
 	public void tick(float deltaT)
@@ -124,7 +141,6 @@ public class Ball {
 		}
 		else
 		{
-			System.out.println("I'm number " + number);
 			ballsToBeDeleted.add(body);
 		}
 	}

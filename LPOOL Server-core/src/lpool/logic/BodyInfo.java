@@ -5,6 +5,7 @@ public class BodyInfo {
 	public enum Type
 	{
 		BALL,
+		BALL_SENSOR,
 		TABLE,
 		HOLE
 	};
@@ -24,5 +25,10 @@ public class BodyInfo {
 
 	public int getID() {
 		return ID;
+	}
+	
+	@Override
+	public String toString() {
+		return "BodyInfo [type=" + type + ", ID=" + ID + "]";
 	}
 }

@@ -141,33 +141,50 @@ public class Match implements Observer{
 		return cueAngle;
 	}
 	
-	/*public Vector2[] predictShot()
+	public Vector2[] predictShot()
 	{
-		/*final Vector2[] n = new Vector2[2];
-		n[0] = new Vector2(1, 0);
-		n[1] = new Vector2(-999, -999);
+		/*
+		 * result:
+		 * 0 - cue ball position
+		 * 1 - 2nd ball position
+		 * 2 - cue ball prediction
+		 * 3 - 2nd ball prediction
+		 * result will be null if the raycast finds no balls in the way
+		 */
+		final boolean[] b = new boolean[1];
+		b[0] = false;
+		final Vector2[] result = new Vector2[4];
 		RayCastCallback callBack = new RayCastCallback() {
+			float smallestDistance;
 			
 			@Override
 			public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction)
 			{
-				if (cueBall.getPosition().dst2(point) < cueBall.getPosition().dst2(n[1]))
+				if (fixture.getUserData() == null)
+					return -1;
+				if (((BodyInfo)fixture.getUserData()).getType() != BodyInfo.Type.BALL_SENSOR)
+					return -1;
+				if (((BodyInfo)fixture.getUserData()).getID() == 0)
+					return -1;
+				if (!b[0] || cueBall.getPosition().dst2(point) < smallestDistance)
 				{
-					n[0] = normal;
-					n[1] = point;
+					b[0] = true;
+					smallestDistance = cueBall.getPosition().dst2(point);
+					result[0] = point.cpy();
+					result[1] = fixture.getBody().getPosition().cpy();
+					result[2] = normal.cpy().rotateRad((float)Math.PI / 2).scl((float)Math.sin(cueBall.getPosition().cpy().sub(result[0]).angleRad(normal)));
+					result[3] = normal.cpy().rotateRad((float)Math.PI).scl((float)Math.cos(cueBall.getPosition().cpy().sub(result[0]).angleRad(normal)));
 				}
 				return 1;
 			}
 		};
 		float diagonal = (float)((new Vector2(Table.width, Table.height)).len());
-		Vector2 copy = new Vector2(cueBall.getPosition().cpy());
-		//copy = new Vector2(0, 0);
-		world.rayCast(callBack, copy, cueBall.getPosition().add(new Vector2(1, 0).scl(diagonal).rotate((float)Math.toDegrees(cueAngle))));
-		return n;
-	
-		World predWorld = new World(gravity, false);
-		Ball predCueBall = new Ball(world, cueBall.getPosition(), cueBall.getNumber());
-	}*/
+		world.rayCast(callBack, cueBall.getPosition(), cueBall.getPosition().cpy().add(new Vector2(1, 0).scl(diagonal).rotateRad(cueAngle)));
+		if (b[0])
+			return result;
+		else
+			return null;
+	}
 	
 	public void addColisionObserver(Observer o)
 	{
@@ -178,8 +195,12 @@ public class Match implements Observer{
 	public void update(Observable o, Object obj) {
 		Contact contact = (Contact)obj;
 		
-		BodyInfo userDataA = ((BodyInfo)contact.getFixtureA().getBody().getUserData());
-		BodyInfo userDataB = ((BodyInfo)contact.getFixtureB().getBody().getUserData());
+		BodyInfo userDataA = ((BodyInfo)contact.getFixtureA().getUserData());
+		BodyInfo userDataB = ((BodyInfo)contact.getFixtureB().getUserData());
+		
+		if (userDataA == null || userDataB == null)
+			return;
+		
 		switch (userDataA.getType())
 		{
 		case BALL:
@@ -192,12 +213,15 @@ public class Match implements Observer{
 			if (userDataB.getType() == BodyInfo.Type.BALL)
 				ballInHoleHandler(userDataB.getID(), userDataA.getID());
 			break;
+		case BALL_SENSOR:
+			break;
+		default:
+			break;
 		}
 	}
 	
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
-		System.out.println("derp: " + ballNumber);
 		balls[ballNumber].setOnTable(false);
 	}
 }
