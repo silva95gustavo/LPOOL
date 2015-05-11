@@ -81,7 +81,7 @@ public class Match implements Observer{
 	}
 	
 	public Match() {
-		stateMachine = new Context<Match>(this, new FreezeTime());
+		//stateMachine = new Context<Match>(this, new FreezeTime());
 		
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
@@ -102,7 +102,7 @@ public class Match implements Observer{
 
 	public void tick(float dt)
 	{
-		stateMachine.update(dt);
+		//stateMachine.update(dt);
 		world.step(dt, 6, 2);
 		while (!ballsToBeDeleted.isEmpty())
 		{
