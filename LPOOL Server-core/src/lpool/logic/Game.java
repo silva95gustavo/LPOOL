@@ -8,10 +8,13 @@ import java.util.Scanner;
 
 import com.badlogic.gdx.Net.Protocol;
 
+import lpool.logic.match.Match;
 import lpool.network.EventChecker;
 
 public class Game extends EventChecker{
 	public static final int numPlayers = 2;
+	
+	
 	private Match match;
 	private float angleVar;
 	private float lastAngle;
