@@ -10,9 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ipField"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="76dp"
         android:editable="true"
         android:hint="Server IP (e.x: XXX.XXX.X.XX)"
         android:autoText="false"
@@ -20,7 +17,9 @@
         android:focusableInTouchMode="true"
         android:inputType="numberDecimal"
         android:digits="0123456789."
-        android:password="false"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:textAlignment="center" />
 
     <TextView
@@ -29,39 +28,34 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Insert server ip below:"
         android:id="@+id/topLabel"
+        android:layout_marginTop="71dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Connect!"
         android:id="@+id/connectBtn"
-        android:layout_below="@+id/ipField"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp"
         android:onClick="connectToServerIp"
-        android:nestedScrollingEnabled="false" />
+        android:nestedScrollingEnabled="false"
+        android:layout_alignBottom="@+id/topLabel"
+        android:layout_alignLeft="@+id/btnReadQR"
+        android:layout_alignStart="@+id/btnReadQR"
+        android:layout_marginLeft="42dp"
+        android:layout_marginStart="42dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Read IP From QR Code"
         android:id="@+id/btnReadQR"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:clickable="true"
-        android:onClick="readIPFromQR" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
-        android:layout_below="@+id/btnReadQR"
-        android:layout_alignLeft="@+id/btnReadQR"
-        android:layout_alignStart="@+id/btnReadQR"
-        android:layout_marginTop="41dp"
-        android:onClick="testAbout" />
+        android:onClick="readIPFromQR"
+        android:layout_alignTop="@+id/ipField"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="37dp"
+        android:layout_marginEnd="37dp" />
 </RelativeLayout>

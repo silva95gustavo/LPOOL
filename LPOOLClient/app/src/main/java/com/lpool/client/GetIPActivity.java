@@ -2,12 +2,17 @@ package com.lpool.client;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -17,6 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 public class GetIPActivity extends ActionBarActivity {
 
     private String ip_to_connect;
+    private EditText ipText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +32,21 @@ public class GetIPActivity extends ActionBarActivity {
 
         // TODO: REMOVE LATER
         ip_to_connect = "192.168.1.68";
+        ipText = (EditText) findViewById(R.id.ipField);
         updateIPLabel();
+
+        ipText.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                ip_to_connect = ipText.getText().toString();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ip_to_connect = ipText.getText().toString();
+            }
+        });
     }
 
 
@@ -39,14 +59,18 @@ public class GetIPActivity extends ActionBarActivity {
 
     public void connectToServerIp(View v)
     {
-        EditText et1 = (EditText) findViewById(R.id.ipField);
-        ip_to_connect = et1.getText().toString();
+        ip_to_connect = ipText.getText().toString();
         if(isValidIP(ip_to_connect)) {
             ShotActivity.setServerIP(ip_to_connect);
             startActivity(new Intent(GetIPActivity.this, ShotActivity.class));
         }
         else
             Toast.makeText(this, "Connection Failed." + '\n' + "The IP entered is invalid.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void testAbout(View v)
+    {
+        startActivity(new Intent(GetIPActivity.this, InstructionsActivity.class));
     }
 
     public void readIPFromQR(View v)
@@ -56,8 +80,9 @@ public class GetIPActivity extends ActionBarActivity {
 
     private void updateIPLabel()
     {
-        EditText et1 = (EditText) findViewById(R.id.ipField);
-        et1.setText(ip_to_connect);
+        ipText = (EditText) findViewById(R.id.ipField);
+        if(ipText != null && ip_to_connect != null)
+            ipText.setText(ip_to_connect);
     }
 
     @Override
@@ -119,5 +144,22 @@ public class GetIPActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+
+        int orientation = newConfig.orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            setContentView(R.layout.activity_get_ip);
+        }
+        else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setContentView(R.layout.activity_get_ip_landscape);
+        }
+
+        updateIPLabel();
     }
 }
