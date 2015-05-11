@@ -26,11 +26,18 @@ public class Network {
 
 	private ConcurrentLinkedQueue<Socket> clientSockets;
 	private ConcurrentLinkedQueue<DatagramPacket> UDPreceived;
+	
+	// Types of service
+	private static final int IPTOS_LOWCOST = 0x02;
+	private static final int IPTOS_RELIABILITY = 0x04;
+	private static final int IPTOS_THROUGHPUT = 0x08;
+	private static final int IPTOS_LOWDELAY = 0x10;
 
 	public Network(int maxClients) {
 		try {
 			this.serverSocket = new ServerSocket(6900);
 			this.UDPServerSocket = new DatagramSocket(6900);
+			UDPServerSocket.setTrafficClass(IPTOS_LOWDELAY);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -202,4 +209,7 @@ public class Network {
 		}
 		return -1;
 	}
+
+	public int getNumClients() {return numClients;}
+	
 }

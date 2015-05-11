@@ -1,83 +1,91 @@
 package lpool.logic;
 
+import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Queue;
 import java.util.Random;
+
+import lpool.gdx.assets.Sounds;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Match {
+public class Match implements Observer{
 	public static int ballsPerPlayer = 7;
 
 	private Vector2 gravity;
 	private World world;
+	private Queue<Body> ballsToBeDeleted;
 
 	private Ball[] balls1;
 	private Ball[] balls2;
 	private Ball blackBall;
 	private Ball cueBall;
+	private Ball[] balls;
+
 	private Table border;
-	
+
 	private float cueAngle = (float)Math.PI;
 
-	private void createBalls()
+	private ObservableCollision observableCollision;
+
+	private Ball createBall(World world, int x, int y, int number)
 	{
-		float x = (float)Math.sqrt(3) * Ball.radius; // Obtained with the Pythagorean Theorem
-		int column = 0;
-		int columnILast = -1;
-		for (int i = 0; i < ballsPerPlayer * 2 + 1; i++)
-		{
-			System.out.println("n: " + (i + 1) + " x: " + (Table.width / 3 - column * x) + " y: " + (Table.height / 2 + (i - columnILast - (column + 0.5f) / 2) * 2f * Ball.radius));
-			Ball ball = new Ball(world, new Vector2(Table.width / 3 - column * x, Table.height / 2 + (i - columnILast - (column + 0.5f) / 2 - 0.75f) * 2f * Ball.radius), i + 1);
-			if (i % 2 == 0 && i != 2)
-				balls1[((i > 2) ? (i - 1) : i) / 2] = ball;
-			else
-				balls2[i / 2] = ball;
-			if (i - columnILast == column + 1)
-			{
-				column++;
-				columnILast = i;
-			}
-		}
-		
-		blackBall = new Ball(world, new Vector2(Table.width / 3 - x, Table.height / 2), 8);
+		Ball ball = new Ball(world, new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius), number, ballsToBeDeleted);
+		if (number == 0)
+			cueBall = ball;
+		else if (number < 8)
+			balls1[number - 1] = ball;
+		else if (number == 8)
+			blackBall = ball;
+		else if (number < 16)
+			balls2[number - 9] = ball;
+		else return null;
+		return balls[number] = ball;
 	}
-	
+
+	private void createBalls()
+	{		
+		createBall(world, 25, 0, 0);
+		createBall(world, 0, 0, 1);
+		createBall(world, -1, 1, 3);
+		createBall(world, -1, -1, 11);
+		createBall(world, -2, 2, 14);
+		createBall(world, -2, 0, 8);
+		createBall(world, -2, -2, 6);
+		createBall(world, -3, 3, 9);
+		createBall(world, -3, 1, 4);
+		createBall(world, -3, -1, 15);
+		createBall(world, -3, -3, 13);
+		createBall(world, -4, 4, 12);
+		createBall(world, -4, 2, 5);
+		createBall(world, -4, 0, 10);
+		createBall(world, -4, -2, 2);
+		createBall(world, -4, -4, 7);
+	}
+
 	public Match() {
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
 		World.setVelocityThreshold(0.00001f);
-		
+		world.setContactListener(observableCollision = new ObservableCollision());
+		addColisionObserver(this);
+		ballsToBeDeleted = new LinkedList<Body>();
+
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
-		
+		balls = new Ball[ballsPerPlayer * 2 + 2];
+
 		createBalls();
-		
-		Random r = new Random();
-		/*float x = (float)Math.sqrt(3) * Ball.radius;
-		
-		if (ballsPerPlayer == 7)
-		{
-			balls1[0] = new Ball(world, new Vector2(Table.width / 4, Table.height / 2), 1);
-			balls2[0] = new Ball(world, new Vector2(Table.width / 4 - x, Table.height / 2 - Ball.radius), 9);
-			balls1[1] = new Ball(world, new Vector2(Table.width / 4 - x, Table.height / 2 + Ball.radius), 2);
-			balls2[1] = new Ball(world, new Vector2(Table.width / 4 - 2 * x, Table.height / 2 - 2 * Ball.radius), 10);
-			balls1[2] = new Ball(world, new Vector2(Table.width / 4 - 2 * x, Table.height / 2), 3);
-			balls2[2] = new Ball(world, new Vector2(Table.width / 4 - 2 * x, Table.height / 2 + 2 * Ball.radius), 11);
-			ballsPerPlayer = 3;
-		}
-		else
-		{
-			for (int i = 0; i < ballsPerPlayer; i++)
-			{
-				balls1[i] = new Ball(world, new Vector2(r.nextFloat() * Table.width, r.nextFloat() * Table.height), i + 1);
-				balls2[i] = new Ball(world, new Vector2(r.nextFloat() * Table.width, r.nextFloat() * Table.height), i + 9);
-			}
-		}*/
-		cueBall = new Ball(world, new Vector2(3 * Table.width / 4, Table.height / 2), 0);
-		
+
 		border = new Table(world);
 
 	}
@@ -85,13 +93,14 @@ public class Match {
 	public void tick(float dt)
 	{
 		world.step(dt, 6, 2);
-		for (int i = 0; i < ballsPerPlayer; i++)
+		while (!ballsToBeDeleted.isEmpty())
 		{
-			balls1[i].tick(dt);
-			balls2[i].tick(dt);
+			world.destroyBody(ballsToBeDeleted.poll());
 		}
-		blackBall.tick(dt);
-		cueBall.tick(dt);
+		for (int i = 0; i < balls.length; i++)
+		{
+			balls[i].tick(dt);
+		}
 	}
 
 	public Ball getBlackBall() {
@@ -111,47 +120,136 @@ public class Match {
 	public Ball getCueBall() {
 		return cueBall;
 	}
-	
+
+	public Ball[] getBalls()
+	{
+		return balls;
+	}
+
 	public void setCueAngle(float angle)
 	{
 		cueAngle = angle;
 	}
-	
+
 	public void makeShot(float force)
 	{
 		cueBall.makeShot(cueAngle, force);
 	}
-	
+
 	public float getCueAngle()
 	{
 		return cueAngle;
 	}
-	
-	/*public Vector2[] predictShot()
+
+	public Vector2[] predictShot()
 	{
-		/*final Vector2[] n = new Vector2[2];
-		n[0] = new Vector2(1, 0);
-		n[1] = new Vector2(-999, -999);
+		/*
+		 * result:
+		 * 0 - cue ball position
+		 * 1 - 2nd ball position
+		 * 2 - cue ball prediction
+		 * 3 - 2nd ball prediction
+		 * 4 - aiming point
+		 * all results must be checked for not being null
+		 */
+		final boolean[] b = new boolean[1];
+		b[0] = false;
+		final Vector2[] result = new Vector2[5];
 		RayCastCallback callBack = new RayCastCallback() {
-			
+			float smallestDistance;
+			boolean foundAimingPoint = false;
+			float closestAP;
+
 			@Override
 			public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction)
 			{
-				if (cueBall.getPosition().dst2(point) < cueBall.getPosition().dst2(n[1]))
+				if (fixture.getUserData() == null)
+					return -1;
+				if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL || ((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.TABLE)
 				{
-					n[0] = normal;
-					n[1] = point;
+					if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL && ((BodyInfo)fixture.getUserData()).getID() == 0)
+						return -1;
+					float distance = point.dst2(cueBall.getPosition());
+					if (foundAimingPoint)
+					{
+						if (distance < closestAP)
+						{
+							result[4] = point.cpy();
+							closestAP = distance;
+						}
+					}
+					else
+					{
+						foundAimingPoint = true;
+						result[4] = point.cpy();
+						closestAP = distance;
+					}
+					return 1;
+				}
+				if (((BodyInfo)fixture.getUserData()).getType() != BodyInfo.Type.BALL_SENSOR)
+					return -1;
+				if (((BodyInfo)fixture.getUserData()).getID() == 0)
+					return -1;
+				if (!b[0] || cueBall.getPosition().dst2(point) < smallestDistance)
+				{
+					b[0] = true;
+					smallestDistance = cueBall.getPosition().dst2(point);
+					result[0] = point.cpy();
+					result[1] = fixture.getBody().getPosition().cpy();
+					result[2] = normal.cpy().rotateRad((float)Math.PI / 2).scl((float)Math.sin(cueBall.getPosition().cpy().sub(result[0]).angleRad(normal)));
+					result[3] = normal.cpy().rotateRad((float)Math.PI).scl((float)Math.cos(cueBall.getPosition().cpy().sub(result[0]).angleRad(normal)));
 				}
 				return 1;
 			}
 		};
 		float diagonal = (float)((new Vector2(Table.width, Table.height)).len());
-		Vector2 copy = new Vector2(cueBall.getPosition().cpy());
-		//copy = new Vector2(0, 0);
-		world.rayCast(callBack, copy, cueBall.getPosition().add(new Vector2(1, 0).scl(diagonal).rotate((float)Math.toDegrees(cueAngle))));
-		return n;
-	
-		World predWorld = new World(gravity, false);
-		Ball predCueBall = new Ball(world, cueBall.getPosition(), cueBall.getNumber());
-	}*/
+		world.rayCast(callBack, cueBall.getPosition(), cueBall.getPosition().cpy().add(new Vector2(1, 0).scl(diagonal).rotateRad(cueAngle)));
+		if (!b[0])
+		{
+			result[0] = null;
+			result[1] = null;
+			result[2] = null;
+			result[3] = null;
+		}
+		return result;
+	}
+
+	public void addColisionObserver(Observer o)
+	{
+		observableCollision.addObserver(o);
+	}
+
+	@Override
+	public void update(Observable o, Object obj) {
+		Contact contact = (Contact)obj;
+
+		BodyInfo userDataA = ((BodyInfo)contact.getFixtureA().getUserData());
+		BodyInfo userDataB = ((BodyInfo)contact.getFixtureB().getUserData());
+
+		if (userDataA == null || userDataB == null)
+			return;
+
+		switch (userDataA.getType())
+		{
+		case BALL:
+			if (userDataB.getType() == BodyInfo.Type.HOLE)
+				ballInHoleHandler(userDataA.getID(), userDataB.getID());
+			break;
+		case TABLE:
+			break;
+		case HOLE:
+			if (userDataB.getType() == BodyInfo.Type.BALL)
+				ballInHoleHandler(userDataB.getID(), userDataA.getID());
+			break;
+		case BALL_SENSOR:
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void ballInHoleHandler(int ballNumber, int holeNumber)
+	{
+		balls[ballNumber].setOnTable(false);
+	}
 }

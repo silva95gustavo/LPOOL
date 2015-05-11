@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="libs/gdx-box2d-1.5.5.jar"/>
 	<classpathentry kind="lib" path="libs/libgdx-utils-0.10.0.jar"/>
 	<classpathentry kind="lib" path="libs/libgdx-utils-box2d-0.10.0.jar"/>
+	<classpathentry kind="lib" path="libs/core-3.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

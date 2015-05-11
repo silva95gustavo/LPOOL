@@ -35,7 +35,7 @@ public class Game extends EventChecker{
 
 	public void tick(float dt)
 	{
-		interpolateAngle(dt);
+		//interpolateAngle(dt);
 		match.tick(dt);
 		network.tick();
 		triggerEvents();
@@ -88,7 +88,6 @@ public class Game extends EventChecker{
 				lastAngle = angle;
 			}
 			match.setCueAngle(angle);
-			System.out.println("i: " + sc.next());
 			break;
 		}
 		case FIRE:
@@ -109,4 +108,5 @@ public class Game extends EventChecker{
 	{
 		match.setCueAngle(match.getCueAngle() + angleVar * dt);
 	}
+
 }

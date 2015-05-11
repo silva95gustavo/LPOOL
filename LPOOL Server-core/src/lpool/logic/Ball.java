@@ -1,5 +1,7 @@
 package lpool.logic;
 
+import java.util.Queue;
+
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -17,12 +20,21 @@ public class Ball {
 
 	private int number;
 	private Quaternion rotation;
+	private boolean onTable = true;
 
 	private Body body;
+	private FixtureDef ballBallFixtureDef;
+	private FixtureDef ballBorderFixtureDef;
+	private FixtureDef sensorFixtureDef;
+	private Fixture ballBallFixture;
+	private Fixture ballBorderFixture;
+	private Fixture sensorFixture;
+	
+	private Queue<Body> ballsToBeDeleted;
 
-	public Ball(World world, Vector2 position, int number) {
+	public Ball(World world, Vector2 position, int number, Queue<Body> ballsToBeDeleted) {
 		rotation = new Quaternion();
-
+		
 		BodyDef bd = new BodyDef();
 		bd.position.set(position);
 		bd.type = BodyType.DynamicBody;
@@ -31,31 +43,43 @@ public class Ball {
 		cs.setRadius(radius);
 
 		// Ball
-		FixtureDef fd1 = new FixtureDef();
-		fd1.shape = cs;
-		fd1.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		fd1.friction = 0.05f;
-		fd1.restitution = 0.80f;
-		fd1.filter.categoryBits = cat;
-		fd1.filter.maskBits = cat;
+		ballBallFixtureDef = new FixtureDef();
+		ballBallFixtureDef.shape = cs;
+		ballBallFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
+		ballBallFixtureDef.friction = 0.05f;
+		ballBallFixtureDef.restitution = 0.95f;
+		ballBallFixtureDef.filter.categoryBits = cat;
+		ballBallFixtureDef.filter.maskBits = cat;
 
 		// Ball <-> Border
-		FixtureDef fd2 = new FixtureDef();
-		fd2.shape = cs;
-		fd2.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		fd2.friction = 1.0f;
-		fd2.restitution = 0.5f;
-		fd2.filter.categoryBits = cat;
-		fd2.filter.maskBits = Table.cat;
-
+		ballBorderFixtureDef = new FixtureDef();
+		ballBorderFixtureDef.shape = cs;
+		ballBorderFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
+		ballBorderFixtureDef.friction = 1.0f;
+		ballBorderFixtureDef.restitution = 0.6f;
+		ballBorderFixtureDef.filter.categoryBits = cat;
+		ballBorderFixtureDef.filter.maskBits = Table.cat;
+		
+		CircleShape cs2 = new CircleShape(); // Sensor
+		cs2.setRadius(2 * radius);
+		sensorFixtureDef = new FixtureDef();
+		sensorFixtureDef.shape = cs2;
+		sensorFixtureDef.isSensor = true;
+		
 		body = world.createBody(bd);
-		body.createFixture(fd1);
-		body.createFixture(fd2);
-		body.setLinearDamping(0.4f);
+		ballBallFixture = body.createFixture(ballBallFixtureDef);
+		ballBallFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
+		ballBorderFixture = body.createFixture(ballBorderFixtureDef);
+		ballBorderFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
+		sensorFixture = body.createFixture(sensorFixtureDef);
+		sensorFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL_SENSOR, number));
+		body.setLinearDamping(0.5f);
 		body.setAngularDamping(100.0f);
 		body.setBullet(true);
+		body.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
 
 		this.number = number;
+		this.ballsToBeDeleted = ballsToBeDeleted;
 	}
 
 	public int getNumber() {
@@ -64,16 +88,24 @@ public class Ball {
 
 	public Vector2 getPosition()
 	{
-		return body.getPosition();
+		return body.getPosition().cpy();
 	}
 
 	public Quaternion getRotation()
 	{
 		return rotation.cpy();
 	}
+	
+	public Vector2 getVelocity()
+	{
+		return body.getLinearVelocity().cpy();
+	}
 
 	public void tick(float deltaT)
 	{
+		if (!onTable)
+			return;
+		
 		if (body.getLinearVelocity().len2() < 0.00015)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
@@ -82,7 +114,7 @@ public class Ball {
 		{
 			Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
 			Vector3 rotatingAxis = velocity.cpy().nor().crs(Vector3.Z);
-			float rotationAmount = 40 * velocity.len() * deltaT / radius; // TODO Find out why we need to multiply by a value around 40
+			float rotationAmount = 45 * velocity.len() * deltaT / radius; // TODO Find out why we need to multiply by a value around 45
 			Quaternion dRotation = new Quaternion(rotatingAxis, rotationAmount);
 			rotation.mulLeft(dRotation);
 		}
@@ -91,5 +123,25 @@ public class Ball {
 	public void makeShot(float angle, float force)
 	{
 		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), new Vector2(0, 0), true);
+	}
+
+	public boolean isOnTable() {
+		return onTable;
+	}
+
+	public void setOnTable(boolean onTable) {
+		if (this.onTable == onTable)
+			return;
+		
+		this.onTable = onTable;
+		
+		if (onTable)
+		{
+			// TODO
+		}
+		else
+		{
+			ballsToBeDeleted.add(body);
+		}
 	}
 }

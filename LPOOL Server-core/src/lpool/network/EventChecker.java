@@ -1,7 +1,5 @@
 package lpool.network;
 
-import java.net.DatagramPacket;
-
 public abstract class EventChecker {
 	protected Network network;
 
