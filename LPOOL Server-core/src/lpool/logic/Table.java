@@ -6,8 +6,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 public class Table {
 	public static final short cat = 0x0002;
@@ -43,7 +45,7 @@ public class Table {
 	    // 2. Create a FixtureDef, as usual.
 	    FixtureDef fd = new FixtureDef();
 	    fd.density = 5f;
-	    fd.restitution = 0.5f;
+	    fd.restitution = 0.7f;
 		fd.filter.categoryBits = cat;
 		fd.filter.maskBits = Ball.cat;
 	 
@@ -54,6 +56,11 @@ public class Table {
 	    loader.attachFixture(body, "table", fd, width);
 	    
 	    body.getFixtureList().get(body.getFixtureList().size - 1).setUserData(new BodyInfo(BodyInfo.Type.TABLE, 0)); 
+	    Array<Fixture> fixtureList = body.getFixtureList();
+	    for (int i = 0; i < fixtureList.size; i++)
+	    {
+	    	fixtureList.get(i).setUserData(new BodyInfo(BodyInfo.Type.TABLE, 0));
+	    }
 	}
 	
 	private void createHole(World world, int number, float x, float y)

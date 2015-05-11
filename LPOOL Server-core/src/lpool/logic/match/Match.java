@@ -160,19 +160,43 @@ public class Match implements Observer{
 		 * 1 - 2nd ball position
 		 * 2 - cue ball prediction
 		 * 3 - 2nd ball prediction
-		 * result will be null if the raycast finds no balls in the way
+		 * 4 - aiming point
+		 * all results must be checked for not being null
 		 */
 		final boolean[] b = new boolean[1];
 		b[0] = false;
-		final Vector2[] result = new Vector2[4];
+		final Vector2[] result = new Vector2[5];
 		RayCastCallback callBack = new RayCastCallback() {
 			float smallestDistance;
-			
+			boolean foundAimingPoint = false;
+			float closestAP;
+
 			@Override
 			public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction)
 			{
 				if (fixture.getUserData() == null)
 					return -1;
+				if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL || ((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.TABLE)
+				{
+					if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL && ((BodyInfo)fixture.getUserData()).getID() == 0)
+						return -1;
+					float distance = point.dst2(cueBall.getPosition());
+					if (foundAimingPoint)
+					{
+						if (distance < closestAP)
+						{
+							result[4] = point.cpy();
+							closestAP = distance;
+						}
+					}
+					else
+					{
+						foundAimingPoint = true;
+						result[4] = point.cpy();
+						closestAP = distance;
+					}
+					return 1;
+				}
 				if (((BodyInfo)fixture.getUserData()).getType() != BodyInfo.Type.BALL_SENSOR)
 					return -1;
 				if (((BodyInfo)fixture.getUserData()).getID() == 0)
@@ -191,10 +215,14 @@ public class Match implements Observer{
 		};
 		float diagonal = (float)((new Vector2(Table.width, Table.height)).len());
 		world.rayCast(callBack, cueBall.getPosition(), cueBall.getPosition().cpy().add(new Vector2(1, 0).scl(diagonal).rotateRad(cueAngle)));
-		if (b[0])
-			return result;
-		else
-			return null;
+		if (!b[0])
+		{
+			result[0] = null;
+			result[1] = null;
+			result[2] = null;
+			result[3] = null;
+		}
+		return result;
 	}
 	
 	public void addColisionObserver(Observer o)

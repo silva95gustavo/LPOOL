@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import sun.misc.IOUtils;
@@ -34,6 +35,7 @@ public class Receiver extends Thread {
 			// TODO
 		} catch (IOException e) {
 			e.printStackTrace();
+			stopMe();
 		}
 	}
 	
