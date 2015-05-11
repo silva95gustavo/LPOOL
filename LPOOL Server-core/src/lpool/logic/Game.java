@@ -12,6 +12,8 @@ import lpool.network.EventChecker;
 
 public class Game extends EventChecker{
 	public static final int numPlayers = 2;
+	
+	
 	private Match match;
 	private float angleVar;
 	private float lastAngle;
