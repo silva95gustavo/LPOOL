@@ -1,4 +1,4 @@
-package lpool.logic;
+package lpool.logic.match;
 
 import java.util.LinkedList;
 import java.util.Observable;
@@ -7,6 +7,12 @@ import java.util.Queue;
 import java.util.Random;
 
 import lpool.gdx.assets.Sounds;
+import lpool.logic.Ball;
+import lpool.logic.BodyInfo;
+import lpool.logic.ObservableCollision;
+import lpool.logic.Table;
+import lpool.logic.BodyInfo.Type;
+import lpool.logic.state.Context;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -20,6 +26,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Match implements Observer{
 	public static int ballsPerPlayer = 7;
+	
+	private lpool.logic.state.Context<Match> stateMachine;
 
 	private Vector2 gravity;
 	private World world;
@@ -73,6 +81,8 @@ public class Match implements Observer{
 	}
 	
 	public Match() {
+		stateMachine = new Context<Match>(this, new FreezeTime());
+		
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
 		World.setVelocityThreshold(0.00001f);
@@ -92,6 +102,7 @@ public class Match implements Observer{
 
 	public void tick(float dt)
 	{
+		stateMachine.update(dt);
 		world.step(dt, 6, 2);
 		while (!ballsToBeDeleted.isEmpty())
 		{
@@ -223,5 +234,9 @@ public class Match implements Observer{
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
 		balls[ballNumber].setOnTable(false);
+	}
+
+	public lpool.logic.state.Context<Match> getStateMachine() {
+		return stateMachine;
 	}
 }

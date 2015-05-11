@@ -33,8 +33,8 @@ import com.badlogic.gdx.utils.Array;
 import lpool.gdx.assets.Sounds;
 import lpool.logic.Ball;
 import lpool.logic.BodyInfo;
-import lpool.logic.Match;
 import lpool.logic.Table;
+import lpool.logic.match.Match;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
@@ -92,7 +92,7 @@ public class MatchScene implements Screen, Observer{
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		lpool.logic.Match m = game.getMatch();
+		lpool.logic.match.Match m = game.getMatch();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();

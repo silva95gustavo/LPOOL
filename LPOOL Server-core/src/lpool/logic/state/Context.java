@@ -1,37 +1,35 @@
 package lpool.logic.state;
 
-public class Context {
+public class Context<E> {
 
-	private State previousState;
-	private State currentState;
+	private E owner;
+	private State<E> previousState;
+	private State<E> currentState;
 	
-	public Context(State initialState) {
-		this.previousState = null;
-		this.currentState = initialState;
+	public Context(E owner, State<E> initialState) {
+		previousState = null;
+		currentState = initialState;
+		currentState.enter(owner);
 	}
 
-	public State getPreviousState() {
+	public State<E> getPreviousState() {
 		return previousState;
 	}
-	
-	public State request()
-	{
-		return getCurrentState();
-	}
 
-	public State getCurrentState() {
+	public State<E> getCurrentState() {
 		return currentState;
 	}
 	
-	public void changeState(State newState) {
+	public void changeState(State<E> newState) {
 		previousState = currentState;
 		
-		if (currentState != null)
-			currentState.exit();
-		
 		currentState = newState;
-		
+		currentState.enter(owner);
+	}
+	
+	public void update(float dt)
+	{
 		if (currentState != null)
-			currentState.enter();
+			currentState.update(owner, dt);
 	}
 }
