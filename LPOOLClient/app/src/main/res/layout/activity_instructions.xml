@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageViewGif"
-        android:src="@drawable/phone_tilt_n1"
+        android:src="@drawable/phone_tilt_img"
         android:contentDescription="stuff"
         android:visibility="visible"
         android:layout_alignParentLeft="true"
