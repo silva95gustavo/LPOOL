@@ -75,7 +75,7 @@ public class GetIPActivity extends ActionBarActivity {
 
     public void readIPFromQR(View v)
     {
-        IntentIntegrator.initiateScan(this);
+        IntentIntegrator.initiateScan(this, IntentIntegrator.QR_CODE_TYPES, "Please point the camera to the QR Code on the server application");
     }
 
     private void updateIPLabel()

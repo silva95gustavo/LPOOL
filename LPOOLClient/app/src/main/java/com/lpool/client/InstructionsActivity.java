@@ -2,40 +2,46 @@ package com.lpool.client;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.graphics.drawable.AnimationDrawable;
-import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class InstructionsActivity extends ActionBarActivity {
 
-    private ImageView view;
-    int imgs[];
-    int i;
-
-    public ImageView myFrameAnimationImageView;
-    public AnimationDrawable myFrameAnimation;
+    Animation tilt_anim;
+    ImageView tilt_anim_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_instructions);
 
-        myFrameAnimationImageView = (ImageView) findViewById(R.id.imageViewGif);
-        myFrameAnimationImageView.setBackgroundResource(R.drawable.frame_animation);
-        myFrameAnimation = (AnimationDrawable) myFrameAnimationImageView.getBackground();
+        tilt_anim = AnimationUtils.loadAnimation(this, R.anim.instructions_anim_tilt);
+        tilt_anim.reset();
+
+        tilt_anim_img = (ImageView) findViewById(R.id.imageViewGif);
+        tilt_anim_img.startAnimation(tilt_anim);
+
+        tilt_anim.setAnimationListener(new Animation.AnimationListener() {
+
+            public void onAnimationEnd(Animation arg0) {
+                tilt_anim_img.startAnimation(tilt_anim);
+            }
+
+            public void onAnimationRepeat(Animation arg0) {}
+
+            public void onAnimationStart(Animation arg0) {}
+
+        });
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if(hasFocus) {
-            myFrameAnimation.stop();
-            myFrameAnimation.start();
-        }
     }
 
     @Override
