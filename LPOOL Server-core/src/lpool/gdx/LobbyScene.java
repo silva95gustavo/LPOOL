@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import lpool.logic.Game;
-import lpool.logic.Table;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -14,6 +13,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class LobbyScene implements Screen, Observer {
 	
@@ -26,7 +30,8 @@ public class LobbyScene implements Screen, Observer {
 	private OrthographicCamera camera;
 	
 	private SpriteBatch batch;
-	private Sprite QRSprite;
+	private Sprite QRCode;
+	private Stage stage;
 	
 	public LobbyScene(int width, int height, String qr_dir, com.badlogic.gdx.Game GdxGame) {
 		this.width = width;
@@ -35,16 +40,17 @@ public class LobbyScene implements Screen, Observer {
 		this.GdxGame = GdxGame;
 		
 		camera = new OrthographicCamera(width, height);
-		camera.position.set(new Vector2(width / 2, height / 2), 0);
+		camera.position.set(new Vector2(0, 0), 0);
 		camera.update();
 		
-		QRSprite = null;
+		QRCode = null;
 		if(qr_dir != "") {
-			Texture tex = new Texture(qr_dir);
-			QRSprite = new Sprite(tex);
+			QRCode = new Sprite(new Texture(qr_dir));
 		}
 		
 		batch = new SpriteBatch();
+		batch.setProjectionMatrix(camera.combined);
+		stage = new Stage(new FitViewport(width, height), batch);
 		
 		game = new Game();
 		game.getNetwork().addConnObserver(this);
@@ -79,8 +85,10 @@ public class LobbyScene implements Screen, Observer {
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(QRSprite, 0, 0, width, height);
+		batch.draw(QRCode, - width / 2, -height / 2, width, height);
 		batch.end();
 	}
 

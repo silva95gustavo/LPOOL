@@ -294,4 +294,9 @@ public class Match implements Observer{
 	public void setAiming(boolean isAiming) {
 		this.aiming = isAiming;
 	}
+	
+	public World getWorld()
+	{
+		return world;
+	}
 }
