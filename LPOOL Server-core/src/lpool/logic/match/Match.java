@@ -1,4 +1,4 @@
-package lpool.logic;
+package lpool.logic.match;
 
 import java.util.LinkedList;
 import java.util.Observable;
@@ -7,6 +7,13 @@ import java.util.Queue;
 import java.util.Random;
 
 import lpool.gdx.assets.Sounds;
+import lpool.logic.Ball;
+import lpool.logic.BodyInfo;
+import lpool.logic.ObservableCollision;
+import lpool.logic.Table;
+import lpool.logic.BodyInfo.Type;
+import lpool.logic.state.Context;
+import lpool.network.Network;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -20,6 +27,9 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Match implements Observer{
 	public static int ballsPerPlayer = 7;
+
+	private lpool.logic.state.Context<Match> stateMachine;
+	private Network network;
 
 	private Vector2 gravity;
 	private World world;
@@ -36,6 +46,8 @@ public class Match implements Observer{
 	private float cueAngle = (float)Math.PI;
 
 	private ObservableCollision observableCollision;
+
+	private boolean aiming;
 
 	private Ball createBall(World world, int x, int y, int number)
 	{
@@ -72,7 +84,10 @@ public class Match implements Observer{
 		createBall(world, -4, -4, 7);
 	}
 
-	public Match() {
+	public Match(Network network) {
+		stateMachine = new Context<Match>(this, new FreezeTime());
+		this.network = network;
+
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
 		World.setVelocityThreshold(0.00001f);
@@ -87,19 +102,31 @@ public class Match implements Observer{
 		createBalls();
 
 		border = new Table(world);
-
 	}
 
 	public void tick(float dt)
 	{
+		stateMachine.update(dt);
+	}
+
+	public void worldStep(float dt)
+	{
 		world.step(dt, 6, 2);
-		while (!ballsToBeDeleted.isEmpty())
-		{
-			world.destroyBody(ballsToBeDeleted.poll());
-		}
+	}
+
+	public void tickBalls(float dt)
+	{
 		for (int i = 0; i < balls.length; i++)
 		{
 			balls[i].tick(dt);
+		}
+	}
+
+	public void deleteRemovedballs()
+	{
+		while (!ballsToBeDeleted.isEmpty())
+		{
+			world.destroyBody(ballsToBeDeleted.poll());
 		}
 	}
 
@@ -165,10 +192,9 @@ public class Match implements Observer{
 			{
 				if (fixture.getUserData() == null)
 					return -1;
-				if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL || ((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.TABLE)
+				if ((((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL_SENSOR && ((BodyInfo)fixture.getUserData()).getID() != 0) || 
+						((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.TABLE)
 				{
-					if (((BodyInfo)fixture.getUserData()).getType() == BodyInfo.Type.BALL && ((BodyInfo)fixture.getUserData()).getID() == 0)
-						return -1;
 					float distance = point.dst2(cueBall.getPosition());
 					if (foundAimingPoint)
 					{
@@ -184,7 +210,6 @@ public class Match implements Observer{
 						result[4] = point.cpy();
 						closestAP = distance;
 					}
-					return 1;
 				}
 				if (((BodyInfo)fixture.getUserData()).getType() != BodyInfo.Type.BALL_SENSOR)
 					return -1;
@@ -251,5 +276,22 @@ public class Match implements Observer{
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
 		balls[ballNumber].setOnTable(false);
+	}
+
+	public lpool.logic.state.Context<Match> getStateMachine() {
+		return stateMachine;
+	}
+
+	public Network getNetwork()
+	{
+		return network;
+	}
+
+	public boolean isAiming() {
+		return aiming;
+	}
+
+	public void setAiming(boolean isAiming) {
+		this.aiming = isAiming;
 	}
 }

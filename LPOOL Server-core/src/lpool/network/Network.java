@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.Observer;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -32,6 +33,9 @@ public class Network {
 	private static final int IPTOS_RELIABILITY = 0x04;
 	private static final int IPTOS_THROUGHPUT = 0x08;
 	private static final int IPTOS_LOWDELAY = 0x10;
+	
+	private ObservableConnection obsConn;
+	private ObservableMessage obsMsg;
 
 	public Network(int maxClients) {
 		try {
@@ -54,6 +58,9 @@ public class Network {
 		this.clientConnEvents = new LinkedList<Integer>();
 		this.clientCommEvents = new LinkedList<Integer>();
 		this.clientCommPackets = new LinkedList<DatagramPacket>();
+		
+		obsConn = new ObservableConnection(this);
+		obsMsg = new ObservableMessage(this);
 	}
 
 	public void tick()
@@ -84,6 +91,9 @@ public class Network {
 		}
 
 		readUDP();
+		
+		obsConn.tick();
+		obsMsg.tick();
 	}
 
 	private void readUDP()
@@ -212,4 +222,23 @@ public class Network {
 
 	public int getNumClients() {return numClients;}
 	
+	public void addConnObserver(Observer o)
+	{
+		obsConn.addObserver(o);
+	}
+	
+	public void addMsgObserver(Observer o)
+	{
+		obsMsg.addObserver(o);
+	}
+	
+	public void deleteConnObserver(Observer o)
+	{
+		obsConn.deleteObserver(o);
+	}
+	
+	public void deleteMsgObserver(Observer o)
+	{
+		obsMsg.deleteObserver(o);
+	}
 }

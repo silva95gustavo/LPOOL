@@ -33,8 +33,8 @@ import com.badlogic.gdx.utils.Array;
 import lpool.gdx.assets.Sounds;
 import lpool.logic.Ball;
 import lpool.logic.BodyInfo;
-import lpool.logic.Match;
 import lpool.logic.Table;
+import lpool.logic.match.Match;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
@@ -45,14 +45,13 @@ public class MatchScene implements Screen, Observer{
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private Texture table;
+	private Texture cueBallPrediction;
 	private lpool.gdx.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
 
-	private Sprite qr_sprite;
-
 	private lpool.logic.Game game;
 
-	public MatchScene(lpool.logic.Game game, int width, int height, String qr_dir)
+	public MatchScene(lpool.logic.Game game, int width, int height)
 	{
 		camera = new OrthographicCamera(Table.width, Table.width * height / width);
 		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
@@ -74,14 +73,11 @@ public class MatchScene implements Screen, Observer{
 		shapeRenderer = new ShapeRenderer();
 
 		table = new Texture("table.png");
+		cueBallPrediction = new Texture("cue_ball_prediction.png");
+		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		this.game = game;
+		game.startMatch();
 		game.getMatch().addColisionObserver(this);
-
-		qr_sprite = null;
-		if(qr_dir != "") {
-			Texture tex = new Texture(qr_dir);
-			qr_sprite = new Sprite(tex);
-		}
 	}
 
 	@Override
@@ -92,7 +88,7 @@ public class MatchScene implements Screen, Observer{
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		lpool.logic.Match m = game.getMatch();
+		lpool.logic.match.Match m = game.getMatch();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -110,21 +106,30 @@ public class MatchScene implements Screen, Observer{
 		modelBatch.render(modelInstances, environment);
 		modelBatch.end();
 
-		shapeRenderer.setProjectionMatrix(camera.combined);
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(Color.WHITE);
 
-		float cueAngle = m.getCueAngle();
+		if (m.isAiming())
+		{
+			shapeRenderer.setProjectionMatrix(camera.combined);
+			shapeRenderer.begin(ShapeType.Filled);
+			shapeRenderer.setColor(Color.WHITE);
 
-		Vector2[] prediction = m.predictShot();
-		if (prediction[4] != null)
-			shapeRenderer.rectLine(m.getCueBall().getPosition(), prediction[4], 0.005f); // Aiming line
-		if (prediction[0] != null && prediction[2] != null)
-			shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(0.075f)), 0.0025f); // Cue ball
-		if (prediction[1] != null && prediction[3] != null)
-			shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f)), 0.0025f); // 2nd ball
+			float cueAngle = m.getCueAngle();
 
-		shapeRenderer.end();
+			Vector2[] prediction = m.predictShot();
+			if (prediction[4] != null)
+				shapeRenderer.rectLine(m.getCueBall().getPosition(), prediction[4], 0.005f); // Aiming line
+			if (prediction[0] != null && prediction[2] != null)
+			{
+				shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(0.075f)), 0.0025f); // Cue ball
+				batch.begin();
+				batch.draw(cueBallPrediction, prediction[0].x - Ball.radius, prediction[0].y - Ball.radius, Ball.radius * 2, Ball.radius * 2);
+				batch.end();
+			}
+			if (prediction[1] != null && prediction[3] != null)
+				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f)), 0.0025f); // 2nd ball
+
+			shapeRenderer.end();
+		}
 	}
 
 	@Override
