@@ -7,6 +7,7 @@ public class Context<E> {
 	private State<E> currentState;
 	
 	public Context(E owner, State<E> initialState) {
+		this.owner = owner;
 		previousState = null;
 		currentState = initialState;
 		currentState.enter(owner);
