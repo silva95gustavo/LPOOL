@@ -8,15 +8,6 @@
     tools:context="com.lpool.client.InstructionsActivity"
     android:id="@+id/layout">
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button2"
-        android:visibility="invisible"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,10 +15,10 @@
         android:src="@drawable/phone_tilt_img"
         android:contentDescription="stuff"
         android:visibility="visible"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/text_inst_1"
-        android:layout_above="@+id/button2" />
+        android:layout_above="@+id/centeraligner" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,8 +37,18 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/instructions_text_2"
         android:id="@+id/text_inst_2"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/centeraligner"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/centeraligner"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp" />
+        android:visibility="invisible"
+        android:text="Center Alignment" />
 
 </RelativeLayout>

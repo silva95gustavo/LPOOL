@@ -59,9 +59,9 @@
         android:layout_height="wrap_content"
         android:text="New Button"
         android:id="@+id/button"
-        android:layout_below="@+id/btnReadQR"
-        android:layout_alignLeft="@+id/btnReadQR"
-        android:layout_alignStart="@+id/btnReadQR"
-        android:layout_marginTop="41dp"
-        android:onClick="testAbout" />
+        android:onClick="testAbout"
+        android:layout_alignBaseline="@+id/connectBtn"
+        android:layout_alignBottom="@+id/connectBtn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
