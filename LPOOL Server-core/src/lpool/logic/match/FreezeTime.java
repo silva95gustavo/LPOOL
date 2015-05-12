@@ -9,14 +9,15 @@ public class FreezeTime implements State<Match> {
 	
 	@Override
 	public void enter(Match match) {
+		match.setAiming(false);
 		elapsedTime = 0;
 	}
 
 	@Override
 	public void update(Match match, float dt) {
 		elapsedTime += dt;
-		//if (elapsedTime >= freezeTime)
-			//match.getStateMachine().changeState(new Play());
+		if (elapsedTime >= freezeTime)
+			match.getStateMachine().changeState(new Play());
 	}
 
 }
