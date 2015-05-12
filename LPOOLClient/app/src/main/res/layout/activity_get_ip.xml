@@ -49,10 +49,10 @@
         android:layout_height="wrap_content"
         android:text="Read IP From QR Code"
         android:id="@+id/btnReadQR"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:clickable="true"
-        android:onClick="readIPFromQR" />
+        android:onClick="readIPFromQR"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
