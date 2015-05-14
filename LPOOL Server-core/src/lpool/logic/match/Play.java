@@ -4,6 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 
+import com.badlogic.gdx.physics.box2d.CircleShape;
+
 import lpool.logic.Game.ProtocolCmd;
 import lpool.logic.state.State;
 import lpool.network.Message;
@@ -27,6 +29,7 @@ public class Play implements State<Match>, Observer{
 
 	@Override
 	public void update(Match match, float dt) {
+		match.getShotPred().predict(match.getCueAngle());
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class Play implements State<Match>, Observer{
 		{
 			if (!sc.hasNextFloat())
 				break;
-			float force = sc.nextFloat();
+			float force = sc.nextFloat() * Match.physicsScaleFactor;
 			match.makeShot(force);
 			match.getStateMachine().changeState(new BallsMoving());
 			match.getNetwork().deleteMsgObserver(this);

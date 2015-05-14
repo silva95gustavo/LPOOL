@@ -1,5 +1,7 @@
 package lpool.gdx;
 
+import lpool.logic.match.Match;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -10,7 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 
 public class BallModel {
-	private static final float scale = 0.025f;
+	private static final float scale = 0.025f * Match.physicsScaleFactor;
 	private static final Vector3 scaleVec = new Vector3(scale, scale, scale);
 	private int number;
 	private Model model;

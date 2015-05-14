@@ -2,6 +2,8 @@ package lpool.logic;
 
 import java.util.Queue;
 
+import lpool.logic.match.Match;
+
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -14,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Ball {
-	static public final float radius = 0.028575f;
+	static public final float radius = 0.028575f * Match.physicsScaleFactor;
 	static public final float mass = 0.163f;
 	public static final short cat = 0x0001;
 
@@ -39,26 +41,8 @@ public class Ball {
 		bd.position.set(position);
 		bd.type = BodyType.DynamicBody;
 
-		CircleShape cs = new CircleShape();
-		cs.setRadius(radius);
-
-		// Ball
-		ballBallFixtureDef = new FixtureDef();
-		ballBallFixtureDef.shape = cs;
-		ballBallFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		ballBallFixtureDef.friction = 0.05f;
-		ballBallFixtureDef.restitution = 0.95f;
-		ballBallFixtureDef.filter.categoryBits = cat;
-		ballBallFixtureDef.filter.maskBits = cat;
-
-		// Ball <-> Border
-		ballBorderFixtureDef = new FixtureDef();
-		ballBorderFixtureDef.shape = cs;
-		ballBorderFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		ballBorderFixtureDef.friction = 1.0f;
-		ballBorderFixtureDef.restitution = 0.6f;
-		ballBorderFixtureDef.filter.categoryBits = cat;
-		ballBorderFixtureDef.filter.maskBits = Table.cat;
+		ballBallFixtureDef = createBallBallFixtureDef();
+		ballBorderFixtureDef = createBallBorderFixtureDef();
 		
 		CircleShape cs2 = new CircleShape(); // Sensor
 		cs2.setRadius(2 * radius);
@@ -106,7 +90,7 @@ public class Ball {
 		if (!onTable)
 			return;
 		
-		if (body.getLinearVelocity().len2() < 0.00015)
+		if (body.getLinearVelocity().len() < 0.0125 * Match.physicsScaleFactor)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 		}
@@ -130,6 +114,9 @@ public class Ball {
 	}
 
 	public void setOnTable(boolean onTable) {
+		if (number == 0)
+			return;
+		
 		if (this.onTable == onTable)
 			return;
 		
@@ -143,5 +130,38 @@ public class Ball {
 		{
 			ballsToBeDeleted.add(body);
 		}
+	}
+	
+	public static FixtureDef createBallBallFixtureDef()
+	{	
+		CircleShape cs = new CircleShape();
+		cs.setRadius(radius);
+		
+		FixtureDef ballBallFixtureDef = new FixtureDef();
+		ballBallFixtureDef.shape = cs;
+		ballBallFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
+		ballBallFixtureDef.friction = 0.05f;
+		ballBallFixtureDef.restitution = 0.95f;
+		ballBallFixtureDef.filter.categoryBits = cat;
+		ballBallFixtureDef.filter.maskBits = cat;
+		
+		return ballBallFixtureDef;
+	}
+	
+	public static FixtureDef createBallBorderFixtureDef()
+	{
+		CircleShape cs = new CircleShape();
+		cs.setRadius(radius);
+		
+		// Ball <-> Border
+		FixtureDef ballBorderFixtureDef = new FixtureDef();
+		ballBorderFixtureDef.shape = cs;
+		ballBorderFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
+		ballBorderFixtureDef.friction = 1.0f;
+		ballBorderFixtureDef.restitution = 0.6f;
+		ballBorderFixtureDef.filter.categoryBits = cat;
+		ballBorderFixtureDef.filter.maskBits = Table.cat;
+		
+		return ballBorderFixtureDef;
 	}
 }

@@ -117,17 +117,21 @@ public class MatchScene implements Screen, Observer{
 			float cueAngle = m.getCueAngle();
 
 			Vector2[] prediction = m.predictShot();
+						
 			if (prediction[4] != null)
-				shapeRenderer.rectLine(m.getCueBall().getPosition(), prediction[4], 0.005f); // Aiming line
-			if (prediction[0] != null && prediction[2] != null)
+				shapeRenderer.rectLine(m.getCueBall().getPosition(), prediction[4], 0.005f * Match.physicsScaleFactor); // Aiming line
+			if (prediction[0] != null)
 			{
-				shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(0.075f)), 0.0025f); // Cue ball
 				batch.begin();
 				batch.draw(cueBallPrediction, prediction[0].x - Ball.radius, prediction[0].y - Ball.radius, Ball.radius * 2, Ball.radius * 2);
 				batch.end();
+				if (prediction[2] != null)
+				{
+					shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(1000.075f)), 0.0025f * Match.physicsScaleFactor); // Cue ball
+				}
 			}
 			if (prediction[1] != null && prediction[3] != null)
-				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f)), 0.0025f); // 2nd ball
+				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(1000.15f)), 0.0025f * Match.physicsScaleFactor); // 2nd ball
 
 			shapeRenderer.end();
 		}
