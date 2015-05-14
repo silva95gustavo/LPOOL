@@ -7,11 +7,11 @@ import java.util.Queue;
 import java.util.Random;
 
 import lpool.gdx.assets.Sounds;
-import lpool.logic.Ball;
 import lpool.logic.BodyInfo;
 import lpool.logic.ObservableCollision;
 import lpool.logic.Table;
 import lpool.logic.BodyInfo.Type;
+import lpool.logic.ball.Ball;
 import lpool.logic.state.Context;
 import lpool.network.Network;
 

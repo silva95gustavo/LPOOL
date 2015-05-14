@@ -32,9 +32,9 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
 
 import lpool.gdx.assets.Sounds;
-import lpool.logic.Ball;
 import lpool.logic.BodyInfo;
 import lpool.logic.Table;
+import lpool.logic.ball.Ball;
 import lpool.logic.match.Match;
 
 public class MatchScene implements Screen, Observer{
@@ -101,7 +101,7 @@ public class MatchScene implements Screen, Observer{
 		Ball[] balls = m.getBalls();
 		for (int i = 0; i < balls.length; i++)
 		{
-			if (balls[i].isOnTable())
+			if (balls[i].isVisible())
 				modelInstances.add(ballModels[balls[i].getNumber()].instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
 		}
 		modelBatch.render(modelInstances, environment);

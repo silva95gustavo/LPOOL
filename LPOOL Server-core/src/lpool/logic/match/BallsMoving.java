@@ -2,7 +2,7 @@ package lpool.logic.match;
 
 import com.badlogic.gdx.math.Vector2;
 
-import lpool.logic.Ball;
+import lpool.logic.ball.Ball;
 import lpool.logic.state.State;
 
 public class BallsMoving implements State<Match> {

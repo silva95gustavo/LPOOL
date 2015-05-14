@@ -1,7 +1,10 @@
-package lpool.logic;
+package lpool.logic.ball;
 
 import java.util.Queue;
 
+import lpool.logic.BodyInfo;
+import lpool.logic.Table;
+import lpool.logic.BodyInfo.Type;
 import lpool.logic.match.Match;
 
 import com.badlogic.gdx.math.Quaternion;
@@ -22,7 +25,11 @@ public class Ball {
 
 	private int number;
 	private Quaternion rotation;
+	private Vector2 position;
 	private boolean onTable = true;
+	private boolean visible = true;
+	
+	private lpool.logic.state.Context<Ball> stateMachine;
 
 	private Body body;
 	private FixtureDef ballBallFixtureDef;
@@ -36,6 +43,9 @@ public class Ball {
 
 	public Ball(World world, Vector2 position, int number, Queue<Body> ballsToBeDeleted) {
 		rotation = new Quaternion();
+		this.position = position;
+		
+		stateMachine = new lpool.logic.state.Context<Ball>(this, new OnTable());
 		
 		BodyDef bd = new BodyDef();
 		bd.position.set(position);
@@ -69,24 +79,41 @@ public class Ball {
 	public int getNumber() {
 		return number;
 	}
+	
+	public void updatePosition()
+	{
+		this.position = body.getPosition().cpy();
+	}
+	
+	public void setPosition(Vector2 position)
+	{
+		this.position = position;
+	}
 
 	public Vector2 getPosition()
 	{
-		return body.getPosition().cpy();
+		return position.cpy();
 	}
 
 	public Quaternion getRotation()
 	{
 		return rotation.cpy();
 	}
+
+	public void setVelocity(Vector2 velocity)
+	{
+		body.setLinearVelocity(velocity);
+	}
 	
 	public Vector2 getVelocity()
 	{
-		return body.getLinearVelocity().cpy();
+		return body.getLinearVelocity();
 	}
 
 	public void tick(float deltaT)
 	{
+		stateMachine.update(deltaT);
+		
 		if (!onTable)
 			return;
 		
@@ -128,7 +155,7 @@ public class Ball {
 		}
 		else
 		{
-			ballsToBeDeleted.add(body);
+			stateMachine.changeState(new EnteringHole(0)); // TODO change 0 to a number obtained with a box2d contact listener
 		}
 	}
 	
@@ -163,5 +190,23 @@ public class Ball {
 		ballBorderFixtureDef.filter.maskBits = Table.cat;
 		
 		return ballBorderFixtureDef;
+	}
+	
+	public lpool.logic.state.Context<Ball> getStateMachine()
+	{
+		return stateMachine;
+	}
+	
+	public void setToBeDeleted()
+	{
+		ballsToBeDeleted.add(body);
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 }
