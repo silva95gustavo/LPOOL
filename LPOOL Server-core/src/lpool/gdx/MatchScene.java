@@ -127,11 +127,11 @@ public class MatchScene implements Screen, Observer{
 				batch.end();
 				if (prediction[2] != null)
 				{
-					shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(1000.075f)), 0.0025f * Match.physicsScaleFactor); // Cue ball
+					shapeRenderer.rectLine(prediction[0], prediction[0].cpy().add(prediction[2].cpy().scl(0.075f * Match.physicsScaleFactor)), 0.0025f * Match.physicsScaleFactor); // Cue ball
 				}
 			}
 			if (prediction[1] != null && prediction[3] != null)
-				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(1000.15f)), 0.0025f * Match.physicsScaleFactor); // 2nd ball
+				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f * Match.physicsScaleFactor)), 0.0025f * Match.physicsScaleFactor); // 2nd ball
 
 			shapeRenderer.end();
 		}

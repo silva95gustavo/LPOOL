@@ -29,7 +29,7 @@ public class Play implements State<Match>, Observer{
 
 	@Override
 	public void update(Match match, float dt) {
-		match.getShotPred().predict(match.getCueAngle());
+		match.predictShot();
 	}
 
 	@Override

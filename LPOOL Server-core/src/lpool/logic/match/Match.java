@@ -10,7 +10,6 @@ import lpool.gdx.assets.Sounds;
 import lpool.logic.Ball;
 import lpool.logic.BodyInfo;
 import lpool.logic.ObservableCollision;
-import lpool.logic.ShotPrediction;
 import lpool.logic.Table;
 import lpool.logic.BodyInfo.Type;
 import lpool.logic.state.Context;
@@ -28,7 +27,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Match implements Observer{
 	public static int ballsPerPlayer = 7;
-	public static float physicsScaleFactor = 100;
+	public static float physicsScaleFactor = 10;
 
 	private lpool.logic.state.Context<Match> stateMachine;
 	private Network network;
@@ -48,7 +47,6 @@ public class Match implements Observer{
 	private float cueAngle = (float)Math.PI;
 
 	private ObservableCollision observableCollision;
-	private ShotPrediction shotPred;
 
 	private boolean aiming;
 
@@ -105,8 +103,6 @@ public class Match implements Observer{
 		createBalls();
 
 		border = new Table(world);
-		
-		shotPred = new ShotPrediction(balls);
 	}
 
 	public void tick(float dt)
@@ -175,8 +171,6 @@ public class Match implements Observer{
 
 	public Vector2[] predictShot()
 	{
-		shotPred = new ShotPrediction(balls);
-		return shotPred.predict(cueAngle);
 		/*
 		 * result:
 		 * 0 - cue ball position
@@ -186,7 +180,7 @@ public class Match implements Observer{
 		 * 4 - aiming point
 		 * all results must be checked for not being null
 		 */
-		/*final boolean[] b = new boolean[1];
+		final boolean[] b = new boolean[1];
 		b[0] = false;
 		final Vector2[] result = new Vector2[5];
 		RayCastCallback callBack = new RayCastCallback() {
@@ -243,7 +237,7 @@ public class Match implements Observer{
 			result[2] = null;
 			result[3] = null;
 		}
-		return result;*/
+		return result;
 	}
 
 	public void addColisionObserver(Observer o)
@@ -305,10 +299,5 @@ public class Match implements Observer{
 	public World getWorld()
 	{
 		return world;
-	}
-	
-	public ShotPrediction getShotPred()
-	{
-		return shotPred;
 	}
 }
