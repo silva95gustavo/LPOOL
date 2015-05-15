@@ -1,4 +1,4 @@
-package lpool.gdx.assets;
+package lpool.gui.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.SoundLoader;

@@ -1,4 +1,4 @@
-package lpool.gdx;
+package lpool.gui;
 
 import lpool.logic.match.Match;
 

@@ -1,4 +1,4 @@
-package lpool.zxing;
+package lpool.gui.zxing;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

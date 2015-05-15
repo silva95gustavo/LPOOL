@@ -1,4 +1,4 @@
-package lpool.gdx.assets;
+package lpool.gui.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;

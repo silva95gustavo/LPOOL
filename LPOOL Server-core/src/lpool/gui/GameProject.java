@@ -1,8 +1,8 @@
-package lpool.gdx;
+package lpool.gui;
 
 import java.net.Inet4Address;
 
-import lpool.zxing.QRGenerator;
+import lpool.gui.zxing.QRGenerator;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

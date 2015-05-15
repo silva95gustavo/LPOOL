@@ -1,4 +1,4 @@
-package lpool.gdx;
+package lpool.gui;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -31,7 +31,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
 
-import lpool.gdx.assets.Sounds;
+import lpool.gui.assets.Sounds;
 import lpool.logic.BodyInfo;
 import lpool.logic.Table;
 import lpool.logic.ball.Ball;
@@ -47,7 +47,7 @@ public class MatchScene implements Screen, Observer{
 	private SpriteBatch batch;
 	private Texture table;
 	private Texture cueBallPrediction;
-	private lpool.gdx.BallModel[] ballModels;
+	private lpool.gui.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
 
 	private lpool.logic.Game game;
@@ -62,7 +62,7 @@ public class MatchScene implements Screen, Observer{
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
 		environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.9f, -0.4f, -0.6f, -1f));
 
-		ballModels = new lpool.gdx.BallModel[16];
+		ballModels = new lpool.gui.BallModel[16];
 		for (int i = 0; i < ballModels.length; i++)
 		{
 			ballModels[i] = new BallModel(i);

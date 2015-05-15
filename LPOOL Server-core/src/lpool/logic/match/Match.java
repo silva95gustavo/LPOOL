@@ -6,7 +6,7 @@ import java.util.Observer;
 import java.util.Queue;
 import java.util.Random;
 
-import lpool.gdx.assets.Sounds;
+import lpool.gui.assets.Sounds;
 import lpool.logic.BodyInfo;
 import lpool.logic.ObservableCollision;
 import lpool.logic.Table;
