@@ -15,9 +15,9 @@ public class BodyInfoTest {
 	public void testCreation() {
 		BodyInfo bd = new BodyInfo(BodyInfo.Type.BALL, 3);
 		
-		assertEquals(bd.getType(), BodyInfo.Type.BALL);
-		assertEquals(bd.getID(), 3);
-		assertEquals("" + bd, "BodyInfo [type=" + BodyInfo.Type.BALL + ", ID=3]");
+		assertEquals(BodyInfo.Type.BALL, bd.getType());
+		assertEquals(3, bd.getID());
+		assertEquals("BodyInfo [type=" + BodyInfo.Type.BALL + ", ID=3]", "" + bd);
 	}
 
 }
