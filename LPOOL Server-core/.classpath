@@ -7,5 +7,8 @@
 	<classpathentry kind="lib" path="libs/libgdx-utils-0.10.0.jar"/>
 	<classpathentry kind="lib" path="libs/libgdx-utils-box2d-0.10.0.jar"/>
 	<classpathentry kind="lib" path="libs/core-3.2.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="libs/gdx-box2d-natives-desktop.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-platform-natives-desktop.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
