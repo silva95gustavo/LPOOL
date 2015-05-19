@@ -88,7 +88,7 @@ public class LobbyScene implements Screen, Observer {
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(QRCode, - width / 2, -height / 2, width, height);
+		batch.draw(QRCode, -height / 2, -height / 2, height, height);
 		batch.end();
 	}
 
