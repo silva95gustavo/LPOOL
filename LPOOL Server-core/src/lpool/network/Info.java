@@ -23,7 +23,7 @@ public class Info {
 		}
 	}
 	
-	String getServerIP()
+	public static String getServerIP()
 	{
 		return serverIP;
 	}

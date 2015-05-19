@@ -25,6 +25,7 @@ public class Ball {
 
 	private int number;
 	private Quaternion rotation;
+	private float lastAngle;
 	private Vector2 position;
 	private boolean onTable = true;
 	private boolean visible = true;
@@ -68,9 +69,11 @@ public class Ball {
 		sensorFixture = body.createFixture(sensorFixtureDef);
 		sensorFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL_SENSOR, number));
 		body.setLinearDamping(0.5f);
-		body.setAngularDamping(100.0f);
+		body.setAngularDamping(0.7f);
 		body.setBullet(true);
 		body.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
+		
+		lastAngle = body.getAngle();
 
 		this.number = number;
 		this.ballsToBeDeleted = ballsToBeDeleted;
@@ -123,11 +126,17 @@ public class Ball {
 		}
 		else
 		{
+			float rotationScalar = 45; // TODO Find out why we need to multiply by a value around 45
+			
 			Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
 			Vector3 rotatingAxis = velocity.cpy().nor().crs(Vector3.Z);
-			float rotationAmount = 45 * velocity.len() * deltaT / radius; // TODO Find out why we need to multiply by a value around 45
+			float rotationAmount = rotationScalar * velocity.len() * deltaT / radius;
 			Quaternion dRotation = new Quaternion(rotatingAxis, rotationAmount);
 			rotation.mulLeft(dRotation);
+			
+			Quaternion dAngle = new Quaternion(Vector3.Z, (body.getAngle() - lastAngle) * rotationScalar);
+			lastAngle = body.getAngle();
+			rotation.mulLeft(dAngle);
 		}
 	}
 
@@ -208,5 +217,10 @@ public class Ball {
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+	
+	public boolean isStopped()
+	{
+		return body.getAngularVelocity() == 0 || body.getLinearVelocity().equals(new Vector2(0, 0));
 	}
 }

@@ -1,6 +1,7 @@
 package lpool.gui.assets;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SoundLoader;
 import com.badlogic.gdx.assets.loaders.SoundLoader.SoundParameter;
 import com.badlogic.gdx.audio.Sound;
@@ -9,14 +10,9 @@ import com.badlogic.gdx.files.FileHandle;
 public class Sounds { // Singleton
 	private static Sounds instance = null;
 	
-	private Sound ballBallCollision;
-	
 	private Sounds() {
-		Manager.getInstance();
-		SoundLoader soundLoader = new SoundLoader(Manager.getIfhr());
-		
-		//ballBallCollision = soundLoader.loadSync(Manager.getAssetManager(), "tailtoddle_lo.mp3", Gdx.files.internal("tailtoddle_lo.mp3"), new SoundParameter());
-		ballBallCollision = Gdx.audio.newSound(Gdx.files.internal("ballBallCollision.wav"));
+		AssetManager am = Manager.getInstance().getAssetManager();
+		am.load("ballBallCollision.wav", Sound.class);
 	}
 	
 	public static Sounds getInstance()
@@ -29,6 +25,6 @@ public class Sounds { // Singleton
 	
 	public Sound getBallBallCollision()
 	{
-		return ballBallCollision;
+		return Manager.getInstance().getAssetManager().get("ballBallCollision.wav");
 	}
 }

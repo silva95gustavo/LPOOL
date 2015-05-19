@@ -26,7 +26,7 @@ public class BallsMoving implements State<Match> {
 		for (int i = 0; i < balls.length; i++)
 		{
 			if (balls[i].isOnTable())
-				if (!balls[i].getVelocity().equals(new Vector2(0, 0)))
+				if (!balls[i].isStopped())
 					return false;
 		}
 		return true;

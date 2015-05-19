@@ -41,6 +41,6 @@ public class GameProject extends Game {
 		
 		batch = new SpriteBatch();
 		
-		setScreen(new LobbyScene(width, height, ip_qr_path, this));
+		setScreen(new LoadingScene(this));
 	}
 }

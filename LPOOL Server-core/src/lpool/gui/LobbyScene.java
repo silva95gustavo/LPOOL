@@ -3,6 +3,8 @@ package lpool.gui;
 import java.util.Observable;
 import java.util.Observer;
 
+import lpool.gui.assets.Manager;
+import lpool.gui.assets.Textures;
 import lpool.logic.Game;
 
 import com.badlogic.gdx.Gdx;
@@ -33,9 +35,9 @@ public class LobbyScene implements Screen, Observer {
 	private Sprite QRCode;
 	private Stage stage;
 	
-	public LobbyScene(int width, int height, String qr_dir, com.badlogic.gdx.Game GdxGame) {
-		this.width = width;
-		this.height = height;
+	public LobbyScene(com.badlogic.gdx.Game GdxGame) {
+		this.width = Gdx.graphics.getWidth();
+		this.height = Gdx.graphics.getHeight();
 		
 		this.GdxGame = GdxGame;
 		
@@ -43,10 +45,7 @@ public class LobbyScene implements Screen, Observer {
 		camera.position.set(new Vector2(0, 0), 0);
 		camera.update();
 		
-		QRCode = null;
-		if(qr_dir != "") {
-			QRCode = new Sprite(new Texture(qr_dir));
-		}
+		QRCode = new Sprite(Textures.getInstance().getQRCode());
 		
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);

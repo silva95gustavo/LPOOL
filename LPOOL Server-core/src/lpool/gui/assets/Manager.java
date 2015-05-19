@@ -21,13 +21,21 @@ public class Manager { // Singleton
 		return instance = new Manager();
 	}
 	
-	public static AssetManager getAssetManager()
+	public AssetManager getAssetManager()
 	{
 		return assetManager;
 	}
 	
-	public static InternalFileHandleResolver getIfhr()
+	public InternalFileHandleResolver getIfhr()
 	{
 		return ifhr;
+	}
+	
+	public void dispose()
+	{
+		assetManager.dispose();
+		assetManager = null;
+		ifhr = null;
+		instance = null;
 	}
 }
