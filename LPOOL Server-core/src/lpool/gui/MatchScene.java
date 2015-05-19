@@ -3,6 +3,9 @@ package lpool.gui;
 import java.util.Observable;
 import java.util.Observer;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
@@ -19,9 +22,12 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
+import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -30,7 +36,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
+import com.sun.media.sound.ModelSource;
 
+import lpool.gui.assets.Manager;
+import lpool.gui.assets.Models;
 import lpool.gui.assets.Sounds;
 import lpool.logic.BodyInfo;
 import lpool.logic.Table;
@@ -40,7 +49,7 @@ import lpool.logic.match.Match;
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
 
-	private ModelBatch modelBatch = new ModelBatch();
+	private ModelBatch modelBatch = new ModelBatch(new DepthShaderProvider());
 	private Environment environment;
 
 	private ShapeRenderer shapeRenderer;
@@ -51,7 +60,7 @@ public class MatchScene implements Screen, Observer{
 	private Array<ModelInstance> modelInstances;
 
 	private lpool.logic.Game game;
-
+	
 	public MatchScene(lpool.logic.Game game, int width, int height)
 	{
 		camera = new OrthographicCamera(Table.width, Table.width * height / width);
@@ -86,16 +95,16 @@ public class MatchScene implements Screen, Observer{
 	{
 		game.tick(delta);
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
+		
 		lpool.logic.match.Match m = game.getMatch();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(table, 0, 0, Table.width, Table.height);
 		batch.end();
-
+		
 		modelBatch.begin(camera);
 		modelInstances.clear();
 		Ball[] balls = m.getBalls();
@@ -104,9 +113,8 @@ public class MatchScene implements Screen, Observer{
 			if (balls[i].isVisible())
 				modelInstances.add(ballModels[balls[i].getNumber()].instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
 		}
-		modelBatch.render(modelInstances, environment);
+		modelBatch.render(modelInstances);
 		modelBatch.end();
-
 
 		if (m.isAiming())
 		{
@@ -142,7 +150,7 @@ public class MatchScene implements Screen, Observer{
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

@@ -14,7 +14,10 @@ import lpool.logic.BodyInfo.Type;
 import lpool.logic.ball.Ball;
 import lpool.logic.state.Context;
 import lpool.network.Network;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -103,6 +106,7 @@ public class Match implements Observer{
 		createBalls();
 
 		border = new Table(world);
+		
 	}
 
 	public void tick(float dt)

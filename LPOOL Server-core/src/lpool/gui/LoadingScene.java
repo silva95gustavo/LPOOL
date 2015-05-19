@@ -1,7 +1,7 @@
 package lpool.gui;
 
 import lpool.gui.assets.Manager;
-import lpool.gui.assets.Model;
+import lpool.gui.assets.Models;
 import lpool.gui.assets.Sounds;
 import lpool.gui.assets.Textures;
 
@@ -18,7 +18,7 @@ public class LoadingScene implements Screen {
 		
 		Textures.getInstance();
 		Sounds.getInstance();
-		Model.getInstance();
+		Models.getInstance();
 	}
 
 	@Override
