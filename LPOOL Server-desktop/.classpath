@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="libs/lwjgl-platform-2.9.2-natives-windows.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-box2d-natives-desktop.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-platform-natives-desktop.jar"/>
+	<classpathentry kind="lib" path="libs/core-3.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
