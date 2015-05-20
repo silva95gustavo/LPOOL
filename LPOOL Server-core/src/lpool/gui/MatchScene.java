@@ -41,6 +41,7 @@ import com.sun.media.sound.ModelSource;
 import lpool.gui.assets.Manager;
 import lpool.gui.assets.Models;
 import lpool.gui.assets.Sounds;
+import lpool.gui.assets.Textures;
 import lpool.logic.BodyInfo;
 import lpool.logic.Table;
 import lpool.logic.ball.Ball;
@@ -56,6 +57,7 @@ public class MatchScene implements Screen, Observer{
 	private SpriteBatch batch;
 	private Texture table;
 	private Texture cueBallPrediction;
+	private Sprite cue;
 	private lpool.gui.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
 
@@ -82,9 +84,11 @@ public class MatchScene implements Screen, Observer{
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-		table = new Texture("table.png");
+		table = Textures.getInstance().getTable();
 		cueBallPrediction = new Texture("cue_ball_prediction.png");
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		cue = new Sprite(Textures.getInstance().getCue());
+		cue.setSize(1.5f, 0.04f);
 		this.game = game;
 		game.startMatch();
 		game.getMatch().addColisionObserver(this);
@@ -143,6 +147,17 @@ public class MatchScene implements Screen, Observer{
 		}
 		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 	    debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
+		
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		Vector2 cuePos = m.getCueBall().getPosition();
+		Vector2 cueSize = new Vector2(1.5f * Match.physicsScaleFactor, 0.04f * Match.physicsScaleFactor);
+		cue.setOrigin(cue.getWidth(), cue.getHeight() / 2);
+		cue.setRotation((float)Math.toDegrees(m.getCueAngle()));
+		Vector2 cueStart = cuePos.cpy().sub(cueSize);
+		cue.setBounds(cueStart.x, cueStart.y, cueSize.x, cueSize.y);
+		cue.draw(batch);
+		batch.end();
 	}
 
 	@Override

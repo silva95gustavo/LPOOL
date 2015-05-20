@@ -178,7 +178,7 @@ public class Ball {
 		FixtureDef ballBallFixtureDef = new FixtureDef();
 		ballBallFixtureDef.shape = cs;
 		ballBallFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		ballBallFixtureDef.friction = 0.05f;
+		ballBallFixtureDef.friction = 0.07f;
 		ballBallFixtureDef.restitution = 0.95f;
 		ballBallFixtureDef.filter.categoryBits = cat;
 		ballBallFixtureDef.filter.maskBits = cat;

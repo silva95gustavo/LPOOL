@@ -18,6 +18,7 @@ public class Textures { // Singleton
 		AssetManager am = Manager.getInstance().getAssetManager();
 		am.load("table.png", Texture.class);
 		am.load(GameProject.QR_IP_DIR, Texture.class);
+		am.load("cue.png", Texture.class);
 	}
 	
 	public static Textures getInstance()
@@ -36,5 +37,10 @@ public class Textures { // Singleton
 	public Texture getQRCode()
 	{
 		return Manager.getInstance().getAssetManager().get(GameProject.QR_IP_DIR);
+	}
+	
+	public Texture getCue()
+	{
+		return Manager.getInstance().getAssetManager().get("cue.png");
 	}
 }
