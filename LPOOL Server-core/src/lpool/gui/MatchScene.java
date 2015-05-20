@@ -144,15 +144,22 @@ public class MatchScene implements Screen, Observer{
 				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f * Match.physicsScaleFactor)), 0.0025f * Match.physicsScaleFactor); // 2nd ball
 
 			shapeRenderer.end();
+			
+			drawCue(m.getCueBall().getPosition(), 0, m.getCueAngle());
 		}
 		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 	    debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
-		
+	}
+	
+	private void drawCue(Vector2 cueBallPos, float force, float angle)
+	{
+		Match m = game.getMatch();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		Vector2 cuePos = m.getCueBall().getPosition();
+		Vector2 cuePos = cueBallPos.cpy().add(new Vector2(Ball.radius + force, 0).rotateRad(angle + (float)Math.PI)).add(new Vector2(0, 0.02f * Match.physicsScaleFactor));
 		Vector2 cueSize = new Vector2(1.5f * Match.physicsScaleFactor, 0.04f * Match.physicsScaleFactor);
-		cue.setOrigin(cue.getWidth(), cue.getHeight() / 2);
+		System.out.println(cue.getWidth());
+		cue.setOrigin(1.5f * Match.physicsScaleFactor, Match.physicsScaleFactor * 0.04f / 2);
 		cue.setRotation((float)Math.toDegrees(m.getCueAngle()));
 		Vector2 cueStart = cuePos.cpy().sub(cueSize);
 		cue.setBounds(cueStart.x, cueStart.y, cueSize.x, cueSize.y);
