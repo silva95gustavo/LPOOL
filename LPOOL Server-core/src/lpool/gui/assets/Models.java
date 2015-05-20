@@ -20,7 +20,6 @@ public class Models { // Singleton
 		
 		for (int i = 0; i < 16; i++)
 			am.load("balls/" + i + ".g3dj", Model.class);
-		am.load("table.g3db", Model.class);
 	}
 	
 	public static Models getInstance()

@@ -69,7 +69,7 @@ public class Ball {
 		sensorFixture = body.createFixture(sensorFixtureDef);
 		sensorFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL_SENSOR, number));
 		body.setLinearDamping(0.5f);
-		body.setAngularDamping(0.7f);
+		body.setAngularDamping(1.5f);
 		body.setBullet(true);
 		body.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
 		
@@ -120,9 +120,11 @@ public class Ball {
 		if (!onTable)
 			return;
 		
-		if (body.getLinearVelocity().len() < 0.0125 * Match.physicsScaleFactor)
+		if (body.getLinearVelocity().len() < 0.0125 * Match.physicsScaleFactor && body.getAngularVelocity() < 0.0125 * Match.physicsScaleFactor)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
+			body.setAngularVelocity(0);
+			System.out.println("entrou");
 		}
 		else
 		{
@@ -142,7 +144,7 @@ public class Ball {
 
 	public void makeShot(float angle, float force)
 	{
-		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), new Vector2(0, 0), true);
+		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), body.getPosition(), true);
 	}
 
 	public boolean isOnTable() {
@@ -221,6 +223,12 @@ public class Ball {
 	
 	public boolean isStopped()
 	{
-		return body.getAngularVelocity() == 0 || body.getLinearVelocity().equals(new Vector2(0, 0));
+		if (body.getAngularVelocity() != 0)
+			return false;
+		System.out.println("2");
+		if (!body.getLinearVelocity().equals(new Vector2(0, 0)))
+			return false;
+		System.out.println("3");
+		return true;
 	}
 }

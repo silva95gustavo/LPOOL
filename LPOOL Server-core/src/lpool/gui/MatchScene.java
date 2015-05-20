@@ -49,7 +49,7 @@ import lpool.logic.match.Match;
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
 
-	private ModelBatch modelBatch = new ModelBatch(new DepthShaderProvider());
+	private ModelBatch modelBatch = new ModelBatch();
 	private Environment environment;
 
 	private ShapeRenderer shapeRenderer;
@@ -95,7 +95,7 @@ public class MatchScene implements Screen, Observer{
 	{
 		game.tick(delta);
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		
 		lpool.logic.match.Match m = game.getMatch();
@@ -113,7 +113,7 @@ public class MatchScene implements Screen, Observer{
 			if (balls[i].isVisible())
 				modelInstances.add(ballModels[balls[i].getNumber()].instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
 		}
-		modelBatch.render(modelInstances);
+		modelBatch.render(modelInstances, environment);
 		modelBatch.end();
 
 		if (m.isAiming())
@@ -121,8 +121,6 @@ public class MatchScene implements Screen, Observer{
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
 			shapeRenderer.setColor(Color.WHITE);
-
-			float cueAngle = m.getCueAngle();
 
 			Vector2[] prediction = m.predictShot();
 						
