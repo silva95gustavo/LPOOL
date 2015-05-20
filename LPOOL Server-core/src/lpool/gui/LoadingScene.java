@@ -7,6 +7,7 @@ import lpool.gui.assets.Textures;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -83,7 +84,12 @@ public class LoadingScene implements Screen {
 		int x = - barWidth / 2;
 		int y = - barHeight / 2;
 		
-		percent = Interpolation.linear.apply(percent, manager.getAssetManager().getProgress(), 0.1f);
+		percent = Interpolation.linear.apply(percent, manager.getAssetManager().getProgress(), 0.2f);
+		
+		if (percent < 0.5f)
+			font.setColor(Color.BLACK);
+		else
+			font.setColor(Color.WHITE);
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();

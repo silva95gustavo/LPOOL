@@ -124,7 +124,6 @@ public class Ball {
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
 			body.setAngularVelocity(0);
-			System.out.println("entrou");
 		}
 		else
 		{
@@ -225,10 +224,10 @@ public class Ball {
 	{
 		if (body.getAngularVelocity() != 0)
 			return false;
-		System.out.println("2");
+		
 		if (!body.getLinearVelocity().equals(new Vector2(0, 0)))
 			return false;
-		System.out.println("3");
+		
 		return true;
 	}
 }

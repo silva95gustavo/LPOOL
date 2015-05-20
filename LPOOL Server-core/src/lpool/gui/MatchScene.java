@@ -9,6 +9,7 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -153,14 +154,12 @@ public class MatchScene implements Screen, Observer{
 	
 	private void drawCue(Vector2 cueBallPos, float force, float angle)
 	{
-		Match m = game.getMatch();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		Vector2 cuePos = cueBallPos.cpy().add(new Vector2(Ball.radius + force, 0).rotateRad(angle + (float)Math.PI)).add(new Vector2(0, 0.02f * Match.physicsScaleFactor));
+		Vector2 cuePos = cueBallPos.cpy().add(new Vector2(2 * Ball.radius + force, 0).rotateRad(angle + (float)Math.PI)).add(new Vector2(0, 0.02f * Match.physicsScaleFactor));
 		Vector2 cueSize = new Vector2(1.5f * Match.physicsScaleFactor, 0.04f * Match.physicsScaleFactor);
-		System.out.println(cue.getWidth());
 		cue.setOrigin(1.5f * Match.physicsScaleFactor, Match.physicsScaleFactor * 0.04f / 2);
-		cue.setRotation((float)Math.toDegrees(m.getCueAngle()));
+		cue.setRotation((float)Math.toDegrees(angle));
 		Vector2 cueStart = cuePos.cpy().sub(cueSize);
 		cue.setBounds(cueStart.x, cueStart.y, cueSize.x, cueSize.y);
 		cue.draw(batch);
@@ -218,7 +217,7 @@ public class MatchScene implements Screen, Observer{
 		{
 		case BALL:
 			if (userDataB.getType() == BodyInfo.Type.BALL)
-				ballBallCollisionHandler(userDataA.getID(), userDataB.getID());
+				ballBallCollisionHandler(userDataA.getID(), userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
 			break;
 		case TABLE:
 			break;
@@ -231,10 +230,10 @@ public class MatchScene implements Screen, Observer{
 		}
 	}
 
-	private void ballBallCollisionHandler(int ballNumber1, int ballNumber2)
+	private void ballBallCollisionHandler(int ballNumber1, int ballNumber2, Vector2 contactPoint)
 	{
 		Ball[] balls = game.getMatch().getBalls();
 		Vector2 impactVelocity = balls[ballNumber1].getVelocity().sub(balls[ballNumber2].getVelocity());
-		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len2());
+		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len2(), 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
 	}
 }
