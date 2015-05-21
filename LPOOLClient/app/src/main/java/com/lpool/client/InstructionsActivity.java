@@ -1,5 +1,6 @@
 package com.lpool.client;
 
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,10 +15,13 @@ public class InstructionsActivity extends ActionBarActivity {
 
     Animation tilt_anim;
     ImageView tilt_anim_img;
+    Animation press_anim;
+    ImageView press_anim_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_instructions);
 
         tilt_anim = AnimationUtils.loadAnimation(this, R.anim.instructions_anim_tilt);
@@ -37,11 +41,27 @@ public class InstructionsActivity extends ActionBarActivity {
             public void onAnimationStart(Animation arg0) {}
 
         });
+
+        /*press_anim = AnimationUtils.loadAnimation(this, R.anim.instructions_press);
+        press_anim.reset();
+
+        press_anim_img = (ImageView) findViewById(R.id.imageViewPress);
+        press_anim_img.startAnimation(press_anim);
+
+        press_anim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation arg0) { press_anim_img.startAnimation(press_anim);}
+
+            public void onAnimationRepeat(Animation arg0) {}
+
+            public void onAnimationStart(Animation arg0) {}
+        });*/
+
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     @Override
@@ -64,5 +84,15 @@ public class InstructionsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onPause() {
+        super.onPause();
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    protected void onResume() {
+        super.onResume();
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 }

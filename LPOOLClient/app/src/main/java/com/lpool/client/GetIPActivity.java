@@ -28,10 +28,10 @@ public class GetIPActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_ip);
-        //super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        // TODO: REMOVE LATER
-        ip_to_connect = "192.168.1.68";
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        ip_to_connect = "";
         ipText = (EditText) findViewById(R.id.ipField);
         updateIPLabel();
 
@@ -151,7 +151,7 @@ public class GetIPActivity extends ActionBarActivity {
     {
         super.onConfigurationChanged(newConfig);
 
-        int orientation = newConfig.orientation;
+        /*int orientation = newConfig.orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT)
         {
             setContentView(R.layout.activity_get_ip);
@@ -160,6 +160,6 @@ public class GetIPActivity extends ActionBarActivity {
             setContentView(R.layout.activity_get_ip_landscape);
         }
 
-        updateIPLabel();
+        updateIPLabel();*/
     }
 }
