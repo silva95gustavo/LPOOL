@@ -133,7 +133,7 @@ public class Network {
 			if (comms[i] == null)
 			{
 				numClients++;
-				comms[i] = new Communication(client);
+				comms[i] = new Communication(this, client);
 				clientConnEvents.add(i);
 				return true; // Success
 			}
@@ -194,6 +194,7 @@ public class Network {
 					ConcurrentLinkedQueue<String> q = comms[clientID].getClientCommEvents();
 					if (q.isEmpty())
 						continue;
+					comms[clientID].resetHeartbeat();
 					clientID = i;
 					return q.poll();
 				}
@@ -240,5 +241,13 @@ public class Network {
 	public void deleteMsgObserver(Observer o)
 	{
 		obsMsg.deleteObserver(o);
+	}
+	
+	public Communication getCommunication(int clientID)
+	{
+		if (!isClientConnected(clientID))
+			return null;
+		
+		return comms[clientID];
 	}
 }

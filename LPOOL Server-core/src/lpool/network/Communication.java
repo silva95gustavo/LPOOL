@@ -1,18 +1,35 @@
 package lpool.network;
 
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Communication {
 	private Socket s;
-	private Receiver r;
+	private Receiver rec;
+	private Sender sen;
 	private ConcurrentLinkedQueue<String> clientCommEvents;
+	private LinkedBlockingQueue<String> toBeSent;
 	
-	public Communication(Socket s) {
+	private AliveKeeper ak;
+	
+	private boolean alive;
+	
+	public Communication(Network network, Socket s) {
+		System.out.println("Creating communication...");
+		this.alive = true;
 		this.s = s;
 		this.clientCommEvents = new ConcurrentLinkedQueue<String>();
-		r = new Receiver(s, clientCommEvents);
-		r.start();
+		this.toBeSent = new LinkedBlockingQueue<String>();
+		
+		rec = new Receiver(s, clientCommEvents);
+		rec.start();
+		
+		sen = new Sender(s, toBeSent);
+		sen.start();
+		
+		ak = new AliveKeeper(network, this);
 	}
 	
 	public Socket getSocket()
@@ -22,16 +39,44 @@ public class Communication {
 	
 	public void close()
 	{
-		r.stopMe();
+		System.out.println("Closing communication");
+		rec.stopMe();
+		sen.stopMe();
+		alive = false;
 	}
 	
 	public boolean isConnClosed()
 	{
-		return r.finished;
+		if (rec.finished)
+			alive = false;
+		
+		if (sen.finished)
+			alive = false;
+		
+		if (alive)
+			return false;
+		
+		close();
+		return true;
 	}
 	
 	public ConcurrentLinkedQueue<String> getClientCommEvents()
 	{
 		return clientCommEvents;
+	}
+	
+	public void send(String msg)
+	{
+		toBeSent.add(msg);
+	}
+	
+	public void resetHeartbeat()
+	{
+		ak.reset();
+	}
+	
+	public void setAlive(boolean alive)
+	{
+		this.alive = alive;
 	}
 }

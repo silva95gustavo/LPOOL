@@ -17,7 +17,11 @@ public class Game implements Observer {
 
 	public enum ProtocolCmd {
 		ANGLE, // angle
-		FIRE // force
+		FIRE, // force
+		PING,
+		PONG,
+		JOIN,
+		QUIT
 	};
 
 	public Game() {
