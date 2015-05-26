@@ -1,6 +1,7 @@
 package lpool.gui.assets;
 
 import lpool.gui.GameProject;
+import lpool.logic.match.Match;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -19,6 +20,11 @@ public class Textures { // Singleton
 		am.load("table.png", Texture.class);
 		am.load(GameProject.QR_IP_DIR, Texture.class);
 		am.load("cue.png", Texture.class);
+		
+		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
+		{
+			am.load("balls/" + i + ".jpg", Texture.class);
+		}
 	}
 	
 	public static Textures getInstance()

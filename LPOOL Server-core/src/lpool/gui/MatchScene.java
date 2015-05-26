@@ -40,7 +40,7 @@ import com.badlogic.gdx.utils.Array;
 import com.sun.media.sound.ModelSource;
 
 import lpool.gui.assets.Manager;
-import lpool.gui.assets.Models;
+import lpool.gui.assets.BallModels;
 import lpool.gui.assets.Sounds;
 import lpool.gui.assets.Textures;
 import lpool.logic.BodyInfo;
@@ -50,7 +50,6 @@ import lpool.logic.match.Match;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
-	private PerspectiveCamera camera2;
 
 	private ModelBatch modelBatch = new ModelBatch();
 	private Environment environment;
@@ -60,7 +59,6 @@ public class MatchScene implements Screen, Observer{
 	private Texture table;
 	private Texture cueBallPrediction;
 	private Sprite cue;
-	private lpool.gui.BallModel[] ballModels;
 	private Array<ModelInstance> modelInstances;
 
 	private lpool.logic.Game game;
@@ -69,34 +67,17 @@ public class MatchScene implements Screen, Observer{
 	{
 		camera = new OrthographicCamera(Table.width, Table.width * height / width);
 		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
-		camera.far = 99999;
-		camera.near = 0.00001f;
+		camera.near = 0.1f; 
+		camera.far = 300.0f;
 		camera.update();
-
-
-		// Create camera sized to screens width/height with Field of View of 75 degrees
-		camera2 = new PerspectiveCamera(
-				75,
-				Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight());
-
+		
 		// Move the camera 3 units back along the z-axis and look at the origin
 		camera.position.set(Table.width / 2, Table.height / 2, 3f);
 		camera.lookAt(Table.width / 2, Table.height / 2, 0);
 
-		// Near and Far (plane) repesent the minimum and maximum ranges of the camera in, um, units
-		camera.near = 0.1f; 
-		camera.far = 300.0f;
-
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
 		environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.9f, -0.4f, -0.6f, -1f));
-
-		ballModels = new lpool.gui.BallModel[16];
-		for (int i = 0; i < ballModels.length; i++)
-		{
-			ballModels[i] = new BallModel(i);
-		}
 
 		modelInstances = new Array<ModelInstance>();
 
@@ -134,7 +115,7 @@ public class MatchScene implements Screen, Observer{
 		for (int i = 0; i < balls.length; i++)
 		{
 			if (balls[i].isVisible())
-				modelInstances.add(ballModels[balls[i].getNumber()].instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
+				modelInstances.add(BallModels.getInstance().getBall(balls[i].getNumber()).instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
 		}
 		modelBatch.render(modelInstances, environment);
 		modelBatch.end();
@@ -206,10 +187,6 @@ public class MatchScene implements Screen, Observer{
 	public void resize(int width, int height) {
 		camera.viewportWidth = Table.width;
 		camera.viewportHeight = Table.width * height / width;
-		camera.update();
-
-		camera2.viewportWidth = Table.width;
-		camera2.viewportHeight = Table.width * height / width;
 		camera.update();
 	}
 
