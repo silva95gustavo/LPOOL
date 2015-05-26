@@ -50,6 +50,7 @@ import lpool.logic.match.Match;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
+	private PerspectiveCamera camera2;
 
 	private ModelBatch modelBatch = new ModelBatch();
 	private Environment environment;
@@ -63,12 +64,29 @@ public class MatchScene implements Screen, Observer{
 	private Array<ModelInstance> modelInstances;
 
 	private lpool.logic.Game game;
-	
+
 	public MatchScene(lpool.logic.Game game, int width, int height)
 	{
 		camera = new OrthographicCamera(Table.width, Table.width * height / width);
 		camera.position.set(new Vector2(Table.width / 2, Table.height / 2), 0);
+		camera.far = 99999;
+		camera.near = 0.00001f;
 		camera.update();
+
+
+		// Create camera sized to screens width/height with Field of View of 75 degrees
+		camera2 = new PerspectiveCamera(
+				75,
+				Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
+
+		// Move the camera 3 units back along the z-axis and look at the origin
+		camera.position.set(Table.width / 2, Table.height / 2, 3f);
+		camera.lookAt(Table.width / 2, Table.height / 2, 0);
+
+		// Near and Far (plane) repesent the minimum and maximum ranges of the camera in, um, units
+		camera.near = 0.1f; 
+		camera.far = 300.0f;
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
@@ -102,14 +120,14 @@ public class MatchScene implements Screen, Observer{
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		
+
 		lpool.logic.match.Match m = game.getMatch();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(table, 0, 0, Table.width, Table.height);
 		batch.end();
-		
+
 		modelBatch.begin(camera);
 		modelInstances.clear();
 		Ball[] balls = m.getBalls();
@@ -128,7 +146,7 @@ public class MatchScene implements Screen, Observer{
 			shapeRenderer.setColor(Color.WHITE);
 
 			Vector2[] prediction = m.predictShot();
-						
+
 			if (prediction[4] != null)
 				shapeRenderer.rectLine(m.getCueBall().getPosition(), prediction[4], 0.005f * Match.physicsScaleFactor); // Aiming line
 			if (prediction[0] != null)
@@ -145,13 +163,13 @@ public class MatchScene implements Screen, Observer{
 				shapeRenderer.rectLine(prediction[1], prediction[1].cpy().add(prediction[3].cpy().scl(0.15f * Match.physicsScaleFactor)), 0.0025f * Match.physicsScaleFactor); // 2nd ball
 
 			shapeRenderer.end();
-			
+
 			drawCue(m.getCueBall().getPosition(), 0, m.getCueAngle());
 		}
 		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-	    debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
+		debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
 	}
-	
+
 	private void drawCue(Vector2 cueBallPos, float force, float angle)
 	{
 		batch.setProjectionMatrix(camera.combined);
@@ -169,7 +187,7 @@ public class MatchScene implements Screen, Observer{
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -188,6 +206,10 @@ public class MatchScene implements Screen, Observer{
 	public void resize(int width, int height) {
 		camera.viewportWidth = Table.width;
 		camera.viewportHeight = Table.width * height / width;
+		camera.update();
+
+		camera2.viewportWidth = Table.width;
+		camera2.viewportHeight = Table.width * height / width;
 		camera.update();
 	}
 

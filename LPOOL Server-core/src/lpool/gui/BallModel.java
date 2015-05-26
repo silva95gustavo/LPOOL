@@ -1,6 +1,8 @@
 package lpool.gui;
 
 import lpool.gui.assets.Manager;
+import lpool.gui.assets.Models;
+import lpool.logic.ball.Ball;
 import lpool.logic.match.Match;
 
 import com.badlogic.gdx.Gdx;
@@ -13,15 +15,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 
 public class BallModel {
-	private static final float scale = 0.025f * Match.physicsScaleFactor;
+	//private static final float scale = 0.025f * Match.physicsScaleFactor;
+	private static final float scale = 0.1f * Match.physicsScaleFactor;
 	private static final Vector3 scaleVec = new Vector3(scale, scale, scale);
 	private int number;
-	private Model model;
 
 	public BallModel(int number) {
 		this.number = number;
-		G3dModelLoader loader = new G3dModelLoader(new JsonReader());
-		this.model = loader.loadModel(Gdx.files.internal("balls/" + number + ".g3dj"));
 	}
 
 	public ModelInstance instanciateModel(Vector2 position, Quaternion rotation)
