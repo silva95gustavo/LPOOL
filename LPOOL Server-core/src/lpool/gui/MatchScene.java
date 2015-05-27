@@ -59,11 +59,12 @@ public class MatchScene implements Screen, Observer{
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private Texture table;
+
 	private Model table3D;
 	private Texture cueBallPrediction;
 	private Sprite cue;
 	private Array<ModelInstance> modelInstances;
-	
+
 	private DirectionalShadowLight shadowLight;
 
 	private lpool.logic.Game game;
@@ -76,15 +77,16 @@ public class MatchScene implements Screen, Observer{
 		camera.near = 0.1f; 
 		camera.far = 300.0f;
 		camera.update();
-		
-		shadowLight = new DirectionalShadowLight(2048, 2048, Table.width, Table.height, camera.near, camera.far);
-		shadowLight.set(0.3f, 0.3f, 0.3f, -0.08f, -0.08f, -1f);
-		
+
+		shadowLight = new DirectionalShadowLight(2048, 2048, Table.width, Table.width * height / width, camera.near, camera.far);
+		shadowLight.set(0.1f, 0.1f, 0.1f, -0.08f, -0.08f, -1f);
+
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
-		environment.add(new DirectionalLight().set(0.5f, 0.5f, 0.5f, -0.4f, -0.6f, -1f));
+		environment.set(new ColorAttribute(ColorAttribute.Specular, 0.8f, 0.8f, 0.8f, 1f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.2f, 0.2f, 0.2f, 1f));
+		environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, -0.1f, -0.1f, -1f));
 		environment.add(shadowLight);
-		environment.shadowMap = shadowLight;
+		//environment.shadowMap = shadowLight;
 
 		modelInstances = new Array<ModelInstance>();
 
@@ -92,11 +94,11 @@ public class MatchScene implements Screen, Observer{
 		shapeRenderer = new ShapeRenderer();
 
 		table = Textures.getInstance().getTable();
-		
+
 		Material matTable = new Material(new TextureAttribute(TextureAttribute.Diffuse, table));
 		ModelBuilder mb = new ModelBuilder();
 		table3D = mb.createRect(0, 0, 0, Table.width, 0, 0, Table.width, Table.height, 0, 0, Table.height, 0, 0, 0, 1, matTable, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
-		
+
 		cueBallPrediction = new Texture("cue_ball_prediction.png"); // TODO Asset manager
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cue = new Sprite(Textures.getInstance().getCue());
@@ -110,7 +112,7 @@ public class MatchScene implements Screen, Observer{
 	public void render(float delta)
 	{
 		game.tick(delta);
-		
+
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
@@ -126,20 +128,26 @@ public class MatchScene implements Screen, Observer{
 		for (int i = 0; i < balls.length; i++)
 		{
 			if (balls[i].isVisible())
+			{
 				modelInstances.add(BallModels.getInstance().getBall(balls[i].getNumber()).instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
+				
+				batch.begin();
+				batch.draw(Textures.getInstance().getBallShadow(), balls[i].getPosition().x - 6 * Ball.radius / 5, balls[i].getPosition().y - 3 * Ball.radius / 2, 2 * Ball.radius, 2 * Ball.radius);
+				batch.end();
+			}
 		}
-		modelInstances.add(new ModelInstance(table3D));
-		
+		//modelInstances.add(new ModelInstance(table3D));
+
 		shadowLight.begin(camera.position, camera.direction);
 		shadowBatch.begin(camera);
 		shadowBatch.render(modelInstances);
 		shadowBatch.end();
 		shadowLight.end();
-		
+
 		modelBatch.begin(camera);
 		modelBatch.render(modelInstances, environment);
 		modelBatch.end();
-		
+
 		if (m.isAiming())
 		{
 			shapeRenderer.setProjectionMatrix(camera.combined);
@@ -167,8 +175,8 @@ public class MatchScene implements Screen, Observer{
 
 			drawCue(m.getCueBall().getPosition(), 0, m.getCueAngle());
 		}
-		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-		debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
+		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
 	}
 
 	private void drawCue(Vector2 cueBallPos, float force, float angle)
