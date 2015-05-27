@@ -1,5 +1,6 @@
 package lpool.gui;
 
+import lpool.logic.ball.Ball;
 import lpool.logic.match.Match;
 
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -20,8 +21,8 @@ public class BallModel {
 
 	public ModelInstance instanciateModel(Vector2 position, Quaternion rotation)
 	{
-		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, 0);
-		ballModelInstance.transform.set(new Vector3(position.x, position.y, 0), rotation, scaleVec);
+		ModelInstance ballModelInstance = new ModelInstance(model, position.x, position.y, Ball.radius);
+		ballModelInstance.transform.set(new Vector3(position.x, position.y, Ball.radius), rotation, scaleVec);
 		return ballModelInstance;
 	}
 
