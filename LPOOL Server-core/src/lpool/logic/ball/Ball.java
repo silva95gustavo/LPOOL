@@ -150,23 +150,16 @@ public class Ball {
 		return onTable;
 	}
 
-	public void setOnTable(boolean onTable) {
+	public void enterHole(int holeNumber) {
 		if (number == 0)
 			return;
 		
-		if (this.onTable == onTable)
+		if (!this.visible || !this.onTable)
 			return;
 		
-		this.onTable = onTable;
+		this.onTable = false;
 		
-		if (onTable)
-		{
-			// TODO
-		}
-		else
-		{
-			stateMachine.changeState(new EnteringHole(0)); // TODO change 0 to a number obtained with a box2d contact listener
-		}
+		stateMachine.changeState(new EnteringHole(holeNumber));
 	}
 	
 	public static FixtureDef createBallBallFixtureDef()

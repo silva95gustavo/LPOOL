@@ -280,7 +280,7 @@ public class Match implements Observer{
 
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
-		balls[ballNumber].setOnTable(false);
+		balls[ballNumber].enterHole(holeNumber);
 	}
 
 	public lpool.logic.state.Context<Match> getStateMachine() {
