@@ -29,7 +29,7 @@ public class EnteringHole implements State<Ball> {
 	public void update(Ball ball, float dt) {
 		t += dt;
 		
-		if (t >= droppingTime)
+		if (t > droppingTime)
 			ball.getStateMachine().changeState(new InHole());
 		
 		Vector2 holePos = Table.getHolePos(holeID);

@@ -53,9 +53,35 @@ public class Match implements Observer{
 
 	private boolean aiming;
 
+	private Ball createBall(World world, int posID, int number)
+	{
+		switch (posID)
+		{
+		case 0: return createBall(world, 25, 0, number);
+		case 1: return createBall(world, 0, 0, number);
+		case 2: return createBall(world, -1, 1, number);
+		case 3: return createBall(world, -1, -1, number);
+		case 4: return createBall(world, -2, 2, number);
+		case 5: return createBall(world, -2, 0, number);
+		case 6: return createBall(world, -2, -2, number);
+		case 7: return createBall(world, -3, 3, number);
+		case 8: return createBall(world, -3, 1, number);
+		case 9: return createBall(world, -3, -1, number);
+		case 10: return createBall(world, -3, -3, number);
+		case 11: return createBall(world, -4, 4, number);
+		case 12: return createBall(world, -4, 2, number);
+		case 13: return createBall(world, -4, 0, number);
+		case 14: return createBall(world, -4, -2, number);
+		case 15: return createBall(world, -4, -4, number);
+		default: return null;
+		}
+	}
+	
 	private Ball createBall(World world, int x, int y, int number)
 	{
-		Ball ball = new Ball(world, new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius), number, ballsToBeDeleted);
+		Vector2 pos = new Vector2((Table.width - 2 * Table.border) / 4 + (float)Math.sqrt(3) * Ball.radius * x, Table.height / 2 + y * Ball.radius);
+		pos.add(new Vector2((float)Math.random() * 0.01f * Ball.radius, (float)Math.random() * 0.01f * Ball.radius)); // noise
+		Ball ball = new Ball(world, pos, number, ballsToBeDeleted);
 		if (number == 0)
 			cueBall = ball;
 		else if (number < 8)
@@ -71,21 +97,13 @@ public class Match implements Observer{
 	private void createBalls()
 	{		
 		createBall(world, 25, 0, 0);
-		createBall(world, 0, 0, 1);
-		createBall(world, -1, 1, 3);
-		createBall(world, -1, -1, 11);
-		createBall(world, -2, 2, 14);
-		createBall(world, -2, 0, 8);
-		createBall(world, -2, -2, 6);
-		createBall(world, -3, 3, 9);
-		createBall(world, -3, 1, 4);
-		createBall(world, -3, -1, 15);
-		createBall(world, -3, -3, 13);
-		createBall(world, -4, 4, 12);
-		createBall(world, -4, 2, 5);
-		createBall(world, -4, 0, 10);
-		createBall(world, -4, -2, 2);
-		createBall(world, -4, -4, 7);
+		
+		int[] rack = Racker.rack();
+		
+		for (int i = 1; i < rack.length; i++)
+		{
+			createBall(world, rack[i], i);
+		}
 	}
 
 	public Match(Network network) {
