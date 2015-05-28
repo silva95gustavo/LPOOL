@@ -183,8 +183,7 @@ public class Match implements Observer{
 
 	public void makeShot(float force)
 	{
-		balls[1].makeShot(cueAngle, force);
-		//cueBall.makeShot(cueAngle, force);
+		cueBall.makeShot(cueAngle, force);
 	}
 
 	public float getCueAngle()

@@ -162,7 +162,8 @@ public class Ball {
 	public void makeShot(float angle, float force)
 	{
 		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), body.getPosition(), true);
-		horSpin = new Vector3(5f, 0, 0);
+		//horSpin = new Vector3(5f, 0, 0);
+		horSpin = new Vector3(0, 0, 0);
 		horSpin.scl(force);
 	}
 
