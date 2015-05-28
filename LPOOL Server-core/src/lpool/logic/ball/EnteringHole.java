@@ -9,6 +9,7 @@ public class EnteringHole implements State<Ball> {
 	private int holeID;
 	private Vector2 droppingPoint;
 	private float droppingSpeed;
+	private float droppingTime;
 	private float t;
 	
 	public EnteringHole(int holeID) {
@@ -19,6 +20,7 @@ public class EnteringHole implements State<Ball> {
 	public void enter(Ball ball) {
 		this.droppingPoint = ball.getPosition();
 		this.droppingSpeed = ball.getVelocity().len();
+		this.droppingTime = droppingPoint.dst(Table.getHolePos(holeID)) / droppingSpeed;
 		this.t = 0;
 		ball.setToBeDeleted();
 	}
@@ -26,10 +28,12 @@ public class EnteringHole implements State<Ball> {
 	@Override
 	public void update(Ball ball, float dt) {
 		t += dt;
-		Vector2 holePos = Table.getHolePos(holeID);
-		ball.setPosition(droppingPoint.lerp(holePos, t * droppingSpeed / Table.holeRadius));
-		if (t >= 1)
+		
+		if (t > droppingTime)
 			ball.getStateMachine().changeState(new InHole());
+		
+		Vector2 holePos = Table.getHolePos(holeID);
+		ball.setPosition(droppingPoint.cpy().lerp(holePos, t * droppingSpeed / Table.holeRadius));
 	}
 
 }

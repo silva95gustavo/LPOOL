@@ -26,6 +26,7 @@ public class Ball {
 	private int number;
 	private Quaternion rotation;
 	private float lastAngle;
+	private Vector3 horSpin;
 	private Vector2 position;
 	private boolean onTable = true;
 	private boolean visible = true;
@@ -69,11 +70,12 @@ public class Ball {
 		sensorFixture = body.createFixture(sensorFixtureDef);
 		sensorFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL_SENSOR, number));
 		body.setLinearDamping(0.5f);
-		body.setAngularDamping(1.5f);
+		body.setAngularDamping(1.6f);
 		body.setBullet(true);
 		body.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
 		
 		lastAngle = body.getAngle();
+		horSpin = new Vector3(0, 0, 0);
 
 		this.number = number;
 		this.ballsToBeDeleted = ballsToBeDeleted;
@@ -120,17 +122,24 @@ public class Ball {
 		if (!onTable)
 			return;
 		
-		if (body.getLinearVelocity().len() < 0.0125 * Match.physicsScaleFactor && body.getAngularVelocity() < 0.0125 * Match.physicsScaleFactor)
+		if (body.getLinearVelocity().len() < 0.0125 * Match.physicsScaleFactor)
 		{
 			body.setLinearVelocity(new Vector2(0, 0));
+		}
+		if (horSpin.len() < 0.0125 * Match.physicsScaleFactor)
+		{
+			horSpin.scl(0);
+		}
+		if (body.getAngularVelocity() < 0.0125 * Match.physicsScaleFactor)
+		{
 			body.setAngularVelocity(0);
 		}
-		else
+		if (!isStopped())
 		{
 			float rotationScalar = 45; // TODO Find out why we need to multiply by a value around 45
 			
 			Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
-			Vector3 rotatingAxis = velocity.cpy().nor().crs(Vector3.Z);
+			Vector3 rotatingAxis = Vector3.Z.cpy().crs(velocity.cpy().nor());
 			float rotationAmount = rotationScalar * velocity.len() * deltaT / radius;
 			Quaternion dRotation = new Quaternion(rotatingAxis, rotationAmount);
 			rotation.mulLeft(dRotation);
@@ -138,35 +147,40 @@ public class Ball {
 			Quaternion dAngle = new Quaternion(Vector3.Z, (body.getAngle() - lastAngle) * rotationScalar);
 			lastAngle = body.getAngle();
 			rotation.mulLeft(dAngle);
+			
+			rotatingAxis = Vector3.Z.cpy().crs(horSpin.cpy().nor());
+			rotationAmount = rotationScalar * horSpin.len() * deltaT / radius;
+			Quaternion dHorSpin = new Quaternion(rotatingAxis, rotationAmount);
+			rotation.mulLeft(dHorSpin);
+			
+			Vector2 dHS = new Vector2(horSpin.x, horSpin.y).scl(deltaT);
+			body.setLinearVelocity(body.getLinearVelocity().add(dHS));
+			horSpin.scl(1 - 2 * deltaT);
 		}
 	}
 
 	public void makeShot(float angle, float force)
 	{
 		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), body.getPosition(), true);
+		horSpin = new Vector3(-2f, 0, 0).rotateRad(Vector3.Z, angle);
+		//horSpin = new Vector3(0, 0, 0);
+		horSpin.scl(force);
 	}
 
 	public boolean isOnTable() {
 		return onTable;
 	}
 
-	public void setOnTable(boolean onTable) {
+	public void enterHole(int holeNumber) {
 		if (number == 0)
 			return;
 		
-		if (this.onTable == onTable)
+		if (!this.visible || !this.onTable)
 			return;
 		
-		this.onTable = onTable;
+		this.onTable = false;
 		
-		if (onTable)
-		{
-			// TODO
-		}
-		else
-		{
-			stateMachine.changeState(new EnteringHole(0)); // TODO change 0 to a number obtained with a box2d contact listener
-		}
+		stateMachine.changeState(new EnteringHole(holeNumber));
 	}
 	
 	public static FixtureDef createBallBallFixtureDef()
@@ -223,6 +237,9 @@ public class Ball {
 	public boolean isStopped()
 	{
 		if (body.getAngularVelocity() != 0)
+			return false;
+		
+		if (!(horSpin.len2() == 0))
 			return false;
 		
 		if (!body.getLinearVelocity().equals(new Vector2(0, 0)))
