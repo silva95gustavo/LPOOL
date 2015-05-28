@@ -34,7 +34,7 @@
         <activity
             android:name=".InstructionsActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/title_activity_instructions" >
         </activity>
     </application>

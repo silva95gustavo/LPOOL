@@ -1,5 +1,7 @@
 package com.lpool.client;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -11,12 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class InstructionsActivity extends ActionBarActivity {
+public class InstructionsActivity extends Activity {
 
     Animation tilt_anim;
     ImageView tilt_anim_img;
     Animation press_anim;
     ImageView press_anim_img;
+    Animation cursor_anim;
+    ImageView cursor_anim_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,7 @@ public class InstructionsActivity extends ActionBarActivity {
 
         });
 
-        /*press_anim = AnimationUtils.loadAnimation(this, R.anim.instructions_press);
+        press_anim = AnimationUtils.loadAnimation(this, R.anim.instructions_press);
         press_anim.reset();
 
         press_anim_img = (ImageView) findViewById(R.id.imageViewPress);
@@ -54,8 +58,21 @@ public class InstructionsActivity extends ActionBarActivity {
             public void onAnimationRepeat(Animation arg0) {}
 
             public void onAnimationStart(Animation arg0) {}
-        });*/
+        });
 
+        cursor_anim = AnimationUtils.loadAnimation(this, R.anim.instructions_cursor);
+        cursor_anim.reset();
+
+        cursor_anim_img = (ImageView) findViewById(R.id.imageViewCursor);
+        cursor_anim_img.startAnimation(cursor_anim);
+
+        cursor_anim.setAnimationListener(new Animation.AnimationListener() {
+            public void onAnimationEnd(Animation arg0) { cursor_anim_img.startAnimation(cursor_anim);}
+
+            public void onAnimationRepeat(Animation arg0) {}
+
+            public void onAnimationStart(Animation arg0) {}
+        });
     }
 
     @Override
