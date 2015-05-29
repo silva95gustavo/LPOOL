@@ -93,7 +93,13 @@ public class GetIPActivity extends ActionBarActivity {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 String text = result.getContents().toString();
-                Toast.makeText(this, "Scanned: " + text, Toast.LENGTH_LONG).show();
+
+                if(isValidIP(text)) {
+                    ShotActivity.setServerIP(text);
+                    startActivity(new Intent(GetIPActivity.this, ShotActivity.class));
+                }
+                else
+                    Toast.makeText(this, "Scanned: " + text, Toast.LENGTH_LONG).show();
                 ip_to_connect = text;
                 updateIPLabel();
             }

@@ -78,6 +78,15 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/imageViewPhone"
+                android:src="@mipmap/phone"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageViewPress"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
@@ -89,7 +98,8 @@
                 android:id="@+id/imageViewCursor"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/cursor" />
+                android:src="@mipmap/cursor" />
+
         </RelativeLayout>
     </LinearLayout>
 

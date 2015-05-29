@@ -1,24 +1,31 @@
 package com.lpool.client;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -36,7 +43,7 @@ import java.util.TimerTask;
 import static com.lpool.client.ShotActivity.ProtocolCmd.*;
 
 
-public class ShotActivity extends ActionBarActivity implements SensorEventListener {
+public class ShotActivity extends Activity implements SensorEventListener {
 
     private static String serverIP = "192.168.1.69";
     private static final int serverPort = 6900;
@@ -64,7 +71,11 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
 
     public enum ProtocolCmd {
         ANGLE, // angle
-        FIRE // force
+        FIRE, // force
+        PING,
+        PONG,
+        JOIN,
+        QUIT
     };
 
     @Override
@@ -95,6 +106,79 @@ public class ShotActivity extends ActionBarActivity implements SensorEventListen
                 }
             }
         }, 100, 1000/FPS);
+
+        final ImageView crosshair = (ImageView) findViewById(R.id.cross);
+        final ImageView cueBall = (ImageView) findViewById(R.id.cueBall);
+
+        final View touchView = findViewById(R.id.center);
+        touchView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final float centerX = cueBall.getX()+cueBall.getWidth()/2;
+                final float centerY = cueBall.getY()+cueBall.getHeight()/2;
+                final float radius;
+                if(cueBall.getWidth() < cueBall.getHeight())
+                    radius = cueBall.getWidth()/2;
+                else
+                    radius = cueBall.getHeight()/2;
+
+
+                float newX = event.getX();
+                float newY = event.getY();
+
+                Log.d("centerX", "" + centerX);
+                Log.d("centerY", "" + centerY);
+                Log.d("radius", "" + radius);
+                Log.d("newX", "" + newX);
+                Log.d("newY", "" + newY);
+
+                if(((newX - centerX)*(newX - centerX) + (newY - centerY)*(newY - centerY)) < (radius*radius)) {
+                    crosshair.setX(newX - crosshair.getWidth() / 2);
+                    crosshair.setY(newY - crosshair.getHeight() / 2);
+                }
+
+                /*if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    //Log.d("TouchTest", "Touch down");
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    //xText.setText("" + String.valueOf(event.getX()));
+                    //yText.setText("" + String.valueOf(event.getY()));
+                }*/
+                return true;
+            }
+        });
+    }
+
+    class beatThread implements Runnable {
+        @Override
+        public void run() {
+            while (counter>0)
+            {
+                try {
+                    System.out.println("Receiving...");
+                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String str = br.readLine();
+                    System.out.println("Received...");
+                    if (str == null) {
+                        System.out.println("received null");
+                        break;
+                    }
+                    else if(str.equals(ProtocolCmd.PING.ordinal() + "" + '\n'))
+                    {
+                        System.out.println("Got PING");
+                        /*try {
+                            String data = new String("" + ProtocolCmd.PONG.ordinal() + '\n');
+                            byte[] msg = data.getBytes();
+                            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
+                            datagramSocket.send(sendPacket);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
+                    }
+                } catch (IOException e) {
+                    //stopMe();
+                }
+            }
+        }
     }
 
     class ClientThread implements Runnable {
