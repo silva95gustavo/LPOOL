@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -60,6 +61,7 @@ public class LoadingScene implements Screen {
 		empty=new NinePatch(new TextureRegion(new Texture(Gdx.files.internal("loading/empty9.png")),24,24),8,8,8,8);
 		full=new NinePatch(new TextureRegion(new Texture(Gdx.files.internal("loading/full9.png")),24,24),8,8,8,8);
 		logo = new Texture(Gdx.files.internal("logo.png"));
+		logo.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		fadingColor = new FadingColor(2);
 	}
@@ -90,10 +92,10 @@ public class LoadingScene implements Screen {
 		if (manager.getAssetManager().update())
 			GdxGame.setScreen(new LobbyScene(GdxGame, fadingColor));
 
-		int barWidth = width / 2;
+		int barWidth = 1000;
 		int barHeight = barWidth / 20;
 		int x = - barWidth / 2;
-		int y = - barHeight / 2;
+		int y = - barHeight / 2 - height / 6;
 
 		percent = Interpolation.linear.apply(percent, manager.getAssetManager().getProgress(), 0.2f);
 
@@ -108,7 +110,7 @@ public class LoadingScene implements Screen {
 		empty.draw(batch, x, y, barWidth, barHeight);
 		full.draw(batch, x, y, percent * barWidth, barHeight);
 		String text = (int)(percent * 100) + "%";
-		font.drawMultiLine(batch, text, 0, font.getMultiLineBounds(text).height / 2, 0, BitmapFont.HAlignment.CENTER);
+		font.drawMultiLine(batch, text, 0, y + barHeight / 2 + font.getMultiLineBounds(text).height / 2, 0, BitmapFont.HAlignment.CENTER);
 		batch.end();
 	}
 

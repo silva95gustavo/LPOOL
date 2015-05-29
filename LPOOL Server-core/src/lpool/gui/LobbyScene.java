@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -21,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LobbyScene implements Screen, Observer {
 	
@@ -31,6 +34,7 @@ public class LobbyScene implements Screen, Observer {
 	private Game game;
 	
 	private OrthographicCamera camera;
+	private Viewport viewport;
 	
 	private SpriteBatch batch;
 	private Sprite QRCode;
@@ -44,9 +48,11 @@ public class LobbyScene implements Screen, Observer {
 		
 		this.GdxGame = GdxGame;
 		
-		camera = new OrthographicCamera(width, height);
+		camera = new OrthographicCamera();
 		camera.position.set(new Vector2(0, 0), 0);
 		camera.update();
+		
+		viewport = new FitViewport(1920, 1080, camera);
 		
 		QRCode = new Sprite(Textures.getInstance().getQRCode());
 		
@@ -58,6 +64,8 @@ public class LobbyScene implements Screen, Observer {
 		game.getNetwork().addConnObserver(this);
 		
 		this.fadingColor = fadingColor;
+		
+		Textures.getInstance().getLobby().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 
 	@Override
@@ -93,7 +101,8 @@ public class LobbyScene implements Screen, Observer {
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(QRCode, -height / 2, -height / 2, height, height);
+		batch.draw(Textures.getInstance().getLobby(), -1920 / 2, -1080 / 2, 1920, 1080);
+		batch.draw(QRCode, -150, -70, 300, 300);
 		batch.end();
 	}
 
@@ -102,9 +111,7 @@ public class LobbyScene implements Screen, Observer {
 		this.width = width;
 		this.height = height;
 		
-		camera.viewportWidth = width;
-		camera.viewportHeight = height;
-		camera.update();
+		viewport.update(width, height);
 	}
 
 	@Override
