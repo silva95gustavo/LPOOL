@@ -21,6 +21,7 @@ public class Textures { // Singleton
 		am.load(GameProject.QR_IP_DIR, Texture.class);
 		am.load("cue.png", Texture.class);
 		am.load("balls/ball_shadow.png", Texture.class);
+		am.load("lobby.png", Texture.class);
 		
 		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
 		{
@@ -59,5 +60,10 @@ public class Textures { // Singleton
 	public Texture getLogo()
 	{
 		return Manager.getInstance().getAssetManager().get("logo.png");
+	}
+	
+	public Texture getLobby()
+	{
+		return Manager.getInstance().getAssetManager().get("lobby.png");
 	}
 }
