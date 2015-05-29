@@ -9,6 +9,7 @@ import lpool.logic.Game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,7 +36,9 @@ public class LobbyScene implements Screen, Observer {
 	private Sprite QRCode;
 	private Stage stage;
 	
-	public LobbyScene(com.badlogic.gdx.Game GdxGame) {
+	private FadingColor fadingColor;
+	
+	public LobbyScene(com.badlogic.gdx.Game GdxGame, FadingColor fadingColor) {
 		this.width = Gdx.graphics.getWidth();
 		this.height = Gdx.graphics.getHeight();
 		
@@ -53,6 +56,8 @@ public class LobbyScene implements Screen, Observer {
 		
 		game = new Game();
 		game.getNetwork().addConnObserver(this);
+		
+		this.fadingColor = fadingColor;
 	}
 
 	@Override
@@ -82,7 +87,8 @@ public class LobbyScene implements Screen, Observer {
 	public void render(float delta) {
 		game.tick(delta);
 		
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Color interpolated = fadingColor.tick(delta);
+		Gdx.gl.glClearColor(interpolated.r, interpolated.g, interpolated.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		
 		batch.setProjectionMatrix(camera.combined);

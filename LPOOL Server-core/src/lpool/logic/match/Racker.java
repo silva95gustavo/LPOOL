@@ -45,13 +45,11 @@ public class Racker {
 		LinkedList<Integer> freeP2 = listPlayer2Free(free);
 		if (r.nextBoolean())
 		{
-			System.out.println("1... " + freeP1 + freeP2);
 			result[11] = removeRandom(r, freeP1);
 			result[15] = removeRandom(r, freeP2);
 		}
 		else
 		{
-			System.out.println("2... " + freeP1 + freeP2);
 			result[11] = removeRandom(r, freeP2);
 			result[15] = removeRandom(r, freeP1);
 		}

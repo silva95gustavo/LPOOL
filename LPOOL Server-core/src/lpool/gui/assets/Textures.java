@@ -55,4 +55,9 @@ public class Textures { // Singleton
 	{
 		return Manager.getInstance().getAssetManager().get("balls/ball_shadow.png");
 	}
+	
+	public Texture getLogo()
+	{
+		return Manager.getInstance().getAssetManager().get("logo.png");
+	}
 }
