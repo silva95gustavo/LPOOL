@@ -1,5 +1,6 @@
 package lpool.gui;
 
+import lpool.gui.assets.Fonts;
 import lpool.gui.assets.Manager;
 import lpool.gui.assets.BallModels;
 import lpool.gui.assets.Sounds;
@@ -53,6 +54,7 @@ public class LoadingScene implements Screen {
 		Textures.getInstance();
 		Sounds.getInstance();
 		BallModels.getInstance();
+		Fonts.getInstance();
 
 		this.percent = 0;
 

@@ -18,10 +18,13 @@ public class Textures { // Singleton
 		
 		AssetManager am = Manager.getInstance().getAssetManager();
 		am.load("table.png", Texture.class);
+		am.load("table_border.png", Texture.class);
 		am.load(GameProject.QR_IP_DIR, Texture.class);
 		am.load("cue.png", Texture.class);
 		am.load("balls/ball_shadow.png", Texture.class);
-		am.load("lobby.png", Texture.class);
+		am.load("lobby/lobby.png", Texture.class);
+		am.load("lobby/disconnected.png", Texture.class);
+		am.load("lobby/connected.png", Texture.class);
 		
 		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
 		{
@@ -40,6 +43,11 @@ public class Textures { // Singleton
 	public Texture getTable()
 	{
 		return Manager.getInstance().getAssetManager().get("table.png");
+	}
+	
+	public Texture getTableBorder()
+	{
+		return Manager.getInstance().getAssetManager().get("table_border.png");
 	}
 	
 	public Texture getQRCode()
@@ -64,6 +72,16 @@ public class Textures { // Singleton
 	
 	public Texture getLobby()
 	{
-		return Manager.getInstance().getAssetManager().get("lobby.png");
+		return Manager.getInstance().getAssetManager().get("lobby/lobby.png");
+	}
+	
+	public Texture getDisconnected()
+	{
+		return Manager.getInstance().getAssetManager().get("lobby/disconnected.png");
+	}
+	
+	public Texture getConnected()
+	{
+		return Manager.getInstance().getAssetManager().get("lobby/connected.png");
 	}
 }

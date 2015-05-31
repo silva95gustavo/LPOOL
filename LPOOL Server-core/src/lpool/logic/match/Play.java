@@ -17,6 +17,13 @@ public class Play implements State<Match>, Observer{
 	private float lastAngle;
 	private long lastAngleTime;
 	
+	private boolean cueBallInHand;
+	
+	public Play(boolean cueBallInHand)
+	{
+		this.cueBallInHand = cueBallInHand;
+	}
+	
 	@Override
 	public void enter(Match match) {
 		match.setAiming(true);
@@ -67,7 +74,7 @@ public class Play implements State<Match>, Observer{
 			match.getStateMachine().changeState(new BallsMoving());
 			match.getNetwork().deleteMsgObserver(this);
 			break;
-		}
+		} // TODO allow the cue ball to be moved with the hands
 		default:
 			break;
 		}

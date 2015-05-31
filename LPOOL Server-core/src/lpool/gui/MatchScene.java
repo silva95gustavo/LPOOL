@@ -59,6 +59,7 @@ public class MatchScene implements Screen, Observer{
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private Texture table;
+	private Texture table_border;
 
 	private Model table3D;
 	private Texture cueBallPrediction;
@@ -94,6 +95,7 @@ public class MatchScene implements Screen, Observer{
 		shapeRenderer = new ShapeRenderer();
 
 		table = Textures.getInstance().getTable();
+		table_border = Textures.getInstance().getTableBorder();
 
 		Material matTable = new Material(new TextureAttribute(TextureAttribute.Diffuse, table));
 		ModelBuilder mb = new ModelBuilder();
@@ -136,6 +138,11 @@ public class MatchScene implements Screen, Observer{
 				batch.end();
 			}
 		}
+		
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(table_border, 0, 0, Table.width, Table.height);
+		batch.end();
 		//modelInstances.add(new ModelInstance(table3D));
 
 		shadowLight.begin(camera.position, camera.direction);
@@ -261,6 +268,6 @@ public class MatchScene implements Screen, Observer{
 	{
 		Ball[] balls = game.getMatch().getBalls();
 		Vector2 impactVelocity = balls[ballNumber1].getVelocity().sub(balls[ballNumber2].getVelocity());
-		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len2(), 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
+		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len() / 40, 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
 	}
 }

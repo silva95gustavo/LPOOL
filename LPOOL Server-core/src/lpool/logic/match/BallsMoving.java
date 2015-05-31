@@ -18,7 +18,7 @@ public class BallsMoving implements State<Match> {
 		owner.deleteRemovedballs();
 		owner.tickBalls(dt);
 		if (allStopped(owner.getBalls()))
-			owner.getStateMachine().changeState(new Play());
+			owner.getStateMachine().changeState(new Play(true)); // TODO check if the cue ball can be moved by hand or not
 	}
 	
 	private boolean allStopped(Ball[] balls)
