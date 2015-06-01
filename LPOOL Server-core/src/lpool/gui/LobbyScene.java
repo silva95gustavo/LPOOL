@@ -150,6 +150,7 @@ public class LobbyScene implements Screen, Observer {
 			else
 			{
 				readyTime -= delta;
+				batch.draw(Textures.getInstance().getStartingIn(), -Textures.getInstance().getStartingIn().getWidth() / 2, -Textures.getInstance().getStartingIn().getHeight() / 2);
 				Fonts.getInstance().getArial100().drawMultiLine(batch, "" + Math.round(readyTime + 0.5f), 0, 0, 0, BitmapFont.HAlignment.CENTER);
 			}
 		}

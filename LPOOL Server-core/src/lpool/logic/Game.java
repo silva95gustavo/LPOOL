@@ -14,7 +14,7 @@ public class Game implements Observer {
 
 	public enum ProtocolCmd {
 		ANGLE, // angle
-		FIRE, // force[0, 1] x-spin[0, 1] y-spin[0, 1]
+		FIRE, // force[0, 1] x-spin[-1, 1] y-spin[-1, 1]
 		PING,
 		PONG,
 		JOIN,
