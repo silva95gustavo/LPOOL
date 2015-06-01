@@ -1,8 +1,5 @@
 package lpool.gdx.desktop;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-
 import lpool.gui.GameProject;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -13,7 +10,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.fullscreen = false;
+		config.fullscreen = false; // TODO set to true
+		config.samples = 2;
 		new LwjglApplication(new GameProject(), config);
 	}
 }

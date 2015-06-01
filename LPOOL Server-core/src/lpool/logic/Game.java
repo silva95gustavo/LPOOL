@@ -17,11 +17,15 @@ public class Game implements Observer {
 
 	public enum ProtocolCmd {
 		ANGLE, // angle
-		FIRE, // force
+		FIRE, // force[0, 1] x-spin[0, 1] y-spin[0, 1]
 		PING,
 		PONG,
 		JOIN,
-		QUIT
+		QUIT,
+		KICK,
+		BIH,
+		ACKBIH,
+		PLACECB // x-pos[0, 1] y-pos[0, 1]
 	};
 
 	public Game() {
