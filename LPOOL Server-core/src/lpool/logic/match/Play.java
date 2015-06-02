@@ -17,11 +17,8 @@ public class Play implements State<Match>, Observer{
 	private float lastAngle;
 	private long lastAngleTime;
 	
-	private boolean cueBallInHand;
-	
-	public Play(boolean cueBallInHand)
+	public Play()
 	{
-		this.cueBallInHand = cueBallInHand;
 	}
 	
 	@Override
@@ -42,7 +39,7 @@ public class Play implements State<Match>, Observer{
 	@Override
 	public void update(Observable o, Object obj) {
 		Message msg = (Message)obj;
-		Scanner sc = new Scanner(msg.msg);
+		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
 		
 		switch (cmd)

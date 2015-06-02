@@ -1,7 +1,5 @@
 package lpool.logic.match;
 
-import com.badlogic.gdx.math.Vector2;
-
 import lpool.logic.ball.Ball;
 import lpool.logic.state.State;
 
@@ -13,12 +11,12 @@ public class BallsMoving implements State<Match> {
 	}
 
 	@Override
-	public void update(Match owner, float dt) {
-		owner.worldStep(dt);
-		owner.deleteRemovedballs();
-		owner.tickBalls(dt);
-		if (allStopped(owner.getBalls()))
-			owner.getStateMachine().changeState(new Play(true)); // TODO check if the cue ball can be moved by hand or not
+	public void update(Match match, float dt) {
+		match.worldStep(dt);
+		match.deleteRemovedballs();
+		match.tickBalls(dt);
+		if (allStopped(match.getBalls()))
+			continueMatch(match);
 	}
 	
 	private boolean allStopped(Ball[] balls)
@@ -31,5 +29,11 @@ public class BallsMoving implements State<Match> {
 		}
 		return true;
 	}
-
+	
+	private void continueMatch(Match match)
+	{
+		
+		
+		match.getStateMachine().changeState(new Play()); // TODO check if the cue ball can be moved by hand or not
+	}
 }

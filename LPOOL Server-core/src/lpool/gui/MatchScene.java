@@ -101,7 +101,7 @@ public class MatchScene implements Screen, Observer{
 		ModelBuilder mb = new ModelBuilder();
 		table3D = mb.createRect(0, 0, 0, Table.width, 0, 0, Table.width, Table.height, 0, 0, Table.height, 0, 0, 0, 1, matTable, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
-		cueBallPrediction = new Texture("cue_ball_prediction.png"); // TODO Asset manager
+		cueBallPrediction = Textures.getInstance().getCueBallPrediction();
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cue = new Sprite(Textures.getInstance().getCue());
 		cue.setSize(1.5f, 0.04f);
@@ -252,8 +252,12 @@ public class MatchScene implements Screen, Observer{
 		case BALL:
 			if (userDataB.getType() == BodyInfo.Type.BALL)
 				ballBallCollisionHandler(userDataA.getID(), userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
+			else if (userDataB.getType() == BodyInfo.Type.TABLE)
+				ballTableCollisionHandler(userDataA.getID(), contact.getWorldManifold().getPoints()[0]);
 			break;
 		case TABLE:
+			if (userDataB.getType() == BodyInfo.Type.BALL)
+				ballTableCollisionHandler(userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
 			break;
 		case HOLE:
 			break;
@@ -269,5 +273,10 @@ public class MatchScene implements Screen, Observer{
 		Ball[] balls = game.getMatch().getBalls();
 		Vector2 impactVelocity = balls[ballNumber1].getVelocity().sub(balls[ballNumber2].getVelocity());
 		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len() / 40, 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
+	}
+	
+	private void ballTableCollisionHandler(int ballNumber, Vector2 contactPoint)
+	{
+		// TODO
 	}
 }

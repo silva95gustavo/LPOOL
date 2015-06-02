@@ -14,13 +14,14 @@ public class Textures { // Singleton
 	
 	private Textures() {
 		TextureLoader tl = new TextureLoader(Manager.getInstance().getIfhr());
-		tl.loadAsync(Manager.getInstance().getAssetManager(), "table.png", Gdx.files.internal("table.png"), new TextureLoader.TextureParameter());
+		tl.loadAsync(Manager.getInstance().getAssetManager(), "match/table.png", Gdx.files.internal("match/table.png"), new TextureLoader.TextureParameter());
 		
 		AssetManager am = Manager.getInstance().getAssetManager();
-		am.load("table.png", Texture.class);
-		am.load("table_border.png", Texture.class);
+		am.load("match/table.png", Texture.class);
+		am.load("match/table_border.png", Texture.class);
 		am.load(GameProject.QR_IP_DIR, Texture.class);
-		am.load("cue.png", Texture.class);
+		am.load("match/cue.png", Texture.class);
+		am.load("match/cue_ball_prediction.png", Texture.class);
 		am.load("balls/ball_shadow.png", Texture.class);
 		am.load("lobby/lobby.png", Texture.class);
 		am.load("lobby/disconnected.png", Texture.class);
@@ -43,12 +44,12 @@ public class Textures { // Singleton
 	
 	public Texture getTable()
 	{
-		return Manager.getInstance().getAssetManager().get("table.png");
+		return Manager.getInstance().getAssetManager().get("match/table.png");
 	}
 	
 	public Texture getTableBorder()
 	{
-		return Manager.getInstance().getAssetManager().get("table_border.png");
+		return Manager.getInstance().getAssetManager().get("match/table_border.png");
 	}
 	
 	public Texture getQRCode()
@@ -58,12 +59,17 @@ public class Textures { // Singleton
 	
 	public Texture getCue()
 	{
-		return Manager.getInstance().getAssetManager().get("cue.png");
+		return Manager.getInstance().getAssetManager().get("match/cue.png");
 	}
 	
 	public Texture getBallShadow()
 	{
 		return Manager.getInstance().getAssetManager().get("balls/ball_shadow.png");
+	}
+	
+	public Texture getCueBallPrediction()
+	{
+		return Manager.getInstance().getAssetManager().get("match/cue_ball_prediction.png");
 	}
 	
 	public Texture getLogo()

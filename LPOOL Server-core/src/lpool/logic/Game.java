@@ -22,6 +22,7 @@ public class Game implements Observer {
 		KICK,
 		BIH,
 		ACKBIH,
+		MOVECB, // x-pos[0, 1] y-pos[0, 1]
 		PLACECB // x-pos[0, 1] y-pos[0, 1]
 	};
 

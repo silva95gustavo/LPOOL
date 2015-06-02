@@ -7,11 +7,11 @@ import lpool.logic.Game.ProtocolCmd;
 
 public class Message {
 	public int clientID;
-	public String msg;
+	public final String body;
 	
-	public Message(int clientID, String msg) {
+	public Message(int clientID, String body) {
 		this.clientID = clientID;
-		this.msg = msg;
+		this.body = body;
 	}
 	
 	public static lpool.logic.Game.ProtocolCmd readCmd(Scanner sc)

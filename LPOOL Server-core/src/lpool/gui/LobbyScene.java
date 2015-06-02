@@ -140,7 +140,7 @@ public class LobbyScene implements Screen, Observer {
 		else
 			batch.draw(disconnected, 412, -900, disconnected.getWidth(), disconnected.getHeight());
 
-		font.drawMultiLine(batch, Info.getServerIP(), 0, -90, 0, BitmapFont.HAlignment.CENTER);
+		font.drawMultiLine(batch, Info.getServerIP(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
 		batch.draw(QRCode, -300, -160, 600, 600);
 
 		if (player1 || player2) // TODO change to &&
