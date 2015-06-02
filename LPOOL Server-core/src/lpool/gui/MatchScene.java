@@ -59,6 +59,7 @@ public class MatchScene implements Screen, Observer{
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
 	private Texture table;
+	private Texture table_border;
 
 	private Model table3D;
 	private Texture cueBallPrediction;
@@ -94,12 +95,13 @@ public class MatchScene implements Screen, Observer{
 		shapeRenderer = new ShapeRenderer();
 
 		table = Textures.getInstance().getTable();
+		table_border = Textures.getInstance().getTableBorder();
 
 		Material matTable = new Material(new TextureAttribute(TextureAttribute.Diffuse, table));
 		ModelBuilder mb = new ModelBuilder();
 		table3D = mb.createRect(0, 0, 0, Table.width, 0, 0, Table.width, Table.height, 0, 0, Table.height, 0, 0, 0, 1, matTable, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
-		cueBallPrediction = new Texture("cue_ball_prediction.png"); // TODO Asset manager
+		cueBallPrediction = Textures.getInstance().getCueBallPrediction();
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cue = new Sprite(Textures.getInstance().getCue());
 		cue.setSize(1.5f, 0.04f);
@@ -136,6 +138,11 @@ public class MatchScene implements Screen, Observer{
 				batch.end();
 			}
 		}
+		
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(table_border, 0, 0, Table.width, Table.height);
+		batch.end();
 		//modelInstances.add(new ModelInstance(table3D));
 
 		shadowLight.begin(camera.position, camera.direction);
@@ -245,8 +252,12 @@ public class MatchScene implements Screen, Observer{
 		case BALL:
 			if (userDataB.getType() == BodyInfo.Type.BALL)
 				ballBallCollisionHandler(userDataA.getID(), userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
+			else if (userDataB.getType() == BodyInfo.Type.TABLE)
+				ballTableCollisionHandler(userDataA.getID(), contact.getWorldManifold().getPoints()[0]);
 			break;
 		case TABLE:
+			if (userDataB.getType() == BodyInfo.Type.BALL)
+				ballTableCollisionHandler(userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
 			break;
 		case HOLE:
 			break;
@@ -261,6 +272,11 @@ public class MatchScene implements Screen, Observer{
 	{
 		Ball[] balls = game.getMatch().getBalls();
 		Vector2 impactVelocity = balls[ballNumber1].getVelocity().sub(balls[ballNumber2].getVelocity());
-		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len2(), 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
+		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len() / 40, 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
+	}
+	
+	private void ballTableCollisionHandler(int ballNumber, Vector2 contactPoint)
+	{
+		// TODO
 	}
 }

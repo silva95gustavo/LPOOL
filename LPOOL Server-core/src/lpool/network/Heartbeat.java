@@ -39,7 +39,7 @@ public class Heartbeat extends Timer.Task implements Observer{
 	public void update(Observable o, Object obj) {
 		if (o instanceof ObservableMessage)
 		{
-			Scanner sc = new Scanner(((Message)obj).msg);
+			Scanner sc = new Scanner(((Message)obj).body);
 			sc.close();
 			System.out.println("Received response, heartbeat successfull.");
 			timer.clear();

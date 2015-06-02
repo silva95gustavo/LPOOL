@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Array;
@@ -28,9 +29,9 @@ public class BallModelLoader extends SynchronousAssetLoader<BallModel, BallModel
 	@Override
 	public BallModel load(AssetManager manager, String fileName, FileHandle file, BallModelParameter parameter) {
 		Texture ballTexture = manager.get("balls/" + parameter.number + ".jpg");
-		Material matBall = new Material(new TextureAttribute(TextureAttribute.Diffuse, ballTexture));
+		Material matBall = new Material(new TextureAttribute(TextureAttribute.Diffuse, ballTexture), new TextureAttribute(TextureAttribute.Specular, ballTexture), new FloatAttribute(FloatAttribute.Shininess, 150));
 		ModelBuilder mb = new ModelBuilder();
-		Model model = mb.createSphere(2 * Ball.radius, 2 * Ball.radius, 2 * Ball.radius, 24, 24, matBall, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		Model model = mb.createSphere(2 * Ball.radius, 2 * Ball.radius, 2 * Ball.radius, 100, 100, matBall, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 		return new BallModel(model);
 	}
 

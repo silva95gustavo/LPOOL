@@ -11,26 +11,23 @@ public class Game implements Observer {
 	private Network network;
 	
 	private Match match;
-	private float angleVar;
-	private float lastAngle;
-	private long lastAngleTime;
 
 	public enum ProtocolCmd {
 		ANGLE, // angle
-		FIRE, // force
+		FIRE, // force[0, 1] x-spin[-1, 1] y-spin[-1, 1]
 		PING,
 		PONG,
 		JOIN,
-		QUIT
+		QUIT,
+		KICK,
+		BIH,
+		ACKBIH,
+		MOVECB, // x-pos[0, 1] y-pos[0, 1]
+		PLACECB // x-pos[0, 1] y-pos[0, 1]
 	};
 
 	public Game() {
 		network = new Network(2);
-		
-		angleVar = 0;
-		lastAngle = (float)Math.PI;
-		lastAngleTime = System.currentTimeMillis();
-
 		network.startConnecting();
 		network.addConnObserver(this);
 	}
@@ -53,12 +50,6 @@ public class Game implements Observer {
 			System.out.println("Client #" + clientID + " connected!");
 		else
 			System.out.println("Client #" + clientID + " disconnected!");
-	}
-
-	private void interpolateAngle(float dt)
-	{
-		if (match != null)
-			match.setCueAngle(match.getCueAngle() + angleVar * dt);
 	}
 	
 	public Network getNetwork()
