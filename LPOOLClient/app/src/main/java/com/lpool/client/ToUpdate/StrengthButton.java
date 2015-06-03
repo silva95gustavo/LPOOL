@@ -1,14 +1,10 @@
-package com.lpool.client;
+package com.lpool.client.ToUpdate;
 
-import android.app.Activity;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-
-import java.util.concurrent.Callable;
 
 /**
  * Created by André on 02/06/2015.

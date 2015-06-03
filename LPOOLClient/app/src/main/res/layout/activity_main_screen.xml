@@ -7,7 +7,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:configChanges="keyboardHidden|orientation"
     android:screenOrientation="landscape"
-    tools:context="com.lpool.client.GetIPActivity"
+    tools:context="com.lpool.client.Lobby.MainScreenActivity"
     android:id="@+id/layout">
 
     <RelativeLayout
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/ipField"
                 android:editable="true"
-                android:hint="Server IP (e.x: XXX.XXX.X.XX)"
+                android:hint="@string/ip_text_hint"
                 android:autoText="false"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:text="Instructions"
                 android:id="@+id/button"
-                android:onClick="testAbout"
+                android:onClick="openInstructions"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"

@@ -1,4 +1,4 @@
-package com.lpool.client;
+package com.lpool.client.Lobby;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -11,6 +11,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.lpool.client.R;
 
 
 public class InstructionsActivity extends Activity {
@@ -84,7 +86,7 @@ public class InstructionsActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_instructions, menu);
+        //getMenuInflater().inflate(R.menu.menu_instructions, menu);
         return true;
     }
 
