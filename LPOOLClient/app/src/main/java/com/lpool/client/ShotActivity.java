@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lpool.client.GameController.Controller;
+
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
@@ -50,7 +52,7 @@ import java.util.TimerTask;
 import static com.lpool.client.ShotActivity.ProtocolCmd.*;
 
 
-public class ShotActivity extends Activity implements SensorEventListener {
+public class ShotActivity extends Activity implements SensorEventListener, Controller {
 
     private static String serverIP = "192.168.206.1";
     private static final int serverPort = 6900;
@@ -75,8 +77,11 @@ public class ShotActivity extends Activity implements SensorEventListener {
     private boolean shooting = false;
     private float accelerometerLast = 0;
     private float gravity[] = new float[3];
+    private float fireAngle;
 
     private Button fire;
+    private StrengthButton strengthButtonAnim;
+    private RelativeLayout strength;
 
     public enum ProtocolCmd {
         ANGLE, // angle
@@ -95,14 +100,24 @@ public class ShotActivity extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shot);
-
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        initializeSensors();
+        initializeConnection();
+        initializeAngleSender();
+        initializeElements();
+    }
+
+    private void initializeConnection() {
+        new Thread(new ClientThread()).start();
+    }
+
+    private void initializeSensors() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
 
-        new Thread(new ClientThread()).start();
-
+    private void initializeAngleSender() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -110,76 +125,57 @@ public class ShotActivity extends Activity implements SensorEventListener {
                 if (socket == null || datagramSocket == null)
                     return;
                 try {
-                    String data = new String(ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + counter++ + '\n');
-                    byte[] msg = data.getBytes();
-                    DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
-                    datagramSocket.send(sendPacket);
+                    if(!shooting) {
+                        String data = new String(ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + counter++ + '\n');
+                        byte[] msg = data.getBytes();
+                        DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
+                        datagramSocket.send(sendPacket);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }, 100, 1000/FPS);
+    }
+
+    private void initializeElements() {
+        fire = (Button) findViewById(R.id.fireButton);
+        strength = (RelativeLayout) findViewById(R.id.strengthBar);
+        strength.setY(700);
+
+        final ShotActivity caller = this;
+
+        fire.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                Log.d("", "changed");
+                strengthButtonAnim.stop();
+                strengthButtonAnim.reset();
+                strengthButtonAnim.disable();
+                strengthButtonAnim = new StrengthButton(caller, fire, strength, fire.getY(), 0, 4);
+                strength.setY(fire.getY());
+            }
+        });
+        strengthButtonAnim = new StrengthButton(caller, fire, strength, fire.getY(), 0, 4);
+
+        final ImageView cueBallPlace = (ImageView) findViewById(R.id.cueBallPlacable);
+        final RelativeLayout placeBall = (RelativeLayout) findViewById(R.id.tableandball);
+
+        placeBall.setOnTouchListener(new View.OnTouchListener()
+        {
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                cueBallPlace.setX(event.getX());
+                cueBallPlace.setY(event.getY());
+                return true;
+            }
+        });
 
         initializeAiming();
-
-        fire = (Button) findViewById(R.id.fireButton);
     }
 
     public void fireButtonClick(View v) {
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.waitLayout);
-        LinearLayout layout2 = (LinearLayout) findViewById(R.id.fireLayout);
-
-        if(layout.getVisibility() != View.VISIBLE) {
-            layout.setVisibility(View.VISIBLE);
-            layout2.setVisibility(View.INVISIBLE);
-        } else {
-            layout.setVisibility(View.INVISIBLE);
-            layout2.setVisibility(View.VISIBLE);
-        }
-
-        final RelativeLayout layout3 = (RelativeLayout) findViewById(R.id.waitLayout);
-        final TextView text = (TextView) findViewById(R.id.waitText);
-
-        Thread thread = new Thread("WaitAnimThread") {
-            public void run(){
-                while(layout3.getVisibility() == View.VISIBLE) {
-                    final String txt = getResources().getString(R.string.wait_text);
-
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            text.setText(txt + ".");
-                        }
-                    });
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            text.setText(txt + "..");
-                        }
-                    });
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            text.setText(txt + "...");
-                        }
-                    });
-                }
-            }
-        };
-        thread.start();
     }
 
     private void initializeAiming() {
@@ -322,14 +318,37 @@ public class ShotActivity extends Activity implements SensorEventListener {
             return;
 
         TextView tv1 = (TextView) findViewById(R.id.textView1);
-        tv1.setText(String.valueOf(rotation));
+        //tv1.setText(String.valueOf(rotation));
 
         TextView tv2 = (TextView) findViewById(R.id.textView2);
-        tv2.setText(String.valueOf(angle));
+        //tv2.setText(String.valueOf(angle));
 
         TextView tv3 = (TextView) findViewById(R.id.textView3);
-        tv3.setText(String.valueOf(event.values[2]));
+        //tv3.setText(String.valueOf(event.values[2]));
 
+    }
+
+    public void startShot() {
+        shooting = true;
+        this.fireAngle = this.angle;
+    }
+
+    public void fireBall(float relativeStrength) {
+        strengthButtonAnim.reset();
+        shooting = false;
+        if (socket == null)
+            return;
+
+        long difference = System.currentTimeMillis() - startTime;
+
+        try {
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            pw.println("" + ProtocolCmd.FIRE.ordinal() + " " + (float)relativeStrength);
+            System.out.println("Firing...");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        strengthButtonAnim.start();
     }
 
     @Override
