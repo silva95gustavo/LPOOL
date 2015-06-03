@@ -38,6 +38,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sun.media.sound.ModelSource;
 
 import lpool.gui.assets.Manager;
@@ -54,6 +56,7 @@ import lpool.logic.state.State;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
+	private Viewport viewport;
 
 	private ModelBatch modelBatch = new ModelBatch();
 	private ModelBatch shadowBatch = new ModelBatch(new DepthShaderProvider());
@@ -75,12 +78,13 @@ public class MatchScene implements Screen, Observer{
 
 	public MatchScene(lpool.logic.Game game, int width, int height)
 	{
-		camera = new OrthographicCamera(Table.width * 1.2f, Table.height * 1.3f);
-		camera.position.set(Table.width / 2, Table.height / 2, 3f);
-		camera.lookAt(Table.width / 2, Table.height / 2, 0);
+		camera = new OrthographicCamera();
+		camera.position.set(Table.width / 2, Table.height * 1.3f / 2, 3);
+		//camera.lookAt(Table.width / 2, Table.height / 2, 0);
 		camera.near = 0.1f; 
 		camera.far = 300.0f;
 		camera.update();
+		viewport = new FitViewport(Table.width * 1.2f, Table.height * 1.3f, camera);
 
 		shadowLight = new DirectionalShadowLight(2048, 2048, camera.viewportWidth, camera.viewportHeight, camera.near, camera.far);
 		shadowLight.set(0.1f, 0.1f, 0.1f, -0.08f, -0.08f, -1f);
@@ -236,6 +240,8 @@ public class MatchScene implements Screen, Observer{
 		camera.viewportWidth = Table.width;
 		camera.viewportHeight = Table.width * height / width;
 		camera.update();
+		
+		viewport.update(width,  height);;
 	}
 
 	@Override
