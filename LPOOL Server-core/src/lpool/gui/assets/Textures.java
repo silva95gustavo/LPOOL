@@ -22,6 +22,8 @@ public class Textures { // Singleton
 		am.load(GameProject.QR_IP_DIR, Texture.class);
 		am.load("match/cue.png", Texture.class);
 		am.load("match/cue_ball_prediction.png", Texture.class);
+		am.load("match/cue_ball_prediction_blocked.png", Texture.class);
+		am.load("match/background.png", Texture.class);
 		am.load("balls/ball_shadow.png", Texture.class);
 		am.load("lobby/lobby.png", Texture.class);
 		am.load("lobby/disconnected.png", Texture.class);
@@ -70,6 +72,16 @@ public class Textures { // Singleton
 	public Texture getCueBallPrediction()
 	{
 		return Manager.getInstance().getAssetManager().get("match/cue_ball_prediction.png");
+	}
+	
+	public Texture getCueBallPredictionBlocked()
+	{
+		return Manager.getInstance().getAssetManager().get("match/cue_ball_prediction_blocked.png");
+	}
+	
+	public Texture getBackground()
+	{
+		return Manager.getInstance().getAssetManager().get("match/background.png");
 	}
 	
 	public Texture getLogo()

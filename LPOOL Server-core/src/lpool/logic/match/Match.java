@@ -45,13 +45,31 @@ public class Match implements Observer{
 	private Ball cueBall;
 	private Ball[] balls;
 
-	private Table border;
-
 	private float cueAngle = (float)Math.PI;
-
+	private boolean ballInHand;
+	
 	private ObservableCollision observableCollision;
 
-	private boolean aiming;
+	public Match(Network network) {
+		stateMachine = new Context<Match>(this, new FreezeTime());
+		this.network = network;
+
+		gravity = new Vector2(0, 0);
+		world = new World(gravity, false);
+		World.setVelocityThreshold(0.00001f);
+		world.setContactListener(observableCollision = new ObservableCollision());
+		addColisionObserver(this);
+		ballsToBeDeleted = new LinkedList<Body>();
+
+		balls1 = new Ball[ballsPerPlayer];
+		balls2 = new Ball[ballsPerPlayer];
+		balls = new Ball[ballsPerPlayer * 2 + 2];
+		setBallInHand(false);
+
+		createBalls();
+
+		Table table = new Table(world);
+	}
 
 	private Ball createBall(World world, int posID, int number)
 	{
@@ -104,27 +122,6 @@ public class Match implements Observer{
 		{
 			createBall(world, rack[i], i);
 		}
-	}
-
-	public Match(Network network) {
-		stateMachine = new Context<Match>(this, new FreezeTime());
-		this.network = network;
-
-		gravity = new Vector2(0, 0);
-		world = new World(gravity, false);
-		World.setVelocityThreshold(0.00001f);
-		world.setContactListener(observableCollision = new ObservableCollision());
-		addColisionObserver(this);
-		ballsToBeDeleted = new LinkedList<Body>();
-
-		balls1 = new Ball[ballsPerPlayer];
-		balls2 = new Ball[ballsPerPlayer];
-		balls = new Ball[ballsPerPlayer * 2 + 2];
-
-		createBalls();
-
-		border = new Table(world);
-		
 	}
 
 	public void tick(float dt)
@@ -299,6 +296,9 @@ public class Match implements Observer{
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
 		balls[ballNumber].enterHole(holeNumber);
+		
+		if (ballNumber == 0)
+			setBallInHand(true);
 	}
 
 	public lpool.logic.state.Context<Match> getStateMachine() {
@@ -309,17 +309,17 @@ public class Match implements Observer{
 	{
 		return network;
 	}
-
-	public boolean isAiming() {
-		return aiming;
-	}
-
-	public void setAiming(boolean isAiming) {
-		this.aiming = isAiming;
-	}
 	
 	public World getWorld()
 	{
 		return world;
+	}
+
+	public boolean isBallInHand() {
+		return ballInHand;
+	}
+
+	public void setBallInHand(boolean ballInHand) {
+		this.ballInHand = ballInHand;
 	}
 }

@@ -23,7 +23,6 @@ public class Play implements State<Match>, Observer{
 	
 	@Override
 	public void enter(Match match) {
-		match.setAiming(true);
 		this.match = match;
 		angleVar = 0;
 		lastAngle = (float)Math.PI;
@@ -71,7 +70,7 @@ public class Play implements State<Match>, Observer{
 			match.getStateMachine().changeState(new BallsMoving());
 			match.getNetwork().deleteMsgObserver(this);
 			break;
-		} // TODO allow the cue ball to be moved with the hands
+		}
 		default:
 			break;
 		}
