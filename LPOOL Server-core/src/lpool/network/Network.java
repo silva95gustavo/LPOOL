@@ -11,6 +11,8 @@ import java.util.Observer;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import lpool.logic.Game;
+
 public class Network {
 	public final int maxClients;
 	private int numClients;
@@ -85,8 +87,8 @@ public class Network {
 			{
 				if (comms[i].isConnClosed())
 				{
-					kickClient(i);
 					clientConnEvents.add(i);
+					kickClient(i);
 				}
 			}
 		}
@@ -150,6 +152,8 @@ public class Network {
 		if (comms[clientID] == null)
 			return false;
 
+		comms[clientID].send(Game.ProtocolCmd.KICK + "");
+		
 		try {
 			comms[clientID].getSocket().close();
 		} catch (IOException e) {
