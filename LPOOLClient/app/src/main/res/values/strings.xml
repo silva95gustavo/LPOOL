@@ -2,6 +2,7 @@
     <string name="app_name">LPOOL Client</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_instructions">Instructions</string>
     <string name="shot_act_name">Shot Activity</string>
     <string name="instructions_act_name">Instructions Activity</string>
     <string name="title_activity_instructions">InstructionsActivity</string>
