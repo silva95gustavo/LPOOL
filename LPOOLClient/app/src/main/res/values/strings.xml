@@ -10,4 +10,6 @@
     <string name="instructions_text_2">Then, just press the screen to shoot the ball. The longer you press, the faster it goes!</string>
 
     <string name="hello_world">Hello world!</string>
+
+    <string name="wait_text">Please wait for your turn </string>
 </resources>

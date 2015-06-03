@@ -3,6 +3,7 @@ package com.lpool.client;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,13 +12,19 @@ import android.media.Image;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -45,7 +52,7 @@ import static com.lpool.client.ShotActivity.ProtocolCmd.*;
 
 public class ShotActivity extends Activity implements SensorEventListener {
 
-    private static String serverIP = "192.168.1.69";
+    private static String serverIP = "192.168.206.1";
     private static final int serverPort = 6900;
     private static final int FPS = 20;
 
@@ -69,13 +76,19 @@ public class ShotActivity extends Activity implements SensorEventListener {
     private float accelerometerLast = 0;
     private float gravity[] = new float[3];
 
+    private Button fire;
+
     public enum ProtocolCmd {
         ANGLE, // angle
-        FIRE, // force
+        FIRE, // force[0, 1] x-spin[-1, 1] y-spin[-1, 1]
         PING,
         PONG,
         JOIN,
-        QUIT
+        QUIT,
+        KICK,
+        BIH,
+        ACKBIH,
+        PLACECB // x-pos[0, 1] y-pos[0, 1]
     };
 
     @Override
@@ -107,42 +120,96 @@ public class ShotActivity extends Activity implements SensorEventListener {
             }
         }, 100, 1000/FPS);
 
-        final ImageView crosshair = (ImageView) findViewById(R.id.cross);
+        initializeAiming();
+
+        fire = (Button) findViewById(R.id.fireButton);
+    }
+
+    public void fireButtonClick(View v) {
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.waitLayout);
+        LinearLayout layout2 = (LinearLayout) findViewById(R.id.fireLayout);
+
+        if(layout.getVisibility() != View.VISIBLE) {
+            layout.setVisibility(View.VISIBLE);
+            layout2.setVisibility(View.INVISIBLE);
+        } else {
+            layout.setVisibility(View.INVISIBLE);
+            layout2.setVisibility(View.VISIBLE);
+        }
+
+        final RelativeLayout layout3 = (RelativeLayout) findViewById(R.id.waitLayout);
+        final TextView text = (TextView) findViewById(R.id.waitText);
+
+        Thread thread = new Thread("WaitAnimThread") {
+            public void run(){
+                while(layout3.getVisibility() == View.VISIBLE) {
+                    final String txt = getResources().getString(R.string.wait_text);
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            text.setText(txt + ".");
+                        }
+                    });
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            text.setText(txt + "..");
+                        }
+                    });
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            text.setText(txt + "...");
+                        }
+                    });
+                }
+            }
+        };
+        thread.start();
+    }
+
+    private void initializeAiming() {
         final ImageView cueBall = (ImageView) findViewById(R.id.cueBall);
+        final RelativeLayout horizontal = (RelativeLayout) findViewById(R.id.horizontalLine);
+        final RelativeLayout vertical = (RelativeLayout) findViewById(R.id.verticalLine);
 
         final View touchView = findViewById(R.id.center);
         touchView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                final float centerX = cueBall.getX()+cueBall.getWidth()/2;
-                final float centerY = cueBall.getY()+cueBall.getHeight()/2;
-                final float radius;
-                if(cueBall.getWidth() < cueBall.getHeight())
-                    radius = cueBall.getWidth()/2;
-                else
-                    radius = cueBall.getHeight()/2;
 
+                float pointX = event.getX();
+                float pointY = event.getY();
+                float centerX = cueBall.getX() + cueBall.getWidth() / 2;
+                float centerY = cueBall.getY() + cueBall.getHeight() / 2;
+                float radius = (float) 0.65 * cueBall.getWidth() / 2;
 
-                float newX = event.getX();
-                float newY = event.getY();
+                float dist = (float) Math.sqrt((pointX - centerX) * (pointX - centerX) + (pointY - centerY) * (pointY - centerY));
 
-                Log.d("centerX", "" + centerX);
-                Log.d("centerY", "" + centerY);
-                Log.d("radius", "" + radius);
-                Log.d("newX", "" + newX);
-                Log.d("newY", "" + newY);
-
-                if(((newX - centerX)*(newX - centerX) + (newY - centerY)*(newY - centerY)) < (radius*radius)) {
-                    crosshair.setX(newX - crosshair.getWidth() / 2);
-                    crosshair.setY(newY - crosshair.getHeight() / 2);
+                if (dist < radius) {
+                    vertical.setX(pointX - vertical.getWidth() / 2);
+                    horizontal.setY(pointY - horizontal.getHeight() / 2);
+                } else {
+                    float closest_x = centerX + radius * (pointX - centerX) / dist;
+                    float closest_y = centerY + radius * (pointY - centerY) / dist;
+                    vertical.setX(closest_x - vertical.getWidth() / 2);
+                    horizontal.setY(closest_y - horizontal.getHeight() / 2);
                 }
 
-                /*if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-                    //Log.d("TouchTest", "Touch down");
-                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                    //xText.setText("" + String.valueOf(event.getX()));
-                    //yText.setText("" + String.valueOf(event.getY()));
-                }*/
                 return true;
             }
         });
@@ -165,14 +232,14 @@ public class ShotActivity extends Activity implements SensorEventListener {
                     else if(str.equals(ProtocolCmd.PING.ordinal() + "" + '\n'))
                     {
                         System.out.println("Got PING");
-                        /*try {
+                        try {
                             String data = new String("" + ProtocolCmd.PONG.ordinal() + '\n');
                             byte[] msg = data.getBytes();
                             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
                             datagramSocket.send(sendPacket);
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }*/
+                        }
                     }
                 } catch (IOException e) {
                     //stopMe();
