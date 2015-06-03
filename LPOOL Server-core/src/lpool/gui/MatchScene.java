@@ -47,7 +47,10 @@ import lpool.gui.assets.Textures;
 import lpool.logic.BodyInfo;
 import lpool.logic.Table;
 import lpool.logic.ball.Ball;
+import lpool.logic.match.CueBallInHand;
 import lpool.logic.match.Match;
+import lpool.logic.match.Play;
+import lpool.logic.state.State;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
@@ -61,8 +64,8 @@ public class MatchScene implements Screen, Observer{
 	private Texture table;
 	private Texture table_border;
 
-	private Model table3D;
 	private Texture cueBallPrediction;
+	private Texture cueBallPredictionBlocked;
 	private Sprite cue;
 	private Array<ModelInstance> modelInstances;
 
@@ -97,12 +100,14 @@ public class MatchScene implements Screen, Observer{
 		table = Textures.getInstance().getTable();
 		table_border = Textures.getInstance().getTableBorder();
 
-		Material matTable = new Material(new TextureAttribute(TextureAttribute.Diffuse, table));
-		ModelBuilder mb = new ModelBuilder();
-		table3D = mb.createRect(0, 0, 0, Table.width, 0, 0, Table.width, Table.height, 0, 0, Table.height, 0, 0, 0, 1, matTable, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
+		//Material matTable = new Material(new TextureAttribute(TextureAttribute.Diffuse, table));
+		//ModelBuilder mb = new ModelBuilder();
+		//table3D = mb.createRect(0, 0, 0, Table.width, 0, 0, Table.width, Table.height, 0, 0, Table.height, 0, 0, 0, 1, matTable, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		cueBallPrediction = Textures.getInstance().getCueBallPrediction();
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		cueBallPredictionBlocked = Textures.getInstance().getCueBallPredictionBlocked();
+		cueBallPredictionBlocked.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cue = new Sprite(Textures.getInstance().getCue());
 		cue.setSize(1.5f, 0.04f);
 		this.game = game;
@@ -155,7 +160,8 @@ public class MatchScene implements Screen, Observer{
 		modelBatch.render(modelInstances, environment);
 		modelBatch.end();
 
-		if (m.isAiming())
+		State<Match> currentState = m.getStateMachine().getCurrentState();
+		if (currentState.getClass() == Play.class)
 		{
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
@@ -181,6 +187,12 @@ public class MatchScene implements Screen, Observer{
 			shapeRenderer.end();
 
 			drawCue(m.getCueBall().getPosition(), 0, m.getCueAngle());
+		}
+		else if (currentState.getClass() == CueBallInHand.class)
+		{
+			batch.begin();
+			batch.draw(((CueBallInHand)currentState).isValidPosition() ? cueBallPrediction : cueBallPredictionBlocked, m.getCueBall().getPosition().x, m.getCueBall().getPosition().y, Ball.radius * 2, Ball.radius * 2);
+			batch.end();
 		}
 		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());

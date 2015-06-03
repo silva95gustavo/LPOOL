@@ -16,9 +16,11 @@ import lpool.network.Message;
 
 public class CueBallInHand implements State<Match>, Observer{
 	private Match match;
+	private boolean validPosition;
 	
 	public CueBallInHand()
 	{
+		this.validPosition = false;
 	}
 	
 	@Override
@@ -46,9 +48,12 @@ public class CueBallInHand implements State<Match>, Observer{
 				break;
 			float yPos = sc.nextFloat();
 			
-			if (tryMoveCueBall(new Vector2(xPos, yPos)))
-				if (cmd == Game.ProtocolCmd.PLACECB)
+			validPosition = tryMoveCueBall(new Vector2(xPos, yPos));
+				if (cmd.equals(Game.ProtocolCmd.PLACECB) && validPosition)
+				{
+					match.setBallInHand(false);
 					match.getStateMachine().changeState(new Play());
+				}
 			break;
 		}
 		default:
@@ -64,7 +69,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		
 		dest.scl(Table.width - 2 * Ball.radius, Table.height - 2 * Ball.radius).add(new Vector2(Table.border, Table.border));
 		
-		for (int i = 0; i < match.getBalls().length; i++)
+		for (int i = 1; i < match.getBalls().length; i++)
 		{
 			if (dest.dst(match.getBalls()[i].getPosition()) < 2 * Ball.radius)
 				return false;
@@ -76,5 +81,10 @@ public class CueBallInHand implements State<Match>, Observer{
 
 	@Override
 	public void update(Match owner, float dt) {
+	}
+	
+	public boolean isValidPosition()
+	{
+		return validPosition;
 	}
 }

@@ -172,9 +172,6 @@ public class Ball {
 	}
 
 	public void enterHole(int holeNumber) {
-		if (number == 0)
-			return;
-		
 		if (!this.visible || !this.onTable)
 			return;
 		
@@ -236,6 +233,9 @@ public class Ball {
 	
 	public boolean isStopped()
 	{
+		if (stateMachine.getCurrentState().getClass() == InHole.class)
+			return true;
+		
 		if (body.getAngularVelocity() != 0)
 			return false;
 		

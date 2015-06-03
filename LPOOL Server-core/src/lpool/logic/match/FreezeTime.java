@@ -9,7 +9,6 @@ public class FreezeTime implements State<Match> {
 	
 	@Override
 	public void enter(Match match) {
-		match.setAiming(false);
 		elapsedTime = 0;
 	}
 

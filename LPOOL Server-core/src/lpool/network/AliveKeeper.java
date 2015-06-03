@@ -15,6 +15,7 @@ public class AliveKeeper {
 		this.network = network;
 		this.comm = comm;
 		timer = new Timer();
+		reset();
 	}
 	
 	public synchronized void reset()

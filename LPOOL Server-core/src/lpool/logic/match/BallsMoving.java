@@ -7,7 +7,6 @@ public class BallsMoving implements State<Match> {
 	
 	@Override
 	public void enter(Match match) {
-		match.setAiming(false);
 	}
 
 	@Override
@@ -23,17 +22,17 @@ public class BallsMoving implements State<Match> {
 	{
 		for (int i = 0; i < balls.length; i++)
 		{
-			if (balls[i].isOnTable())
-				if (!balls[i].isStopped())
-					return false;
+			if (!balls[i].isStopped())
+				return false;
 		}
 		return true;
 	}
 	
 	private void continueMatch(Match match)
 	{
-		
-		
-		match.getStateMachine().changeState(new Play()); // TODO check if the cue ball can be moved by hand or not
+		if (match.isBallInHand())
+			match.getStateMachine().changeState(new CueBallInHand());
+		else
+			match.getStateMachine().changeState(new Play()); // TODO check if the cue ball can be moved by hand or not
 	}
 }
