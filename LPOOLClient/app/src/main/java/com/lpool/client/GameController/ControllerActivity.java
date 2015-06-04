@@ -103,4 +103,14 @@ public class ControllerActivity extends Activity implements Receiver{
         }
         return false;
     }
+
+    protected void onPause() {
+        super.onPause();
+        currentState.onPause();
+    }
+
+    protected void onResume() {
+        super.onResume();
+        currentState.onResume();
+    }
 }

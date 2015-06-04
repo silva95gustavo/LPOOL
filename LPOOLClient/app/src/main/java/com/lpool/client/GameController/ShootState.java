@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 
 import com.lpool.client.Network.Connector;
 import com.lpool.client.R;
-import com.lpool.client.ToUpdate.StrengthButton;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,7 +31,10 @@ public class ShootState implements GameState, SensorEventListener {
     private static final int FPS = 20;
     private SensorManager sensorManager;
     private Sensor senAccelerometer;
-    private boolean shooting = false;
+    //private boolean shooting = false;
+    private boolean paused = false;
+    private boolean interrupted = true;
+    private boolean shot_active = false;
     private float angle = (float)Math.PI;
     private float gravity[] = new float[3];
     private float accelerometerLast = 0;
@@ -47,8 +49,6 @@ public class ShootState implements GameState, SensorEventListener {
         own_layout = (LinearLayout) caller.findViewById(R.id.fireLayout);
     }
 
-    // TODO cenas de interacao
-
     private void initializeSensors() {
         sensorManager = (SensorManager) caller.getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -59,7 +59,7 @@ public class ShootState implements GameState, SensorEventListener {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!shooting && active) {
+                if (!paused && !interrupted && active && !shot_active) {
                     caller.sendUDPMessage(Connector.ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + '\n');
                 }
             }
@@ -71,20 +71,14 @@ public class ShootState implements GameState, SensorEventListener {
         strength = (RelativeLayout) caller.findViewById(R.id.strengthBar);
         strength.setY(700);
 
-        //final ShootState caller = this;
-
-        /*fire.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
+        // TODO strength
+        final ShootState shooter = this;
+        strengthButtonAnim = new StrengthButton(caller, shooter, fire, strength, fire.getY(), own_layout.getY(), 5);
+        fire.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Log.d("", "changed");
-                strengthButtonAnim.stop();
-                strengthButtonAnim.reset();
-                strengthButtonAnim.disable();
-                strengthButtonAnim = new StrengthButton(caller, fire, strength, fire.getY(), 0, 4);
                 strength.setY(fire.getY());
             }
         });
-        strengthButtonAnim = new StrengthButton(caller, fire, strength, fire.getY(), 0, 4);*/
 
         final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
         final RelativeLayout placeBall = (RelativeLayout) caller.findViewById(R.id.tableandball);
@@ -136,42 +130,40 @@ public class ShootState implements GameState, SensorEventListener {
     }
 
     public void startShot() {
+        //shooting = true;
+        shot_active = true;
+    }
 
+    public void stopShot() {
+        //shooting = false;
+        shot_active = false;
     }
 
     public void fireBall(float relativeStrength) {
-
+        //shooting = false;
+        caller.sendTCPMessage("" + Connector.ProtocolCmd.FIRE.ordinal() + " " + relativeStrength + '\n');
+        System.out.println("Force: " + relativeStrength);
+        shot_active = false;
     }
 
-    public boolean onTouchEvent(MotionEvent event){
-
-        /*if (action == MotionEvent.ACTION_DOWN) {
-            startTime = System.currentTimeMillis();
-            shooting = true;
-            return true;
-        }*/
+    public boolean onTouchEvent(MotionEvent event) {
         return true;
     }
 
-    protected void onResume() {
-        //super.onResume();
-        // register this class as a listener for the orientation and
-        // accelerometer sensors
+    public void onResume() {
         sensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+        //shooting = false;
+        paused = false;
     }
 
-    protected void onPause() {
-        // unregister listener
-        //super.onPause();
+    public void onPause() {
         sensorManager.unregisterListener(this);
+        //shooting = true;
+        paused = true;
     }
 
-    public void onSensorChanged(SensorEvent event)
-    {
-        System.out.println("new angle");
-        if (shooting)
-            return;
-        System.out.println("valid shot");
+    public void onSensorChanged(SensorEvent event) {
+
         float[] g = new float[3];
         g = event.values.clone();
 
@@ -196,17 +188,17 @@ public class ShootState implements GameState, SensorEventListener {
         g[2] = g[2] / norm_Of_g;
 
         float rotation = (float)(Math.atan2(g[0], g[1]) - Math.PI / 2);
-        angle -= (float)(rotation * Math.abs(rotation) * (System.currentTimeMillis() - lastSensorReadTime) * 0.02f);
+        if(!shot_active && !paused && !interrupted && active)
+            angle -= (float) (rotation * Math.abs(rotation) * (System.currentTimeMillis() - lastSensorReadTime) * 0.02f);
         lastSensorReadTime = System.currentTimeMillis();
 
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     public void interrupt() {
+        //shooting = true;
+        interrupted = true;
         sensorManager.unregisterListener(this);
         own_layout.setVisibility(View.INVISIBLE);
         active = false;
@@ -219,6 +211,9 @@ public class ShootState implements GameState, SensorEventListener {
         initializeElements();
         sensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_GAME);
         active = true;
+        //shooting = false;
+        interrupted = false;
+        shot_active = false;
     }
 
     public Boolean isActive() {
