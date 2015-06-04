@@ -28,6 +28,7 @@ public class Play implements State<Match>, Observer{
 		lastAngle = (float)Math.PI;
 		lastAngleTime = System.currentTimeMillis();
 		match.getNetwork().addMsgObserver(this);
+		match.setBallInHand(false);
 	}
 
 	@Override

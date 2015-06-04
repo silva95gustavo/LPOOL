@@ -9,9 +9,15 @@ public class Message {
 	public int clientID;
 	public final String body;
 	
-	public Message(int clientID, String body) {
+	public Message(int clientID, Object... objects)
+	{
 		this.clientID = clientID;
-		this.body = body;
+		String s = new String();
+		for (int i = 0; i < objects.length; i++)
+		{
+			s += objects[i] + " ";
+		}
+		this.body = s.substring(0, s.length() - 1);
 	}
 	
 	public static lpool.logic.Game.ProtocolCmd readCmd(Scanner sc)
