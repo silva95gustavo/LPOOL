@@ -11,6 +11,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 /**
  * Created by André on 03/06/2015.
@@ -39,17 +40,19 @@ public class Connector {
     private int serverPort;
     private Boolean running = true;
 
+    private ArrayList<Receiver> receivers;
+
     public Connector(String ip, int port) {
         this.serverIP = ip;
         this.serverPort = port;
         running = true;
-        initializeClientThread();
-        initializeHeartbeatThread();
+        receivers = new ArrayList<Receiver>();
+        initializeClientThread(); // Initializes receiver/heartbeat thread
     }
 
-
-
     public Boolean sendUPDMessage(String message) {
+
+        System.out.println("Sending " + message);
 
         if(!running)
             return false;
@@ -66,6 +69,7 @@ public class Connector {
             return false;
         }
 
+        System.out.println("Sent");
         return true;
     }
 
@@ -93,6 +97,7 @@ public class Connector {
                 InetAddress serverAddr = InetAddress.getByName(serverIP);
                 socket = new Socket(serverAddr, serverPort);
                 datagramSocket = new DatagramSocket(serverPort);
+                initializeReceiverThread();
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
@@ -101,7 +106,7 @@ public class Connector {
         }
     }
 
-    class beatThread implements Runnable {
+    class receiverThread implements Runnable {
         @Override
         public void run() {
             while (running)
@@ -110,23 +115,19 @@ public class Connector {
                     System.out.println("Receiving...");
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String str = br.readLine();
-                    System.out.println("Received...");
                     if (str == null) {
                         System.out.println("received null");
                         break;
                     }
-                    else if(str.equals(ProtocolCmd.PING.ordinal() + "" + '\n'))
+                    System.out.println("Received message \"" + str + "\"");
+                    if(str.equals(ProtocolCmd.PING + ""))
                     {
                         System.out.println("Got PING");
-                        try {
-                            String data = new String("" + ProtocolCmd.PONG.ordinal() + '\n');
-                            byte[] msg = data.getBytes();
-                            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
-                            datagramSocket.send(sendPacket);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        sendTCPMessage("" + ProtocolCmd.PONG.ordinal());
+                        System.out.println("Sent PONG");
                     }
+                    else
+                        spreadMessage(str);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -134,19 +135,37 @@ public class Connector {
         }
     }
 
+    private void spreadMessage(String message) {
+        for(int i = 0; i < receivers.size(); i++) {
+            if(receivers.get(i) != null)
+                receivers.get(i).getMessage(message);
+        }
+    }
+
     private void initializeClientThread() {
         new Thread(new ClientThread()).start();
     }
 
-    private void initializeHeartbeatThread() { new beatThread().run();}
+    private void initializeReceiverThread() { new receiverThread().run();}
+
+    public void addReceiver(Receiver receiver) {
+        receivers.add(receiver);
+    }
+
+    public void removeReceiver(Receiver receiver) {
+        if(receivers.indexOf(receiver) != -1) {
+            receivers.remove(receiver);
+        }
+    }
 
     public void stop() {
         running = false;
+        receivers.clear();
     }
 
     public void restart() {
         running = true;
         initializeClientThread();
-        initializeHeartbeatThread();
+        initializeReceiverThread();
     }
 }

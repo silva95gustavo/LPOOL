@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ToUpdate.ShotActivity"
+            android:name=".GameController.ControllerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/shot_act_name"

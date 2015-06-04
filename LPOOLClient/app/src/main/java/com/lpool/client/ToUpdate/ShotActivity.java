@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lpool.client.GameController.Controller;
 import com.lpool.client.R;
 
 import java.io.BufferedReader;
@@ -37,7 +36,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class ShotActivity extends Activity implements SensorEventListener, Controller {
+public class ShotActivity extends Activity implements SensorEventListener {
 
     private static String serverIP = "192.168.206.1";
     private static final int serverPort = 6900;
@@ -84,7 +83,7 @@ public class ShotActivity extends Activity implements SensorEventListener, Contr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shot);
+        setContentView(R.layout.activity_game);
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         initializeSensors();

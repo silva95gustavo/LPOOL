@@ -5,6 +5,8 @@ package com.lpool.client.Network;
  */
 public class Utilities {
 
+    public static final int MAX_PORT = 65535;
+
     public static boolean isValidIP(String ip)
     {
         try {
@@ -31,5 +33,10 @@ public class Utilities {
         } catch (NumberFormatException exc) {
             return false;
         }
+    }
+
+    public static Boolean isValidPort(int port) {
+        if(port < MAX_PORT && port > 0) return true;
+        return false;
     }
 }
