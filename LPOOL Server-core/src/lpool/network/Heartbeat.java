@@ -4,6 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 
+import lpool.logic.Game;
+
 import com.badlogic.gdx.utils.Timer;
 
 public class Heartbeat extends Timer.Task implements Observer{
@@ -24,7 +26,7 @@ public class Heartbeat extends Timer.Task implements Observer{
 	public void run() {
 		network.addMsgObserver(this);
 		System.out.println("Sending PING");
-		//comm.send(Game.ProtocolCmd.PING + "");
+		comm.send(Game.ProtocolCmd.PING + "");
 		timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
