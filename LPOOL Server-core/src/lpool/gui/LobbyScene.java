@@ -8,6 +8,7 @@ import lpool.gui.assets.Manager;
 import lpool.gui.assets.Textures;
 import lpool.logic.Game;
 import lpool.network.Info;
+import lpool.network.Network;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -43,6 +44,7 @@ public class LobbyScene implements Screen, Observer {
 
 	private ShaderBatch batch;
 	private Sprite QRCode;
+	private Sprite AndroidAppQRCode;
 
 	private FadingColor fadingColor;
 
@@ -67,6 +69,7 @@ public class LobbyScene implements Screen, Observer {
 		viewport = new FitViewport(Textures.getInstance().getLobby().getWidth(), Textures.getInstance().getLobby().getHeight(), camera);
 
 		QRCode = new Sprite(Textures.getInstance().getQRCode());
+		AndroidAppQRCode = new Sprite(Textures.getInstance().getAndroidAppQRCode());
 
 		//batch = new SpriteBatch();
 		batch = new ShaderBatch(100);
@@ -123,7 +126,7 @@ public class LobbyScene implements Screen, Observer {
 		batch.setProjectionMatrix(camera.combined);
 		renderLobby(batch);
 		renderPlayerStatus(batch);
-		renderQRCode(batch);
+		renderQRCodes(batch);
 
 		if (player1 || player2) // TODO change to &&
 		{
@@ -165,11 +168,13 @@ public class LobbyScene implements Screen, Observer {
 				-Textures.getInstance().getLobby().getHeight() / 2);
 	}
 	
-	public void renderQRCode(Batch batch)
+	public void renderQRCodes(Batch batch)
 	{
 		Fonts.getInstance().getArial32().setColor(Color.WHITE);
-		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
+		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP() + ":" + Network.port, 0, -180, 0, BitmapFont.HAlignment.CENTER);
+		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.androidAppUrl, 0, -920, 0, BitmapFont.HAlignment.CENTER);
 		batch.draw(QRCode, -300, -160, 600, 600);
+		batch.draw(AndroidAppQRCode, -200, -900, 400, 400);
 	}
 	
 	public void renderPlayerStatus(Batch batch)

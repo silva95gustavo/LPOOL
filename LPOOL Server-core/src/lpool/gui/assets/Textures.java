@@ -20,6 +20,7 @@ public class Textures { // Singleton
 		am.load("match/table.png", Texture.class);
 		am.load("match/table_border.png", Texture.class);
 		am.load(GameProject.QR_IP_DIR, Texture.class);
+		am.load(GameProject.QR_ANDROID_APP_DIR, Texture.class);
 		am.load("match/cue.png", Texture.class);
 		am.load("match/cue_ball_prediction.png", Texture.class);
 		am.load("match/cue_ball_prediction_blocked.png", Texture.class);
@@ -57,6 +58,11 @@ public class Textures { // Singleton
 	public Texture getQRCode()
 	{
 		return Manager.getInstance().getAssetManager().get(GameProject.QR_IP_DIR);
+	}
+	
+	public Texture getAndroidAppQRCode()
+	{
+		return Manager.getInstance().getAssetManager().get(GameProject.QR_ANDROID_APP_DIR);
 	}
 	
 	public Texture getCue()
