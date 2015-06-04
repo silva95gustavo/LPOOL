@@ -3,6 +3,7 @@ package lpool.gui;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+// Class obtained as an example from libGDX
 public class ShaderBatch extends SpriteBatch {
 
 	static final String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //

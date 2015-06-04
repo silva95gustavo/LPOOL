@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,7 +31,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LobbyScene implements Screen, Observer {
 	private static final float startingTime = 3; /** Time between all players are connected and the match starts **/
-	
+
 	private int width;
 	private int height;
 
@@ -118,18 +119,61 @@ public class LobbyScene implements Screen, Observer {
 	@Override
 	public void render(float delta) {
 		game.tick(delta);
+		renderBackground(delta);
+		batch.setProjectionMatrix(camera.combined);
+		renderLobby(batch);
+		renderPlayerStatus(batch);
+		renderQRCode(batch);
 
+		if (player1 || player2) // TODO change to &&
+		{
+			if (readyTime <= 0)
+				GdxGame.setScreen(new MatchScene(game, width, height));
+			else
+			{
+				readyTime -= delta;
+
+				if (startingTime - readyTime <= 1)
+					brightness = (readyTime - startingTime) / 2;
+				else
+					brightness = -0.5f;
+				renderStartOverlay(batch);
+			}
+		}
+		else
+		{
+			readyTime = startingTime;
+			brightness = 0;
+		}
+
+		batch.end();
+	}
+
+	public void renderBackground(float delta)
+	{
 		Color interpolated = fadingColor.tick(delta);
 		Gdx.gl.glClearColor(interpolated.r, interpolated.g, interpolated.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-		batch.setProjectionMatrix(camera.combined);
+	}
+	
+	public void renderLobby(ShaderBatch batch)
+	{
 		batch.brightness = brightness;
 		batch.begin();		
 		batch.draw(Textures.getInstance().getLobby(),
 				-Textures.getInstance().getLobby().getWidth() / 2,
 				-Textures.getInstance().getLobby().getHeight() / 2);
-
+	}
+	
+	public void renderQRCode(Batch batch)
+	{
+		Fonts.getInstance().getArial32().setColor(Color.WHITE);
+		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
+		batch.draw(QRCode, -300, -160, 600, 600);
+	}
+	
+	public void renderPlayerStatus(Batch batch)
+	{
 		Texture connected = Textures.getInstance().getConnected();
 		Texture disconnected = Textures.getInstance().getDisconnected();
 
@@ -142,38 +186,16 @@ public class LobbyScene implements Screen, Observer {
 			batch.draw(connected, 412, -900, connected.getWidth(), connected.getHeight());
 		else
 			batch.draw(disconnected, 412, -900, disconnected.getWidth(), disconnected.getHeight());
-
-		Fonts.getInstance().getArial32().setColor(Color.WHITE);
-		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
-		batch.draw(QRCode, -300, -160, 600, 600);
-
-		if (player1 || player2) // TODO change to &&
-		{
-			if (readyTime <= 0)
-				GdxGame.setScreen(new MatchScene(game, width, height));
-			else
-			{
-				readyTime -= delta;
-				
-				if (startingTime - readyTime <= 1)
-					brightness = (readyTime - startingTime) / 2;
-				else
-					brightness = -0.5f;
-				batch.brightness = 0;
-				batch.end();
-				batch.begin();
-				batch.draw(Textures.getInstance().getStartingIn(), -Textures.getInstance().getStartingIn().getWidth() / 2, -Textures.getInstance().getStartingIn().getHeight() / 2);
-				Fonts.getInstance().getArial150().setColor(Color.BLACK);
-				Fonts.getInstance().getArial150().drawMultiLine(batch, "" + Math.round(readyTime + 0.5f), 0, 0, 0, BitmapFont.HAlignment.CENTER);
-			}
-		}
-		else
-		{
-			readyTime = startingTime;
-			brightness = 0;
-		}
-
+	}
+	
+	public void renderStartOverlay(ShaderBatch batch)
+	{
+		batch.brightness = 0;
 		batch.end();
+		batch.begin();
+		batch.draw(Textures.getInstance().getStartingIn(), -Textures.getInstance().getStartingIn().getWidth() / 2, -Textures.getInstance().getStartingIn().getHeight() / 2);
+		Fonts.getInstance().getArial150().setColor(Color.BLACK);
+		Fonts.getInstance().getArial150().drawMultiLine(batch, "" + Math.round(readyTime + 0.5f), 0, 0, 0, BitmapFont.HAlignment.CENTER);
 	}
 
 	@Override
