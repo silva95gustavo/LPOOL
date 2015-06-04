@@ -42,6 +42,14 @@ public class Ball {
 	private Fixture sensorFixture;
 	
 	private Queue<Body> ballsToBeDeleted;
+	
+	public enum Type
+	{
+		CUE,
+		SOLID,
+		BLACK,
+		STRIPE
+	}
 
 	public Ball(World world, Vector2 position, int number, Queue<Body> ballsToBeDeleted) {
 		rotation = new Quaternion();
@@ -256,5 +264,18 @@ public class Ball {
 	public boolean isSolid()
 	{
 		return number >= 1 && number <= 7;
+	}
+	
+	public Type getType()
+	{
+		if (number == 0)
+			return Type.CUE;
+		if (isSolid())
+			return Type.SOLID;
+		if (number == 8)
+			return Type.BLACK;
+		if (isStripped())
+			return Type.STRIPE;
+		return null;
 	}
 }
