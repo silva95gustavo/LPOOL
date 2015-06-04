@@ -11,12 +11,6 @@ import com.lpool.client.Network.Receiver;
 import com.lpool.client.Network.Utilities;
 import com.lpool.client.R;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
  * Created by André on 03/06/2015.
  */
@@ -96,9 +90,9 @@ public class ControllerActivity extends Activity implements Receiver{
         // TODO
     }
 
-    public Boolean sendUPDMessage(String message) {
+    public Boolean sendUDPMessage(String message) {
         if(connector != null) {
-            return connector.sendUPDMessage(message);
+            return connector.sendUDPMessage(message);
         }
         return false;
     }

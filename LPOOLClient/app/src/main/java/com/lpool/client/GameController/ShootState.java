@@ -1,31 +1,21 @@
 package com.lpool.client.GameController;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v4.view.MotionEventCompat;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.lpool.client.Network.Connector;
 import com.lpool.client.R;
 import com.lpool.client.ToUpdate.StrengthButton;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +34,6 @@ public class ShootState implements GameState, SensorEventListener {
     private Sensor senAccelerometer;
     private boolean shooting = false;
     private float angle = (float)Math.PI;
-    private int counter = 0;
     private float gravity[] = new float[3];
     private float accelerometerLast = 0;
     private long lastSensorReadTime = System.currentTimeMillis();
@@ -70,8 +59,8 @@ public class ShootState implements GameState, SensorEventListener {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!shooting) {
-                    caller.sendUPDMessage(Connector.ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + counter++ + '\n');
+                if (!shooting && active) {
+                    caller.sendUDPMessage(Connector.ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + '\n');
                 }
             }
         }, 100, 1000 / FPS);
@@ -179,8 +168,10 @@ public class ShootState implements GameState, SensorEventListener {
 
     public void onSensorChanged(SensorEvent event)
     {
+        System.out.println("new angle");
         if (shooting)
             return;
+        System.out.println("valid shot");
         float[] g = new float[3];
         g = event.values.clone();
 
@@ -216,6 +207,7 @@ public class ShootState implements GameState, SensorEventListener {
     }
 
     public void interrupt() {
+        sensorManager.unregisterListener(this);
         own_layout.setVisibility(View.INVISIBLE);
         active = false;
     }
@@ -225,6 +217,7 @@ public class ShootState implements GameState, SensorEventListener {
         initializeSensors();
         initializeAngleSender();
         initializeElements();
+        sensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_GAME);
         active = true;
     }
 
