@@ -11,8 +11,11 @@ import java.util.Observer;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import lpool.logic.Game;
+
 public class Network {
 	public final int maxClients;
+	public static final int port = 6900;
 	private int numClients;
 	private ServerSocket serverSocket;
 	private DatagramSocket UDPServerSocket;
@@ -39,8 +42,8 @@ public class Network {
 
 	public Network(int maxClients) {
 		try {
-			this.serverSocket = new ServerSocket(6900);
-			this.UDPServerSocket = new DatagramSocket(6900);
+			this.serverSocket = new ServerSocket(port);
+			this.UDPServerSocket = new DatagramSocket(port);
 			UDPServerSocket.setTrafficClass(IPTOS_LOWDELAY);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,8 +88,8 @@ public class Network {
 			{
 				if (comms[i].isConnClosed())
 				{
-					kickClient(i);
 					clientConnEvents.add(i);
+					kickClient(i);
 				}
 			}
 		}
@@ -134,7 +137,7 @@ public class Network {
 			if (comms[i] == null)
 			{
 				numClients++;
-				comms[i] = new Communication(this, client);
+				comms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
 				return true; // Success
 			}
@@ -150,6 +153,8 @@ public class Network {
 		if (comms[clientID] == null)
 			return false;
 
+		comms[clientID].send(Game.ProtocolCmd.KICK + "");
+		
 		try {
 			comms[clientID].getSocket().close();
 		} catch (IOException e) {
@@ -192,10 +197,10 @@ public class Network {
 			{
 				if (isClientConnected(i))
 				{
-					ConcurrentLinkedQueue<String> q = comms[clientID].getClientCommEvents();
+					ConcurrentLinkedQueue<String> q = comms[i].getClientCommEvents();
 					if (q.isEmpty())
 						continue;
-					comms[clientID].resetHeartbeat();
+					comms[i].resetHeartbeat();
 					clientID = i;
 					return q.poll();
 				}
@@ -250,5 +255,14 @@ public class Network {
 			return null;
 		
 		return comms[clientID];
+	}
+	
+	public void send(Message message)
+	{
+		if (message == null)
+			return;
+		if (!isClientConnected(message.clientID))
+			return;
+		comms[message.clientID].send(message.body);
 	}
 }

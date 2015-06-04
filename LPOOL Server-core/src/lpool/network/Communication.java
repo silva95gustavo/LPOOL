@@ -11,17 +11,19 @@ public class Communication {
 	private Sender sen;
 	private ConcurrentLinkedQueue<String> clientCommEvents;
 	private LinkedBlockingQueue<String> toBeSent;
+	private int clientID;
 	
 	private AliveKeeper ak;
 	
 	private boolean alive;
 	
-	public Communication(Network network, Socket s) {
+	public Communication(Network network, Socket s, int clientID) {
 		System.out.println("Creating communication...");
 		this.alive = true;
 		this.s = s;
 		this.clientCommEvents = new ConcurrentLinkedQueue<String>();
 		this.toBeSent = new LinkedBlockingQueue<String>();
+		this.clientID = clientID;
 		
 		rec = new Receiver(s, clientCommEvents);
 		rec.start();
@@ -78,5 +80,10 @@ public class Communication {
 	public void setAlive(boolean alive)
 	{
 		this.alive = alive;
+	}
+	
+	public int getClientID()
+	{
+		return clientID;
 	}
 }

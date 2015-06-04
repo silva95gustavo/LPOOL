@@ -247,4 +247,14 @@ public class Ball {
 		
 		return true;
 	}
+	
+	public boolean isStripped()
+	{
+		return number >= 9 && number <= 15;
+	}
+	
+	public boolean isSolid()
+	{
+		return number >= 1 && number <= 7;
+	}
 }

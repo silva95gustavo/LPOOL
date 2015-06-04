@@ -38,6 +38,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sun.media.sound.ModelSource;
 
 import lpool.gui.assets.Manager;
@@ -54,7 +57,8 @@ import lpool.logic.state.State;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
-
+	private Viewport viewport;
+	
 	private ModelBatch modelBatch = new ModelBatch();
 	private ModelBatch shadowBatch = new ModelBatch(new DepthShaderProvider());
 	private Environment environment;
@@ -72,24 +76,30 @@ public class MatchScene implements Screen, Observer{
 	private DirectionalShadowLight shadowLight;
 
 	private lpool.logic.Game game;
+	
+	private final float tableMargin = Table.border;
+	private final float headerHeight = 4 * Table.border;
+	private final float worldWidth = Table.width + 2 * tableMargin;
+	private final float worldHeight = Table.height + 2 * tableMargin + headerHeight;
 
 	public MatchScene(lpool.logic.Game game, int width, int height)
 	{
-		camera = new OrthographicCamera(Table.width * 1.2f, Table.height * 1.3f);
-		camera.position.set(Table.width / 2, Table.height / 2, 3f);
-		camera.lookAt(Table.width / 2, Table.height / 2, 0);
+		camera = new OrthographicCamera();
+		camera.position.set(Table.width / 2, worldHeight / 2 - tableMargin, 3);
+		//camera.lookAt(Table.width / 2, Table.height / 2, 0);
 		camera.near = 0.1f; 
 		camera.far = 300.0f;
 		camera.update();
+		viewport = new FitViewport(worldWidth, worldHeight, camera);
 
-		shadowLight = new DirectionalShadowLight(2048, 2048, camera.viewportWidth, camera.viewportHeight, camera.near, camera.far);
-		shadowLight.set(0.1f, 0.1f, 0.1f, -0.08f, -0.08f, -1f);
+		//shadowLight = new DirectionalShadowLight(2048, 2048, camera.viewportWidth, camera.viewportHeight, camera.near, camera.far);
+		//shadowLight.set(0.1f, 0.1f, 0.1f, -0.08f, -0.08f, -1f);
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.Specular, 0.8f, 0.8f, 0.8f, 1f));
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.2f, 0.2f, 0.2f, 1f));
 		environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, -0.1f, -0.1f, -1f));
-		environment.add(shadowLight);
+		//environment.add(shadowLight);
 		//environment.shadowMap = shadowLight;
 
 		modelInstances = new Array<ModelInstance>();
@@ -120,14 +130,14 @@ public class MatchScene implements Screen, Observer{
 	{
 		game.tick(delta);
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		lpool.logic.match.Match m = game.getMatch();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(Textures.getInstance().getBackground(), -Table.width * 0.1f, 0, Table.width * 1.1f, Table.height * 1.3f);
+		batch.draw(Textures.getInstance().getBackground(), -tableMargin, -tableMargin, worldWidth, worldHeight);
 		batch.draw(table, 0, 0, Table.width, Table.height);
 		batch.end();
 
@@ -145,17 +155,16 @@ public class MatchScene implements Screen, Observer{
 			}
 		}
 		
-		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(table_border, 0, 0, Table.width, Table.height);
 		batch.end();
 		//modelInstances.add(new ModelInstance(table3D));
 
-		shadowLight.begin(camera.position, camera.direction);
+		/*shadowLight.begin(camera.position, camera.direction);
 		shadowBatch.begin(camera);
 		shadowBatch.render(modelInstances);
 		shadowBatch.end();
-		shadowLight.end();
+		shadowLight.end();*/
 
 		modelBatch.begin(camera);
 		modelBatch.render(modelInstances, environment);
@@ -195,8 +204,8 @@ public class MatchScene implements Screen, Observer{
 			batch.draw(((CueBallInHand)currentState).isValidPosition() ? cueBallPrediction : cueBallPredictionBlocked, m.getCueBall().getPosition().x, m.getCueBall().getPosition().y, Ball.radius * 2, Ball.radius * 2);
 			batch.end();
 		}
-		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
+		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+		debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
 	}
 
 	private void drawCue(Vector2 cueBallPos, float force, float angle)
@@ -232,10 +241,8 @@ public class MatchScene implements Screen, Observer{
 	}
 
 	@Override
-	public void resize(int width, int height) {
-		camera.viewportWidth = Table.width;
-		camera.viewportHeight = Table.width * height / width;
-		camera.update();
+	public void resize(int width, int height) {		
+		viewport.update(width, height);
 	}
 
 	@Override

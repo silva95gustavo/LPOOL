@@ -3,6 +3,8 @@ package lpool.gui;
 import java.net.Inet4Address;
 
 import lpool.gui.zxing.QRGenerator;
+import lpool.network.Info;
+import lpool.network.Network;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -13,6 +15,8 @@ public class GameProject extends Game {
 	
 	public static final String QR_IP_DIR = "./data/ip_qrcode.png";
 	public static final String QR_IP_TYPE = "png";
+	public static final String QR_ANDROID_APP_DIR = "./data/android_app_qrcode.png";
+	public static final String QR_ANDROID_APP_TYPE = "png";
 	
 	SpriteBatch batch;
 	Texture img;
@@ -23,7 +27,6 @@ public class GameProject extends Game {
 	public void create () {
 
 		String ip_address = "";
-		String ip_qr_path = "";
 
 		try {
 			ip_address = Inet4Address.getLocalHost().getHostAddress();
@@ -31,9 +34,8 @@ public class GameProject extends Game {
 			System.out.println("Unable to get IP address");
 		}
 
-		if(QRGenerator.generateFromStringToFile(ip_address, QR_IP_DIR, QR_IP_TYPE)) {
-			ip_qr_path = QR_IP_DIR;
-		}
+		QRGenerator.generateFromStringToFile(ip_address + "\n" + Network.port, QR_IP_DIR, QR_IP_TYPE);
+		QRGenerator.generateFromStringToFile(Info.androidAppUrl, QR_ANDROID_APP_DIR, QR_ANDROID_APP_TYPE);
 
 		width = Gdx.graphics.getDesktopDisplayMode().width;
 		height = Gdx.graphics.getDesktopDisplayMode().height;

@@ -6,7 +6,7 @@ import java.net.Socket;
 public class Info {
 	private static final String IPCheckURL = "fe.up.pt";
 	private static final int IPCheckPort = 80;
-	public static final String androidAppUrl = "";
+	public static final String androidAppUrl = "http://lpool.pt.vu/";
 	private static String serverIP;
 	
 	public Info() {

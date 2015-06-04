@@ -27,43 +27,54 @@ public class Racker {
 		int[] result = new int[2 * Match.ballsPerPlayer + 2];
 		
 		Random r = new Random();
-		LinkedList<Integer> free = new LinkedList<Integer>();
+		LinkedList<Integer> freePos = new LinkedList<Integer>();
 		
 		for (int i = 1; i <= 15; i++)
 		{
-			free.add(new Integer(i));
+			freePos.add(new Integer(i));
 		}
 		
 		result[1] = 1; // The first ball must be placed at the apex position (front of the rack and so the center of that ball is directly over the table's foot spot).
 		result[8] = 5; // The 8 ball must be in the center of the rack (the second ball in the three balls wide row).
 
-		free.remove(new Integer(1));
-		free.remove(new Integer(5));
+		freePos.remove(new Integer(1));
+		freePos.remove(new Integer(5));
 		
 		// The two corner balls must be a stripe and a solid.
-		LinkedList<Integer> freeP1 = listPlayer1Free(free);
-		LinkedList<Integer> freeP2 = listPlayer2Free(free);
+		LinkedList<Integer> freeStripe = new LinkedList<Integer>();
+		LinkedList<Integer> freeSolid = new LinkedList<Integer>();
+		
+		for (int i = 0; i < Match.ballsPerPlayer; i++)
+		{
+			if (i != 0)
+				freeSolid.add(i + 1);
+			freeStripe.add(i + 9);
+		}
+		int left;
+		int right;
 		if (r.nextBoolean())
 		{
-			result[11] = removeRandom(r, freeP1);
-			result[15] = removeRandom(r, freeP2);
+			left = removeRandom(r, freeSolid);
+			right = removeRandom(r, freeStripe);
 		}
 		else
 		{
-			result[11] = removeRandom(r, freeP2);
-			result[15] = removeRandom(r, freeP1);
+			left = removeRandom(r, freeStripe);
+			right = removeRandom(r, freeSolid);
 		}
-		
-		free.remove(new Integer(result[11]));
-		free.remove(new Integer(result[15]));
+		result[left] = 11;
+		result[right] = 15;
+		freePos.remove(new Integer(11));
+		freePos.remove(new Integer(15));
 		
 		// All balls other than the 8 ball are placed at random, but in conformance with the preceding corner ball rule.
-		for (int i = 2; i < 2 * Match.ballsPerPlayer + 2; i++)
+		while (!freeSolid.isEmpty())
 		{
-			if (i != 8 && i != 11 && i != 15)
-			{
-				result[i] = removeRandom(r, free);
-			}
+			result[freeSolid.poll()] = removeRandom(r, freePos);
+		}
+		while (!freeStripe.isEmpty())
+		{
+			result[freeStripe.poll()] = removeRandom(r, freePos);
 		}
 		
 		return result;
@@ -72,39 +83,5 @@ public class Racker {
 	private static int removeRandom(Random r, LinkedList<Integer> list)
 	{
 		return list.remove(r.nextInt(list.size())).intValue();
-	}
-	
-	private static LinkedList<Integer> listPlayer1Free(LinkedList<Integer> list)
-	{
-		LinkedList<Integer> result = new LinkedList<Integer>();
-		for (ListIterator<Integer> it = list.listIterator(); it.hasNext();)
-		{
-			int curr = it.next();
-			if (isPlayer1(curr))
-				result.add(curr);
-		}
-		return result;
-	}
-	
-	private static LinkedList<Integer> listPlayer2Free(LinkedList<Integer> list)
-	{
-		LinkedList<Integer> result = new LinkedList<Integer>();
-		for (ListIterator<Integer> it = list.listIterator(); it.hasNext();)
-		{
-			int curr = it.next();
-			if (isPlayer2(curr))
-				result.add(curr);
-		}
-		return result;
-	}
-	
-	private static boolean isPlayer1(int ID)
-	{
-		return ID >= 1 && ID <= 7;
-	}
-	
-	private static boolean isPlayer2(int ID)
-	{
-		return ID >= 9 && ID <= 15;
 	}
 }

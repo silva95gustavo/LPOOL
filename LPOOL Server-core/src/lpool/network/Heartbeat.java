@@ -4,6 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 
+import lpool.logic.Game;
+
 import com.badlogic.gdx.utils.Timer;
 
 public class Heartbeat extends Timer.Task implements Observer{
@@ -24,7 +26,7 @@ public class Heartbeat extends Timer.Task implements Observer{
 	public void run() {
 		network.addMsgObserver(this);
 		System.out.println("Sending PING");
-		//comm.send(Game.ProtocolCmd.PING + "");
+		comm.send(Game.ProtocolCmd.PING + "");
 		timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
@@ -39,13 +41,15 @@ public class Heartbeat extends Timer.Task implements Observer{
 	public void update(Observable o, Object obj) {
 		if (o instanceof ObservableMessage)
 		{
-			Scanner sc = new Scanner(((Message)obj).body);
+			Message msg = (Message)obj;
+			if (msg.clientID != comm.getClientID())
+				return;
+			Scanner sc = new Scanner(msg.body);
 			sc.close();
 			System.out.println("Received response, heartbeat successfull.");
 			timer.clear();
 			network.deleteMsgObserver(this);
 			comm.resetHeartbeat();
-			// TODO check if the message corresponds to this user
 		}
 	}
 
