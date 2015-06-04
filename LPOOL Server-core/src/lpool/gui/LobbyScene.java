@@ -40,7 +40,7 @@ public class LobbyScene implements Screen, Observer {
 	private OrthographicCamera camera;
 	private Viewport viewport;
 
-	private SpriteBatch batch;
+	private ShaderBatch batch;
 	private Sprite QRCode;
 
 	private FadingColor fadingColor;
@@ -51,6 +51,7 @@ public class LobbyScene implements Screen, Observer {
 	private BitmapFont font;
 
 	private float readyTime;
+	private float brightness;
 
 	public LobbyScene(com.badlogic.gdx.Game GdxGame, FadingColor fadingColor) {
 		this.width = Gdx.graphics.getWidth();
@@ -66,7 +67,8 @@ public class LobbyScene implements Screen, Observer {
 
 		QRCode = new Sprite(Textures.getInstance().getQRCode());
 
-		batch = new SpriteBatch();
+		//batch = new SpriteBatch();
+		batch = new ShaderBatch(100);
 		batch.setProjectionMatrix(camera.combined);
 
 		game = new Game();
@@ -122,6 +124,7 @@ public class LobbyScene implements Screen, Observer {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
+		batch.brightness = brightness;
 		batch.begin();		
 		batch.draw(Textures.getInstance().getLobby(),
 				-Textures.getInstance().getLobby().getWidth() / 2,
@@ -140,7 +143,8 @@ public class LobbyScene implements Screen, Observer {
 		else
 			batch.draw(disconnected, 412, -900, disconnected.getWidth(), disconnected.getHeight());
 
-		font.drawMultiLine(batch, Info.getServerIP(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
+		Fonts.getInstance().getArial32().setColor(Color.WHITE);
+		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
 		batch.draw(QRCode, -300, -160, 600, 600);
 
 		if (player1 || player2) // TODO change to &&
@@ -150,12 +154,24 @@ public class LobbyScene implements Screen, Observer {
 			else
 			{
 				readyTime -= delta;
+				
+				if (startingTime - readyTime <= 1)
+					brightness = (readyTime - startingTime) / 2;
+				else
+					brightness = -0.5f;
+				batch.brightness = 0;
+				batch.end();
+				batch.begin();
 				batch.draw(Textures.getInstance().getStartingIn(), -Textures.getInstance().getStartingIn().getWidth() / 2, -Textures.getInstance().getStartingIn().getHeight() / 2);
-				Fonts.getInstance().getArial100().drawMultiLine(batch, "" + Math.round(readyTime + 0.5f), 0, 0, 0, BitmapFont.HAlignment.CENTER);
+				Fonts.getInstance().getArial150().setColor(Color.BLACK);
+				Fonts.getInstance().getArial150().drawMultiLine(batch, "" + Math.round(readyTime + 0.5f), 0, 0, 0, BitmapFont.HAlignment.CENTER);
 			}
 		}
 		else
+		{
 			readyTime = startingTime;
+			brightness = 0;
+		}
 
 		batch.end();
 	}
