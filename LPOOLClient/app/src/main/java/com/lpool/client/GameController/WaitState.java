@@ -38,4 +38,8 @@ public class WaitState implements GameState {
     public Boolean isActive() {
         return active;
     }
+
+    public void onPause() {}
+
+    public void onResume() {}
 }

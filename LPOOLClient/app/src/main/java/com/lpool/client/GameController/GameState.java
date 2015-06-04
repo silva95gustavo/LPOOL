@@ -15,4 +15,6 @@ public interface GameState {
     public void interrupt();
     public void start();
     public Boolean isActive();
+    public void onPause();
+    public void onResume();
 }

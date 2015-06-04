@@ -53,8 +53,6 @@ public class Connector {
 
     public Boolean sendUDPMessage(String message) {
 
-        System.out.println("Sending " + message + " to " + serverIP + " " + serverPort);
-
         if(!running)
             return false;
 
@@ -70,7 +68,6 @@ public class Connector {
             return false;
         }
 
-        System.out.println("Sent");
         return true;
     }
 
