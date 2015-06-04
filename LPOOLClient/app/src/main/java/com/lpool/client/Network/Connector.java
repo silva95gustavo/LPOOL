@@ -28,6 +28,7 @@ public class Connector {
         KICK,
         BIH,
         ACKBIH,
+        MOVECB, // x-pos[0, 1] y-pos[0, 1]
         PLACECB // x-pos[0, 1] y-pos[0, 1]
     };
 
@@ -50,9 +51,9 @@ public class Connector {
         initializeClientThread(); // Initializes receiver/heartbeat thread
     }
 
-    public Boolean sendUPDMessage(String message) {
+    public Boolean sendUDPMessage(String message) {
 
-        System.out.println("Sending " + message);
+        System.out.println("Sending " + message + " to " + serverIP + " " + serverPort);
 
         if(!running)
             return false;
@@ -61,7 +62,7 @@ public class Connector {
             return false;
         try {
             String data = message;
-            byte[] msg = data.getBytes();
+            byte[] msg = message.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
             datagramSocket.send(sendPacket);
         } catch (IOException e) {
