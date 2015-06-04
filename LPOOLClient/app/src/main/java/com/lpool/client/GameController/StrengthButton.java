@@ -102,6 +102,10 @@ public class StrengthButton implements View.OnTouchListener {
         return (1 - pos) * min + pos * max;
     }
 
+    public void resetPosition() {
+        strength_bar.setY(maxY);
+    }
+
     public boolean onTouch(View v, MotionEvent event) {
 
         switch ( event.getAction() ) {

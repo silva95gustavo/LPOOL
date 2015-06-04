@@ -103,9 +103,7 @@ public class MainScreenActivity extends ActionBarActivity {
     }
 
     public void readInfoFromQR(View v) {
-        IntentIntegrator.initiateScan(this, IntentIntegrator.QR_CODE_TYPES,
-                "Please point the camera to the QR Code on the server application." +
-                        '\n' + "     If the camera stays black hit the back button and try again.");
+        IntentIntegrator.initiateScan(this, IntentIntegrator.QR_CODE_TYPES, "Please point the camera to the QR Code on the server application.");
     }
 
     @Override           // Get QR code scanning result

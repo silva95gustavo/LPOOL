@@ -39,6 +39,8 @@ public class ShootState implements GameState, SensorEventListener {
     private float gravity[] = new float[3];
     private float accelerometerLast = 0;
     private long lastSensorReadTime = System.currentTimeMillis();
+    private float spinX = 0;
+    private float spinY = 0;
 
     private Button fire;
     private StrengthButton strengthButtonAnim;
@@ -113,17 +115,23 @@ public class ShootState implements GameState, SensorEventListener {
                 float radius = (float) 0.65 * cueBall.getWidth() / 2;
 
                 float dist = (float) Math.sqrt((pointX - centerX) * (pointX - centerX) + (pointY - centerY) * (pointY - centerY));
+                float finalX;
+                float finalY;
 
                 if (dist < radius) {
-                    vertical.setX(pointX - vertical.getWidth() / 2);
-                    horizontal.setY(pointY - horizontal.getHeight() / 2);
+                    finalX = pointX - vertical.getWidth() / 2;
+                    finalY = pointY - horizontal.getHeight() / 2;
                 } else {
                     float closest_x = centerX + radius * (pointX - centerX) / dist;
                     float closest_y = centerY + radius * (pointY - centerY) / dist;
-                    vertical.setX(closest_x - vertical.getWidth() / 2);
-                    horizontal.setY(closest_y - horizontal.getHeight() / 2);
+                    finalX = closest_x - vertical.getWidth() / 2;
+                    finalY = closest_y - horizontal.getHeight() / 2;
                 }
 
+                spinX = (finalX + vertical.getWidth()/2 - centerX)/radius;
+                spinY = -(finalY + horizontal.getHeight()/2 - centerY)/radius;
+                vertical.setX(finalX);
+                horizontal.setY(finalY);
                 return true;
             }
         });
@@ -141,9 +149,11 @@ public class ShootState implements GameState, SensorEventListener {
 
     public void fireBall(float relativeStrength) {
         //shooting = false;
-        caller.sendTCPMessage("" + Connector.ProtocolCmd.FIRE.ordinal() + " " + relativeStrength + '\n');
+        caller.sendTCPMessage("" + Connector.ProtocolCmd.FIRE.ordinal() + " " + relativeStrength + " " + spinX + " " + spinY + " " + '\n');
         System.out.println("Force: " + relativeStrength);
+        System.out.println("Spin: (" + spinX + " == " + spinY + ")");
         shot_active = false;
+        strengthButtonAnim.resetPosition();
     }
 
     public boolean onTouchEvent(MotionEvent event) {
