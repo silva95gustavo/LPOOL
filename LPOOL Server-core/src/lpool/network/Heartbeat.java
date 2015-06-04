@@ -41,13 +41,15 @@ public class Heartbeat extends Timer.Task implements Observer{
 	public void update(Observable o, Object obj) {
 		if (o instanceof ObservableMessage)
 		{
-			Scanner sc = new Scanner(((Message)obj).body);
+			Message msg = (Message)obj;
+			if (msg.clientID != comm.getClientID())
+				return;
+			Scanner sc = new Scanner(msg.body);
 			sc.close();
 			System.out.println("Received response, heartbeat successfull.");
 			timer.clear();
 			network.deleteMsgObserver(this);
 			comm.resetHeartbeat();
-			// TODO check if the message corresponds to this user
 		}
 	}
 
