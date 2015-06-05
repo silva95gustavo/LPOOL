@@ -145,7 +145,7 @@ public class Network {
 		return false; // No null position in clients array
 	}
 
-	public boolean kickClient(int clientID)
+	private boolean kickClient(int clientID)
 	{
 		if (clientID >= maxClients)
 			return false;
@@ -153,7 +153,6 @@ public class Network {
 		if (comms[clientID] == null)
 			return false;
 
-		comms[clientID].send(Game.ProtocolCmd.KICK.ordinal() + ""); // FIXME this may not have time to be sent...
 		comms[clientID].close();
 		try {
 			comms[clientID].getSocket().close();

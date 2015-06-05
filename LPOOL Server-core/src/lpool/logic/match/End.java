@@ -2,6 +2,7 @@ package lpool.logic.match;
 
 import lpool.logic.Game;
 import lpool.logic.state.State;
+import lpool.network.Message;
 
 public class End implements State<Match> {
 	public enum Reason
@@ -25,7 +26,7 @@ public class End implements State<Match> {
 		match.deleteCollisionObserver(match);
 		match.getWorld().dispose();
 		for (int i = 0; i < Game.numPlayers; i++)
-			match.getNetwork().kickClient(i);
+			match.getNetwork().send(new Message(i, Game.ProtocolCmd.KICK.ordinal()));
 	}
 
 	@Override
