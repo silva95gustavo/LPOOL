@@ -1,12 +1,14 @@
 package lpool.logic.state;
 
 public class TransitionState<E> implements State<E> {
+	private Context<E> context;
 	private State<E> previous;
 	private State<E> next;
 	protected float time;
 	
-	protected TransitionState(State<E> previous, State<E> next) {
+	public TransitionState(Context<E> context, State<E> previous, State<E> next) {
 		super();
+		this.context = context;
 		this.previous = previous;
 		this.next = next;
 		this.time = 0;
@@ -21,13 +23,18 @@ public class TransitionState<E> implements State<E> {
 		time += dt;
 	}
 
-	protected State<E> getPreviousState()
+	public State<E> getPreviousState()
 	{
 		return previous;
 	}
 	
-	protected State<E> getNextState()
+	public State<E> getNextState()
 	{
 		return next;
+	}
+	
+	public void next()
+	{
+		context.changeState(next);
 	}
 }

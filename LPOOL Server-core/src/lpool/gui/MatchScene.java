@@ -54,6 +54,7 @@ import lpool.logic.match.CueBallInHand;
 import lpool.logic.match.Match;
 import lpool.logic.match.Play;
 import lpool.logic.state.State;
+import lpool.logic.state.TransitionState;
 
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
@@ -171,7 +172,7 @@ public class MatchScene implements Screen, Observer{
 		modelBatch.end();
 
 		State<Match> currentState = m.getStateMachine().getCurrentState();
-		if (currentState.getClass() == Play.class)
+		if (currentState instanceof Play)
 		{
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
@@ -198,11 +199,15 @@ public class MatchScene implements Screen, Observer{
 
 			drawCue(m.getCueBall().getPosition(), 0, m.getCueAngle());
 		}
-		else if (currentState.getClass() == CueBallInHand.class)
+		else if (currentState instanceof CueBallInHand)
 		{
 			batch.begin();
 			batch.draw(((CueBallInHand)currentState).isValidPosition() ? cueBallPrediction : cueBallPredictionBlocked, m.getCueBall().getPosition().x, m.getCueBall().getPosition().y, Ball.radius * 2, Ball.radius * 2);
 			batch.end();
+		}
+		else if (currentState instanceof TransitionState)
+		{
+			((TransitionState) currentState).next();
 		}
 		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 		debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
