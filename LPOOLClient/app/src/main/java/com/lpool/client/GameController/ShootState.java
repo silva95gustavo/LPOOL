@@ -166,6 +166,10 @@ public class ShootState implements GameState, SensorEventListener {
         paused = false;
     }
 
+    public Boolean isSameAsCmd(Connector.ProtocolCmd cmd) {
+        return (cmd == Connector.ProtocolCmd.PLAY);
+    }
+
     public void onPause() {
         sensorManager.unregisterListener(this);
         //shooting = true;
