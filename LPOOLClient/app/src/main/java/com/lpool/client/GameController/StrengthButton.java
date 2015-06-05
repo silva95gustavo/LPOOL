@@ -30,6 +30,7 @@ public class StrengthButton implements View.OnTouchListener {
     private static final int GREEN = 1;
     private static final int BLUE = 2;
 
+    // TODO make invisible after shot
 
     public StrengthButton(ControllerActivity activity, ShootState shooter, Button trigger, RelativeLayout strength_bar, float maxY, float minY, float delta) {
         this.caller_activity = activity;

@@ -92,6 +92,7 @@ public class Connector {
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
             pw.println(message);
+            System.out.println("Sent " + message);
         } catch (IOException e) {
             e.printStackTrace();
             return false;

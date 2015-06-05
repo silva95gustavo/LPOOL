@@ -5,13 +5,20 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lpool.client.Network.Connector;
 import com.lpool.client.Network.Receiver;
 import com.lpool.client.Network.Utilities;
 import com.lpool.client.R;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by André on 03/06/2015.
@@ -56,7 +63,6 @@ public class ControllerActivity extends Activity implements Receiver{
     public void temp_funct(View v) {
         // TODO remove
         sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
-        // TODO remove
         switch (currentState.getValue()) {
             case WAIT:
                 currentState.interrupt();
@@ -96,10 +102,8 @@ public class ControllerActivity extends Activity implements Receiver{
                     currentState = states[GameState.Value.PLACE_BALL.ordinal()];
                     break;
                 case END:
-                    currentState = states[GameState.Value.WAIT.ordinal()];
-                    break;
                 case KICK:
-                    terminate();
+                    game_ended(cmd);
                     return;
                 default:
                     currentState = states[GameState.Value.WAIT.ordinal()];
@@ -108,6 +112,58 @@ public class ControllerActivity extends Activity implements Receiver{
             currentState.start();
         }
 
+    }
+
+    private void game_ended(GameCommand cmd) {
+        stop();
+        setContentView(R.layout.game_end);
+        ImageView img = (ImageView) findViewById(R.id.picture);
+        TextView txt = (TextView) findViewById(R.id.descriptionText);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.end_game_layout);
+        final Activity act = this;
+        layout.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                act.finish();
+                return true;
+            }
+        });
+
+        if(cmd.getCmd() == Connector.ProtocolCmd.KICK) {
+            img.setImageResource(R.mipmap.terminated);
+            txt.setText(getResources().getString(R.string.kicked));
+        } else if(cmd.getCmd() == Connector.ProtocolCmd.END) {
+            Boolean win = (Boolean) cmd.getArgs().get(0);
+            Connector.EndReason reason = (Connector.EndReason) cmd.getArgs().get(1);
+
+            switch (reason) {
+                case BLACK_BALL_SCORED_AS_LAST:
+                    if(win) {
+                        img.setImageResource(R.mipmap.winner);
+                        txt.setText(getResources().getString(R.string.win_black_last));
+                    } else {
+                        img.setImageResource(R.mipmap.loser);
+                        txt.setText(getResources().getString(R.string.lose_black_last));
+                    }
+                    break;
+                case BLACK_BALL_SCORED_ACCIDENTALLY:
+                    if(win) {
+                        img.setImageResource(R.mipmap.winner);
+                        txt.setText(getResources().getString(R.string.win_black_accident));
+                    } else {
+                        img.setImageResource(R.mipmap.loser);
+                        txt.setText(getResources().getString(R.string.lose_black_accident));
+                    }
+                    break;
+                case TIMEOUT:
+                    img.setImageResource(R.mipmap.terminated);
+                    txt.setText(getResources().getString(R.string.disconnected_timeout));
+                    break;
+                case DISCONNECT:
+                    img.setImageResource(R.mipmap.terminated);
+                    txt.setText(getResources().getString(R.string.disconnected_voluntary));
+                    break;
+            }
+        }
     }
 
     public GameState getCurrentState() {
@@ -156,17 +212,31 @@ public class ControllerActivity extends Activity implements Receiver{
         currentState.onResume();
     }
 
-    public void terminate() {
+    private void stop() {
         currentState.interrupt();
         connector.disconnect();
+    }
+
+    public void terminate() {
+        stop();
         this.finish();
     }
 
     public void onBackPressed() {
-        terminate();
-        /*Intent setIntent = new Intent(Intent.ACTION_MAIN);
-        setIntent.addCategory(Intent.CATEGORY_HOME);
-        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(setIntent);*/
+        stop();
+        setContentView(R.layout.game_end);
+        ImageView img = (ImageView) findViewById(R.id.picture);
+        TextView txt = (TextView) findViewById(R.id.descriptionText);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.end_game_layout);
+        final Activity act = this;
+        layout.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                act.finish();
+                return true;
+            }
+        });
+
+        img.setImageResource(R.mipmap.terminated);
+        txt.setText(getResources().getString(R.string.disconnected_quit));
     }
 }

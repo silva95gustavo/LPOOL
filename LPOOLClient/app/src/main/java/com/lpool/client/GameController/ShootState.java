@@ -73,7 +73,6 @@ public class ShootState implements GameState, SensorEventListener {
         strength = (RelativeLayout) caller.findViewById(R.id.strengthBar);
         strength.setY(700);
 
-        // TODO strength
         final ShootState shooter = this;
         strengthButtonAnim = new StrengthButton(caller, shooter, fire, strength, fire.getY(), own_layout.getY(), 5);
         fire.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
