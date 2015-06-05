@@ -125,8 +125,6 @@ public class Ball {
 
 	public void tick(float deltaT)
 	{
-		if (number == 0)
-			System.out.println("Angular velocity: " + body.getAngularVelocity());
 		stateMachine.update(deltaT);
 		
 		if (!onTable)

@@ -21,7 +21,7 @@ public class QRGenerator {
 		
 		int size = 125;
 		try {
-			Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<EncodeHintType, ErrorCorrectionLevel>();
+			Hashtable<EncodeHintType, Object> hintMap = new Hashtable<EncodeHintType, Object>();
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
 			BitMatrix byteMatrix = qrCodeWriter.encode(text,BarcodeFormat.QR_CODE, size, size, hintMap);
