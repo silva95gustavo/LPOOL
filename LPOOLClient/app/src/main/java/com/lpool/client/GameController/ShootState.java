@@ -71,28 +71,41 @@ public class ShootState implements GameState, SensorEventListener {
     private void initializeElements() {
         fire = (Button) caller.findViewById(R.id.fireButton);
         strength = (RelativeLayout) caller.findViewById(R.id.strengthBar);
-        strength.setY(700);
+
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                strength.setY(700);
+            }
+        });
 
         final ShootState shooter = this;
         strengthButtonAnim = new StrengthButton(caller, shooter, fire, strength, fire.getY(), own_layout.getY(), 5);
         fire.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                strength.setY(fire.getY());
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        strength.setY(fire.getY());
+                    }
+                });
             }
         });
 
-        final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
+        /*final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
         final RelativeLayout placeBall = (RelativeLayout) caller.findViewById(R.id.tableandball);
 
         placeBall.setOnTouchListener(new View.OnTouchListener()
         {
             public boolean onTouch(View v, MotionEvent event)
             {
-                cueBallPlace.setX(event.getX());
-                cueBallPlace.setY(event.getY());
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        cueBallPlace.setX(event.getX());
+                        cueBallPlace.setY(event.getY());
+                    }
+                });
                 return true;
             }
-        });
+        });*/
 
         initializeAiming();
     }
@@ -129,8 +142,16 @@ public class ShootState implements GameState, SensorEventListener {
 
                 spinX = (finalX + vertical.getWidth()/2 - centerX)/radius;
                 spinY = -(finalY + horizontal.getHeight()/2 - centerY)/radius;
-                vertical.setX(finalX);
-                horizontal.setY(finalY);
+
+                final float xVal = finalX;
+                final float yVal = finalY;
+
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        vertical.setX(xVal);
+                        horizontal.setY(yVal);
+                    }
+                });
                 return true;
             }
         });

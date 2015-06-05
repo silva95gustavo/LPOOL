@@ -29,4 +29,5 @@
     <string name="disconnected_voluntary">The game was terminated because your opponent has disconnected from the game.</string>
     <string name="disconnected_quit">The game was terminated because you were disconnected.</string>
     <string name="kicked">You were kicked from the server, probably due to it being full of players. Try again later.</string>
+    <string name="continue_text">Touch the screen to continue.</string>
 </resources>

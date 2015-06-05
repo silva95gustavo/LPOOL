@@ -12,11 +12,18 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by André on 03/06/2015.
  */
 public class Connector {
+
+    public static final int HEARTBEAT_TIMEOUT = 30; // seconds
+    public static final int HEARTBEAT_INTERVAL = 20; // seconds
+    private Timer timer;
+    private Boolean gotPONG = false;
 
     public enum EndReason
     {
@@ -57,6 +64,7 @@ public class Connector {
         this.serverIP = ip;
         this.serverPort = port;
         running = true;
+        timer = new Timer();
         receivers = new ArrayList<Receiver>();
         initializeClientThread(); // Initializes receiver/heartbeat thread
         System.out.println("Connecting to " + serverIP + " " + serverPort);
@@ -116,9 +124,10 @@ public class Connector {
         }
     }
 
-    class receiverThread implements Runnable {
+    class receiverThread implements Runnable    {
         @Override
         public void run() {
+            startHeartBeat();
             while (running)
             {
                 try {
@@ -136,7 +145,10 @@ public class Connector {
                         sendTCPMessage("" + ProtocolCmd.PONG.ordinal());
                         System.out.println("Sent PONG");
                     }
-                    else
+                    else if(str.equals(ProtocolCmd.PONG.ordinal() + "")) {
+                        System.out.println("Got PONG");
+                        gotPONG = true;
+                    } else
                         spreadMessage(str);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -189,6 +201,39 @@ public class Connector {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void startHeartBeat() {
+        timer.schedule(new HeartBeatTask(), HEARTBEAT_INTERVAL * 1000);
+    }
+
+    private class HeartBeatTask extends TimerTask {
+        @Override
+        public void run() {
+            System.out.println("Sending PING");
+            sendTCPMessage(ProtocolCmd.PING.ordinal() + "");
+            gotPONG = false;
+
+            try {
+                Thread.sleep(HEARTBEAT_TIMEOUT * 1000);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if(!gotPONG)
+                stopReceivers();
+            else {
+                timer.schedule(new HeartBeatTask(), HEARTBEAT_INTERVAL * 1000);
+            }
+
+        }
+    }
+
+    private void stopReceivers() {
+        for(int i = 0; i < receivers.size(); i++) {
+            if(receivers.get(i) != null)
+                receivers.get(i).disconnect();
         }
     }
 }

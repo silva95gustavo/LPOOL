@@ -28,11 +28,17 @@ public class ControllerActivity extends Activity implements Receiver{
     private GameState currentState;
     private GameState states[];
 
+    private LinearLayout end_layout;
+
     private Connector connector;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                setContentView(R.layout.activity_game);
+            }
+        });
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         states = new GameState[3];
@@ -57,6 +63,7 @@ public class ControllerActivity extends Activity implements Receiver{
         connector = new Connector(server_ip, server_port);
         connector.addReceiver(this);
         connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
+        end_layout = (LinearLayout) findViewById(R.id.final_layout);
     }
 
 
@@ -116,12 +123,16 @@ public class ControllerActivity extends Activity implements Receiver{
 
     private void game_ended(GameCommand cmd) {
         stop();
-        setContentView(R.layout.game_end);
-        ImageView img = (ImageView) findViewById(R.id.picture);
-        TextView txt = (TextView) findViewById(R.id.descriptionText);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.end_game_layout);
+        end_layout = (LinearLayout) findViewById(R.id.final_layout);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                end_layout.setVisibility(View.VISIBLE);
+            }
+        });
+        final ImageView img = (ImageView) findViewById(R.id.picture_view);
+        final TextView txt = (TextView) findViewById(R.id.end_event_description);
         final Activity act = this;
-        layout.setOnTouchListener(new View.OnTouchListener() {
+        end_layout.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View arg0, MotionEvent arg1) {
                 act.finish();
                 return true;
@@ -129,8 +140,12 @@ public class ControllerActivity extends Activity implements Receiver{
         });
 
         if(cmd.getCmd() == Connector.ProtocolCmd.KICK) {
-            img.setImageResource(R.mipmap.terminated);
-            txt.setText(getResources().getString(R.string.kicked));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    img.setImageResource(R.mipmap.terminated);
+                    txt.setText(getResources().getString(R.string.kicked));
+                }
+            });
         } else if(cmd.getCmd() == Connector.ProtocolCmd.END) {
             Boolean win = (Boolean) cmd.getArgs().get(0);
             Connector.EndReason reason = (Connector.EndReason) cmd.getArgs().get(1);
@@ -138,29 +153,53 @@ public class ControllerActivity extends Activity implements Receiver{
             switch (reason) {
                 case BLACK_BALL_SCORED_AS_LAST:
                     if(win) {
-                        img.setImageResource(R.mipmap.winner);
-                        txt.setText(getResources().getString(R.string.win_black_last));
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                img.setImageResource(R.mipmap.winner);
+                                txt.setText(getResources().getString(R.string.win_black_last));
+                            }
+                        });
                     } else {
-                        img.setImageResource(R.mipmap.loser);
-                        txt.setText(getResources().getString(R.string.lose_black_last));
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                img.setImageResource(R.mipmap.loser);
+                                txt.setText(getResources().getString(R.string.lose_black_last));
+                            }
+                        });
                     }
                     break;
                 case BLACK_BALL_SCORED_ACCIDENTALLY:
                     if(win) {
-                        img.setImageResource(R.mipmap.winner);
-                        txt.setText(getResources().getString(R.string.win_black_accident));
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                img.setImageResource(R.mipmap.winner);
+                                txt.setText(getResources().getString(R.string.win_black_accident));
+                            }
+                        });
                     } else {
-                        img.setImageResource(R.mipmap.loser);
-                        txt.setText(getResources().getString(R.string.lose_black_accident));
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                img.setImageResource(R.mipmap.loser);
+                                txt.setText(getResources().getString(R.string.lose_black_accident));
+                            }
+                        });
                     }
                     break;
                 case TIMEOUT:
-                    img.setImageResource(R.mipmap.terminated);
-                    txt.setText(getResources().getString(R.string.disconnected_timeout));
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            img.setImageResource(R.mipmap.terminated);
+                            txt.setText(getResources().getString(R.string.disconnected_timeout));
+                        }
+                    });
                     break;
                 case DISCONNECT:
-                    img.setImageResource(R.mipmap.terminated);
-                    txt.setText(getResources().getString(R.string.disconnected_voluntary));
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            img.setImageResource(R.mipmap.terminated);
+                            txt.setText(getResources().getString(R.string.disconnected_voluntary));
+                        }
+                    });
                     break;
             }
         }
@@ -222,21 +261,37 @@ public class ControllerActivity extends Activity implements Receiver{
         this.finish();
     }
 
-    public void onBackPressed() {
+    public void disconnect() {
         stop();
-        setContentView(R.layout.game_end);
-        ImageView img = (ImageView) findViewById(R.id.picture);
-        TextView txt = (TextView) findViewById(R.id.descriptionText);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.end_game_layout);
-        final Activity act = this;
-        layout.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                act.finish();
-                return true;
+        end_layout = (LinearLayout) findViewById(R.id.final_layout);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                end_layout.setVisibility(View.VISIBLE);
             }
         });
+        final ImageView img = (ImageView) findViewById(R.id.picture_view);
+        final TextView txt = (TextView) findViewById(R.id.end_event_description);
+        final Activity act = this;
+        if(end_layout != null) {
+            end_layout.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View arg0, MotionEvent arg1) {
+                    act.finish();
+                    return true;
+                }
+            });
+        }
 
-        img.setImageResource(R.mipmap.terminated);
-        txt.setText(getResources().getString(R.string.disconnected_quit));
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if(img != null)
+                    img.setImageResource(R.mipmap.terminated);
+                if(txt != null)
+                    txt.setText(getResources().getString(R.string.disconnected_quit));
+            }
+        });
+    }
+
+    public void onBackPressed() {
+        disconnect();
     }
 }
