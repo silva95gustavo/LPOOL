@@ -137,9 +137,9 @@ public class LobbyScene implements Screen, Observer {
 				readyTime -= delta;
 
 				if (startingTime - readyTime <= 1)
-					brightness = (readyTime - startingTime) / 2;
+					brightness = (readyTime - startingTime);
 				else
-					brightness = -0.5f;
+					brightness = -1f;
 				renderStartOverlay(batch);
 			}
 		}
@@ -154,14 +154,16 @@ public class LobbyScene implements Screen, Observer {
 
 	public void renderBackground(float delta)
 	{
+		float brightnessFactor = brightness + 1;
 		Color interpolated = fadingColor.tick(delta);
-		Gdx.gl.glClearColor(interpolated.r, interpolated.g, interpolated.b, 1);
+		Gdx.gl.glClearColor(brightnessFactor * interpolated.r, brightnessFactor * interpolated.g, brightnessFactor * interpolated.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	}
 	
 	public void renderLobby(ShaderBatch batch)
 	{
 		batch.brightness = brightness;
+		batch.contrast = brightness + 1;
 		batch.begin();		
 		batch.draw(Textures.getInstance().getLobby(),
 				-Textures.getInstance().getLobby().getWidth() / 2,
@@ -196,6 +198,7 @@ public class LobbyScene implements Screen, Observer {
 	public void renderStartOverlay(ShaderBatch batch)
 	{
 		batch.brightness = 0;
+		batch.contrast = 1;
 		batch.end();
 		batch.begin();
 		batch.draw(Textures.getInstance().getStartingIn(), -Textures.getInstance().getStartingIn().getWidth() / 2, -Textures.getInstance().getStartingIn().getHeight() / 2);

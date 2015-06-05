@@ -2,6 +2,7 @@ package lpool.logic.match;
 
 import lpool.logic.ball.Ball;
 import lpool.logic.state.State;
+import lpool.logic.state.TransitionState;
 
 public class BallsMoving implements State<Match>{
 	
@@ -37,9 +38,9 @@ public class BallsMoving implements State<Match>{
 			match.getStateMachine().changeState(new End(reason, winner));
 		}
 		else if (match.isBallInHand())
-			match.getStateMachine().changeState(new CueBallInHand());
+			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new CueBallInHand()));
 		else
-			match.getStateMachine().changeState(new Play());
+			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new Play()));
 	}
 	
 	private boolean matchEnded(Match match)
