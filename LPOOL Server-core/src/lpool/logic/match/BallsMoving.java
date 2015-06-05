@@ -8,11 +8,11 @@ public class BallsMoving implements State<Match>{
 
 	@Override
 	public void enter(Match match) {
+		match.sendStateToClients();
 	}
 
 	@Override
 	public void update(Match match, float dt) {
-		match.sendStateToClients();
 		match.worldStep(dt);
 		match.deleteRemovedBalls();
 		match.tickBalls(dt);
