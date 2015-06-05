@@ -3,6 +3,7 @@ package com.lpool.client.GameController;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.lpool.client.Network.Connector;
 import com.lpool.client.R;
 
 /**
@@ -42,4 +43,8 @@ public class WaitState implements GameState {
     public void onPause() {}
 
     public void onResume() {}
+
+    public Boolean isSameAsCmd(Connector.ProtocolCmd cmd) {
+        return (cmd == Connector.ProtocolCmd.WAIT);
+    }
 }

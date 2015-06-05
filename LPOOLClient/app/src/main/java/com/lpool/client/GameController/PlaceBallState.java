@@ -47,8 +47,8 @@ public class PlaceBallState implements GameState {
                     cueBallPlace.setX(event.getX());
                     cueBallPlace.setY(event.getY());
 
-                    ballX = (x+cueBallPlace.getWidth()/2)/placeBall.getWidth();
-                    ballY = (y+cueBallPlace.getHeight()/2)/placeBall.getHeight();
+                    ballX = (x)/(placeBall.getWidth() - cueBallPlace.getWidth());
+                    ballY = (y)/(placeBall.getHeight() - cueBallPlace.getHeight());
                     moveCueBall();
                 }
                 return true;
@@ -74,6 +74,10 @@ public class PlaceBallState implements GameState {
     public void onPause() {}
 
     public void onResume() {}
+
+    public Boolean isSameAsCmd(Connector.ProtocolCmd cmd) {
+        return (cmd == Connector.ProtocolCmd.BIH);
+    }
 
     public Value getValue() {
         return value;
