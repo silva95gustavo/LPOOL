@@ -27,6 +27,7 @@ public class CueBallInHand implements State<Match>, Observer{
 	public void enter(Match match) {
 		this.match = match;
 		match.getNetwork().addMsgObserver(this);
+		match.getNetwork().send(new Message(match.getCurrentPlayer(), Game.ProtocolCmd.BIH));
 	}
 
 	@Override
@@ -66,9 +67,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		if (dest.x < 0 || dest.x > 1 || dest.y < 0 || dest.y > 1)
 			return false;
 
-		dest.y = 1 - dest.y;
-		System.out.println("dest: " + dest);
-		
+		dest.y = 1 - dest.y;		
 		dest.scl(Table.width - 2 * Ball.radius, Table.height - 2 * Ball.radius).add(new Vector2(Ball.radius, Ball.radius));
 
 		for (int i = 1; i < match.getBalls().length; i++)
