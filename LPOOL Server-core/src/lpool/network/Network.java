@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Observer;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import lpool.logic.Game;
@@ -145,7 +146,7 @@ public class Network {
 		return false; // No null position in clients array
 	}
 
-	public boolean kickClient(int clientID)
+	private boolean kickClient(int clientID)
 	{
 		if (clientID >= maxClients)
 			return false;
@@ -153,14 +154,12 @@ public class Network {
 		if (comms[clientID] == null)
 			return false;
 
-		comms[clientID].send(Game.ProtocolCmd.KICK.ordinal() + "");
-		
+		comms[clientID].close();
 		try {
 			comms[clientID].getSocket().close();
 		} catch (IOException e) {
 			// Do nothing
 		}
-		comms[clientID].close();
 		comms[clientID] = null;
 		numClients--;
 		return true;
@@ -186,10 +185,11 @@ public class Network {
 	
 	public String pollClientCommQueue(Integer clientID)
 	{
+		String body = null;
 		if (!clientCommEvents.isEmpty())
 		{
 			clientID = clientCommEvents.poll();
-			return new String(clientCommPackets.poll().getData());
+			body = new String(clientCommPackets.poll().getData());
 		}
 		else
 		{
@@ -202,11 +202,17 @@ public class Network {
 						continue;
 					comms[i].resetHeartbeat();
 					clientID = i;
-					return q.poll();
+					body = q.poll();
 				}
 			}
 		}
-		return null;
+		if (body == null) return null;
+		
+		Scanner sc = new Scanner(body);
+		Game.ProtocolCmd cmd = Message.readCmd(sc);
+		if (cmd.equals(Game.ProtocolCmd.PING))
+			send(new Message(clientID, Game.ProtocolCmd.PONG.ordinal()));
+		return body;
 	}
 
 	public boolean isClientConnected(int clientID) {

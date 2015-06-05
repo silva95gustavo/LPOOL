@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import lpool.logic.Game;
 
 public class Sender extends Thread {
 	private Socket s;
@@ -24,9 +27,13 @@ public class Sender extends Thread {
 			try
 			{
 				String msg = toBeSent.take();
+				Scanner sc = new Scanner(msg);
 				System.out.println("Sending msg " + msg);
 				PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s.getOutputStream())), true);
 				pw.println(msg);
+				if (Message.readCmd(sc) == Game.ProtocolCmd.KICK)
+					stopMe();
+				sc.close();
 			}
 			catch (InterruptedException e) {
 				stopMe();

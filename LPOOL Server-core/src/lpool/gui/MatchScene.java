@@ -229,8 +229,10 @@ public class MatchScene implements Screen, Observer{
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		modelBatch.dispose();
+		shadowBatch.dispose();
+		shapeRenderer.dispose();
+		batch.dispose();
 	}
 
 	@Override
