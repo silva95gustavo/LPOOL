@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Scanner;
 
 import lpool.gui.assets.Sounds;
 import lpool.logic.BodyInfo;
@@ -18,6 +19,7 @@ import lpool.logic.state.State;
 import lpool.logic.state.TransitionState;
 import lpool.network.Message;
 import lpool.network.Network;
+import lpool.network.ObservableMessage;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 
@@ -53,7 +55,6 @@ public class Match implements Observer{
 	private Ball.Type ballsPlayer[];
 	private int playNum;
 	private int currentPlayer;
-	private boolean openingShot;
 	private PlayValidator playValidator;
 
 	private ObservableCollision observableCollision;
@@ -66,7 +67,6 @@ public class Match implements Observer{
 		Random r = new Random();
 		this.currentPlayer = r.nextInt(2);
 		this.currentPlayer = 0;
-		this.openingShot = true;
 
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
@@ -318,6 +318,15 @@ public class Match implements Observer{
 			default: break;
 			}
 		}
+		if (o instanceof ObservableMessage && obj instanceof Message)
+		{
+			Message msg = (Message)obj;
+			Scanner sc = new Scanner(msg.body);
+			Game.ProtocolCmd cmd = Message.readCmd(sc);
+			if (cmd == Game.ProtocolCmd.JOIN)
+				sendStateToClient(msg.clientID);
+			sc.close();
+		}
 	}
 
 	private void ballTableCollisionHandler(int ballNumber)
@@ -403,13 +412,8 @@ public class Match implements Observer{
 		return currentPlayer;
 	}
 
-
 	public boolean isOpeningShot() {
-		return openingShot;
-	}
-
-	public void setOpeningShot(boolean openingShot) {
-		this.openingShot = openingShot;
+		return playNum == 0;
 	}
 
 	public PlayValidator getPlayValidator() {
@@ -419,42 +423,51 @@ public class Match implements Observer{
 	public void setPlayValidator(PlayValidator playValidator) {
 		this.playValidator = playValidator;
 	}
-	
-	public void sendStateToClients()
+
+	public void sendStateToClient(int clientID)
 	{
 		State<Match> currentState = stateMachine.getCurrentState();
-		if (currentState instanceof TransitionState || currentState instanceof FreezeTime)
+		if (currentState instanceof TransitionState || currentState instanceof FreezeTime || currentState instanceof BallsMoving)
 		{
-			for (int i = 0; i < Game.numPlayers; i++)
-				network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
+			network.send(new Message(clientID, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof Play)
 		{
-			for (int i = 0; i < Game.numPlayers; i++)
-				if (currentPlayer == i)
-					network.send(new Message(i, Game.ProtocolCmd.PLAY.ordinal()));
-				else network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
+			if (currentPlayer == clientID)
+				network.send(new Message(clientID, Game.ProtocolCmd.PLAY.ordinal()));
+			else network.send(new Message(clientID, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof CueBallInHand)
 		{
-			for (int i = 0; i < Game.numPlayers; i++)
-				if (currentPlayer == i)
-					network.send(new Message(i, Game.ProtocolCmd.BIH.ordinal()));
-				else network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
+			if (currentPlayer == clientID)
+				network.send(new Message(clientID, Game.ProtocolCmd.BIH.ordinal()));
+			else network.send(new Message(clientID, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof End)
 		{
 			End endState = (End)currentState;
-			for (int i = 0; i < Game.numPlayers; i++)
-				if (currentPlayer == i)
-					network.send(new Message(i, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == i ? true : false, endState.getReason()));
-				else network.send(new Message(i, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == i ? true : false, endState.getReason()));
+			if (currentPlayer == clientID)
+				network.send(new Message(clientID, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == clientID ? true : false, endState.getReason()));
+			else network.send(new Message(clientID, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == clientID ? true : false, endState.getReason()));
 		}
 	}
-	
+
+	public void sendStateToClients()
+	{
+		for (int i = 0; i < Game.numPlayers; i++)
+		{
+			sendStateToClient(i);
+		}
+	}
+
 	public void changeCurrentPlayer()
 	{
 		currentPlayer += 1;
 		currentPlayer %= Game.numPlayers;
+	}
+	
+	public void deleteCollisionObserver(Observer obs)
+	{
+		observableCollision.deleteObserver(obs);
 	}
 }

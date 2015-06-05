@@ -1,5 +1,6 @@
 package lpool.logic.match;
 
+import lpool.logic.Game;
 import lpool.logic.state.State;
 
 public class End implements State<Match> {
@@ -21,13 +22,14 @@ public class End implements State<Match> {
 	@Override
 	public void enter(Match match) {
 		match.sendStateToClients();
-		// TODO remove match from the collision observers
+		match.deleteCollisionObserver(match);
+		match.getWorld().dispose();
+		for (int i = 0; i < Game.numPlayers; i++)
+			match.getNetwork().kickClient(i);
 	}
 
 	@Override
 	public void update(Match match, float dt) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public int getWinner() {

@@ -39,7 +39,7 @@ public class BallsMoving implements State<Match>{
 		}
 		else if (match.isBallInHand())
 		{
-			//match.changeCurrentPlayer();
+			//match.changeCurrentPlayer(); // TODO uncomment
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new CueBallInHand()));
 		}
 		else
@@ -53,31 +53,15 @@ public class BallsMoving implements State<Match>{
 
 	private End.Reason whyMatchEnded(Match match, Integer winner)
 	{
-		Ball[] balls = match.getBalls();
-		for (int i = 0; i < balls.length; i++)
+		if (match.isBallInHand())
 		{
-			if (!balls[i].isOnTable())
-				continue;
-			if (
-					match.
-					getPlayerBallsType
-					(
-							match.
-							getCurrentPlayer()
-							)
-							.
-							equals
-							(
-									balls
-									[i]
-											.
-											getType()))
-			{
-				winner = (match.getCurrentPlayer() == 0 ? 1 : 0);
-				return End.Reason.BLACK_BALL_SCORED_ACCIDENTALLY;
-			}
+			winner = (match.getCurrentPlayer() == 0 ? 1 : 0);
+			return End.Reason.BLACK_BALL_SCORED_ACCIDENTALLY;
 		}
-		winner = match.getCurrentPlayer();
-		return End.Reason.BLACK_BALL_SCORED_AS_LAST;
+		else
+		{
+			winner = match.getCurrentPlayer();
+			return End.Reason.BLACK_BALL_SCORED_AS_LAST;
+		}
 	}
 }

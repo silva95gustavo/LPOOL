@@ -153,14 +153,13 @@ public class Network {
 		if (comms[clientID] == null)
 			return false;
 
-		comms[clientID].send(Game.ProtocolCmd.KICK.ordinal() + "");
-		
+		comms[clientID].send(Game.ProtocolCmd.KICK.ordinal() + ""); // FIXME this may not have time to be sent...
+		comms[clientID].close();
 		try {
 			comms[clientID].getSocket().close();
 		} catch (IOException e) {
 			// Do nothing
 		}
-		comms[clientID].close();
 		comms[clientID] = null;
 		numClients--;
 		return true;
