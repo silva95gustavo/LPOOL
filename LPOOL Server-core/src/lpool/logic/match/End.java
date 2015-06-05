@@ -21,6 +21,7 @@ public class End implements State<Match> {
 	@Override
 	public void enter(Match match) {
 		match.sendStateToClients();
+		// TODO remove match from the collision observers
 	}
 
 	@Override

@@ -65,6 +65,7 @@ public class Match implements Observer{
 		this.playNum = 0;
 		Random r = new Random();
 		this.currentPlayer = r.nextInt(2);
+		this.currentPlayer = 0;
 		this.openingShot = true;
 
 		gravity = new Vector2(0, 0);
@@ -383,7 +384,7 @@ public class Match implements Observer{
 
 	public Ball.Type getPlayerBallsType(int playerID)
 	{
-		if (playerID > 0 && playerID < 2)
+		if (playerID >= 0 && playerID < 2)
 			return ballsPlayer[playerID];
 		return null;
 	}
@@ -425,29 +426,35 @@ public class Match implements Observer{
 		if (currentState instanceof TransitionState || currentState instanceof FreezeTime)
 		{
 			for (int i = 0; i < Game.numPlayers; i++)
-				network.send(new Message(i, Game.ProtocolCmd.WAIT));
+				network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof Play)
 		{
 			for (int i = 0; i < Game.numPlayers; i++)
 				if (currentPlayer == i)
-					network.send(new Message(i, Game.ProtocolCmd.PLAY));
-				else network.send(new Message(i, Game.ProtocolCmd.WAIT));
+					network.send(new Message(i, Game.ProtocolCmd.PLAY.ordinal()));
+				else network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof CueBallInHand)
 		{
 			for (int i = 0; i < Game.numPlayers; i++)
 				if (currentPlayer == i)
-					network.send(new Message(i, Game.ProtocolCmd.BIH));
-				else network.send(new Message(i, Game.ProtocolCmd.WAIT));
+					network.send(new Message(i, Game.ProtocolCmd.BIH.ordinal()));
+				else network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof End)
 		{
 			End endState = (End)currentState;
 			for (int i = 0; i < Game.numPlayers; i++)
 				if (currentPlayer == i)
-					network.send(new Message(i, Game.ProtocolCmd.END, endState.getWinner() == i ? true : false, endState.getReason()));
-				else network.send(new Message(i, Game.ProtocolCmd.END, endState.getWinner() == i ? true : false, endState.getReason()));
+					network.send(new Message(i, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == i ? true : false, endState.getReason()));
+				else network.send(new Message(i, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == i ? true : false, endState.getReason()));
 		}
+	}
+	
+	public void changeCurrentPlayer()
+	{
+		currentPlayer += 1;
+		currentPlayer %= Game.numPlayers;
 	}
 }

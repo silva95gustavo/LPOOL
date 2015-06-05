@@ -27,7 +27,6 @@ public class CueBallInHand implements State<Match>, Observer{
 	public void enter(Match match) {
 		this.match = match;
 		match.getNetwork().addMsgObserver(this);
-		match.getNetwork().send(new Message(match.getCurrentPlayer(), Game.ProtocolCmd.BIH));
 		match.sendStateToClients();
 	}
 

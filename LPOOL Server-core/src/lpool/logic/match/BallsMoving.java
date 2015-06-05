@@ -38,7 +38,10 @@ public class BallsMoving implements State<Match>{
 			match.getStateMachine().changeState(new End(reason, winner));
 		}
 		else if (match.isBallInHand())
+		{
+			//match.changeCurrentPlayer();
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new CueBallInHand()));
+		}
 		else
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new Play()));
 	}

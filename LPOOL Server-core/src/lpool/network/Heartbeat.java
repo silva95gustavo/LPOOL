@@ -26,7 +26,7 @@ public class Heartbeat extends Timer.Task implements Observer{
 	public void run() {
 		network.addMsgObserver(this);
 		System.out.println("Sending PING");
-		comm.send(Game.ProtocolCmd.PING + "");
+		comm.send(Game.ProtocolCmd.PING.ordinal() + "");
 		timer.scheduleTask(new Timer.Task() {
 			@Override
 			public void run() {
