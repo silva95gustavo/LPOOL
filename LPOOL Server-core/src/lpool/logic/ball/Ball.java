@@ -78,7 +78,7 @@ public class Ball {
 		sensorFixture = body.createFixture(sensorFixtureDef);
 		sensorFixture.setUserData(new BodyInfo(BodyInfo.Type.BALL_SENSOR, number));
 		body.setLinearDamping(0.5f);
-		body.setAngularDamping(1.6f);
+		body.setAngularDamping(1f);
 		body.setBullet(true);
 		body.setUserData(new BodyInfo(BodyInfo.Type.BALL, number));
 		
@@ -125,6 +125,8 @@ public class Ball {
 
 	public void tick(float deltaT)
 	{
+		if (number == 0)
+			System.out.println("Angular velocity: " + body.getAngularVelocity());
 		stateMachine.update(deltaT);
 		
 		if (!onTable)
@@ -138,13 +140,13 @@ public class Ball {
 		{
 			horSpin.scl(0);
 		}
-		if (body.getAngularVelocity() < 0.0125 * Match.physicsScaleFactor)
+		if (Math.abs(body.getAngularVelocity()) < 0.0125 * Match.physicsScaleFactor)
 		{
 			body.setAngularVelocity(0);
 		}
 		if (!isStopped())
 		{
-			float rotationScalar = 45; // TODO Find out why we need to multiply by a value around 45
+			float rotationScalar = (float)Math.toDegrees(1); // Radians to degrees
 			
 			Vector3 velocity = new Vector3(body.getLinearVelocity().x, body.getLinearVelocity().y, 0);
 			Vector3 rotatingAxis = Vector3.Z.cpy().crs(velocity.cpy().nor());
@@ -167,12 +169,12 @@ public class Ball {
 		}
 	}
 
-	public void makeShot(float angle, float force)
+	public void makeShot(float angle, float force, float xSpin, float ySpin)
 	{
-		body.applyLinearImpulse(new Vector2(force, 0).rotate((float)Math.toDegrees(angle)), body.getPosition(), true);
-		horSpin = new Vector3(-2f, 0, 0).rotateRad(Vector3.Z, angle);
-		//horSpin = new Vector3(0, 0, 0);
-		horSpin.scl(force);
+		body.applyLinearImpulse(new Vector2(2 * force * Match.physicsScaleFactor, 0).rotateRad(angle), body.getPosition().cpy(), true);
+		body.setAngularVelocity(force * xSpin * 150);
+		horSpin = new Vector3(4f * force * ySpin, 0, 0).rotateRad(Vector3.Z, angle);
+		horSpin.scl(force * Match.physicsScaleFactor);
 	}
 
 	public boolean isOnTable() {
@@ -213,7 +215,7 @@ public class Ball {
 		FixtureDef ballBorderFixtureDef = new FixtureDef();
 		ballBorderFixtureDef.shape = cs;
 		ballBorderFixtureDef.density = (float) (mass / (Math.PI * Math.pow(radius, 2)));
-		ballBorderFixtureDef.friction = 1.0f;
+		ballBorderFixtureDef.friction = 2.0f;
 		ballBorderFixtureDef.restitution = 0.6f;
 		ballBorderFixtureDef.filter.categoryBits = cat;
 		ballBorderFixtureDef.filter.maskBits = Table.cat;

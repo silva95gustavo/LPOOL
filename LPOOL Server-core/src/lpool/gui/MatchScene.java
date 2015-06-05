@@ -79,7 +79,7 @@ public class MatchScene implements Screen, Observer{
 	private lpool.logic.Game game;
 	
 	private final float tableMargin = Table.border;
-	private final float headerHeight = 4 * Table.border;
+	private final float headerHeight = 3 * Table.border;
 	private final float worldWidth = Table.width + 2 * tableMargin;
 	private final float worldHeight = Table.height + 2 * tableMargin + headerHeight;
 
@@ -130,7 +130,7 @@ public class MatchScene implements Screen, Observer{
 	public void render(float delta)
 	{
 		game.tick(delta);
-
+		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
