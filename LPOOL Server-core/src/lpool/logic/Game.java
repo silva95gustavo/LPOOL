@@ -20,10 +20,12 @@ public class Game implements Observer {
 		JOIN,
 		QUIT,
 		KICK,
-		BIH,
-		ACKBIH,
 		MOVECB, // x-pos[0, 1] y-pos[0, 1]
-		PLACECB // x-pos[0, 1] y-pos[0, 1]
+		PLACECB, // x-pos[0, 1] y-pos[0, 1]
+		PLAY,
+		WAIT,
+		BIH,
+		END // winner(boolean) End.Reason
 	};
 
 	public Game() {

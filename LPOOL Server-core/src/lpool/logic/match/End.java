@@ -20,8 +20,7 @@ public class End implements State<Match> {
 
 	@Override
 	public void enter(Match match) {
-		// TODO Auto-generated method stub
-		
+		match.sendStateToClients();
 	}
 
 	@Override
