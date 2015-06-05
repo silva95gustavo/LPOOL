@@ -49,6 +49,59 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:id="@+id/placeBallLayout"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.2"
+            android:id="@+id/tableandball">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/poolTable"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/pooltable"
+                    android:layout_weight="0.20"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="false"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/cueBallPlacable"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/cue" />
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Place Ball"
+            android:clickable="true"
+            android:id="@+id/placeBallButton"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:visibility="invisible"
         android:id="@+id/fireLayout">
 
@@ -57,37 +110,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.4"
-            android:id="@+id/left">
+            android:id="@+id/left"
+            android:layout_gravity="bottom">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/textView3"
-                android:layout_below="@+id/textView2"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/logo"
+                android:src="@mipmap/lpool"
+                android:layout_gravity="center"
+                android:layout_weight="1" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/textView2"
-                android:layout_below="@+id/textView1"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/textView1"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"></RelativeLayout>
 
         </LinearLayout>
 
@@ -198,56 +235,59 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/placeBallLayout"
+        android:id="@+id/final_layout"
         android:visibility="invisible">
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.2"
-            android:id="@+id/tableandball">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/poolTable"
-                    android:layout_gravity="center_vertical"
-                    android:src="@mipmap/pooltable"
-                    android:layout_weight="0.20"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="false"
-                    android:layout_centerInParent="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true" />
-            </RelativeLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" >
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/cueBallPlacable"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:src="@mipmap/cue" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/picture_view"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/terminated"
+                android:layout_weight="1" />
 
-        </RelativeLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center" >
 
-        <Button
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/lose_black_accident"
+                    android:id="@+id/end_event_description"
+                    android:layout_gravity="center"
+                    android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Place Ball"
-            android:clickable="true"
-            android:id="@+id/placeBallButton"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_height="match_parent"
+            android:layout_weight="3" >
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/continue_text"
+                android:id="@+id/textView3"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
     </LinearLayout>
 
     <Button

@@ -5,4 +5,5 @@ package com.lpool.client.Network;
  */
 public interface Receiver {
     void getMessage(String message);
+    void disconnect();
 }

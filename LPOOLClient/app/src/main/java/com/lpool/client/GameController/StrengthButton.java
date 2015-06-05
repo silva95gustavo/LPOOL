@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.lpool.client.ToUpdate.ShotActivity;
-
 /**
  * Created by André on 04/06/2015.
  */
@@ -30,6 +28,7 @@ public class StrengthButton implements View.OnTouchListener {
     private static final int GREEN = 1;
     private static final int BLUE = 2;
 
+    // TODO make invisible after shot
 
     public StrengthButton(ControllerActivity activity, ShootState shooter, Button trigger, RelativeLayout strength_bar, float maxY, float minY, float delta) {
         this.caller_activity = activity;
@@ -49,6 +48,7 @@ public class StrengthButton implements View.OnTouchListener {
 
     public void start() {
         anim_running = true;
+        makeVisible();
         if(minY < maxY) {
             animation_thread = new Thread("StrengthAnimThread") {
                 public void run(){
@@ -77,7 +77,11 @@ public class StrengthButton implements View.OnTouchListener {
                         }
                     }
                     if(strength_bar.getY() <= minY) {
-                        strength_bar.setY(minY);
+                        caller_activity.runOnUiThread(new Runnable() {
+                            public void run() {
+                                strength_bar.setY(minY);
+                            }
+                        });
                         relativeForce = 1;
                     }
                 }
@@ -93,9 +97,15 @@ public class StrengthButton implements View.OnTouchListener {
 
     public void stop() {
         anim_running = false;
+        makeInvisible();
         if(animation_thread != null)
             animation_thread.interrupt();
-        strength_bar.setY(maxY);
+
+        caller_activity.runOnUiThread(new Runnable() {
+            public void run() {
+                strength_bar.setY(maxY);
+            }
+        });
     }
 
     public static float linear_interpolation(float min, float max, float pos){
@@ -103,7 +113,12 @@ public class StrengthButton implements View.OnTouchListener {
     }
 
     public void resetPosition() {
-        strength_bar.setY(maxY);
+        caller_activity.runOnUiThread(new Runnable() {
+            public void run() {
+                strength_bar.setY(maxY);
+            }
+        });
+        makeInvisible();
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -121,10 +136,30 @@ public class StrengthButton implements View.OnTouchListener {
                     shooter.fireBall(relativeForce);
                 else
                     shooter.stopShot();
-
-                strength_bar.setY(maxY);
+                makeInvisible();
+                caller_activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        strength_bar.setY(maxY);
+                    }
+                });
                 break;
         }
         return true;
+    }
+
+    private void makeInvisible() {
+        caller_activity.runOnUiThread(new Runnable() {
+            public void run() {
+                strength_bar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    private void makeVisible() {
+        caller_activity.runOnUiThread(new Runnable() {
+            public void run() {
+                strength_bar.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

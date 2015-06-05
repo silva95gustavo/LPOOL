@@ -143,7 +143,7 @@ public class MainScreenActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            // TODO Menu de settings maybe?
+            // TODO Menu de about maybe?
             Toast.makeText(this, "Settings are currently unavailable", Toast.LENGTH_LONG).show();
             return true;
         } else if(id == R.id.action_instructions) {

@@ -38,14 +38,20 @@ public class PlaceBallState implements GameState {
         {
             public boolean onTouch(View v, MotionEvent event)
             {
-                float x = event.getX();
-                float y = event.getY();
+                final float x = event.getX();
+                final float y = event.getY();
                 if(x >= 0 + xProportionLimit*placeBall.getWidth() &&
                         x <= placeBall.getX() + placeBall.getWidth() - cueBallPlace.getWidth() - xProportionLimit*placeBall.getWidth() &&
                         y >= 0 + yProportionLimit*placeBall.getHeight() &&
                         y <= placeBall.getY() + placeBall.getHeight() - cueBallPlace.getHeight() - yProportionLimit*placeBall.getHeight()) {
-                    cueBallPlace.setX(event.getX());
-                    cueBallPlace.setY(event.getY());
+
+
+                    caller.runOnUiThread(new Runnable() {
+                        public void run() {
+                            cueBallPlace.setX(x);
+                            cueBallPlace.setY(y);
+                        }
+                    });
 
                     ballX = (x)/(placeBall.getWidth() - cueBallPlace.getWidth());
                     ballY = (y)/(placeBall.getHeight() - cueBallPlace.getHeight());

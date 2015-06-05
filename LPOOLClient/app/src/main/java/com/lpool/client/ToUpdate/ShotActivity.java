@@ -110,7 +110,7 @@ public class ShotActivity extends Activity implements SensorEventListener {
                     return;
                 try {
                     if(!shooting) {
-                        String data = new String(ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + counter++ + "\n");
+                        String data = new String(ProtocolCmd.ANGLE.ordinal() + " " + angle + " " + counter++ + '\n');
                         byte[] msg = data.getBytes();
                         DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(serverIP), serverPort);
                         datagramSocket.send(sendPacket);

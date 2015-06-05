@@ -19,5 +19,15 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="wait_text">Please wait for your turn </string>
-        <string name="title_activity_title_screen">TitleScreenActivity</string>
+    <string name="title_activity_title_screen">TitleScreenActivity</string>
+
+    <string name="win_black_last">You won because you scored the black ball! Congratulations!</string>
+    <string name="lose_black_last">You have lost because your opponent scored the black ball... Better luck next time!</string>
+    <string name="win_black_accident">You won because your opponent accidentally scored the black ball. Congratulations!</string>
+    <string name="lose_black_accident">You have lost because you accidentally scored the black ball... Better luck next time!</string>
+    <string name="disconnected_timeout">The game was terminated because your opponent\'s connection timed out. Try again later.</string>
+    <string name="disconnected_voluntary">The game was terminated because your opponent has disconnected from the game.</string>
+    <string name="disconnected_quit">The game was terminated because you were disconnected.</string>
+    <string name="kicked">You were kicked from the server, probably due to it being full of players. Try again later.</string>
+    <string name="continue_text">Touch the screen to continue.</string>
 </resources>
