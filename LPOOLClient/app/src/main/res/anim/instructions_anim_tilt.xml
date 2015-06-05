@@ -6,28 +6,28 @@
         android:startOffset="0"
         android:duration="1000"
         android:fromDegrees="0"
+        android:toDegrees="0"
         android:pivotX="50%"
-        android:pivotY="50%"
-        android:toDegrees="0"/>
+        android:pivotY="50%"/>
     <rotate
         android:startOffset="1000"
         android:duration="1000"
         android:fromDegrees="0"
+        android:toDegrees="20"
         android:pivotX="50%"
-        android:pivotY="50%"
-        android:toDegrees="20"/>
+        android:pivotY="50%"/>
     <rotate
         android:startOffset="2000"
         android:duration="2000"
         android:fromDegrees="0"
+        android:toDegrees="-40"
         android:pivotX="50%"
-        android:pivotY="50%"
-        android:toDegrees="-40"/>
+        android:pivotY="50%"/>
     <rotate
         android:startOffset="4000"
         android:duration="1000"
         android:fromDegrees="0"
+        android:toDegrees="20"
         android:pivotX="50%"
-        android:pivotY="50%"
-        android:toDegrees="20"/>
+        android:pivotY="50%"/>
 </set>

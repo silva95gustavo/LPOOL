@@ -9,8 +9,12 @@
     <string name="instructions_act_name">Instructions Activity</string>
     <string name="title_activity_instructions">InstructionsActivity</string>
 
+    <string name="qr_button_text">Connect From QR Code</string>
+    <string name="instructions_button_text">Instructions</string>
+    <string name="connect_button_text">Connect</string>
+
     <string name="instructions_text_1">Tilt your phone sideways to aim for your shot. More inclination means more rotation speed.</string>
-    <string name="instructions_text_2">Then, just press the screen to shoot the ball. The longer you press, the faster it goes!</string>
+    <string name="instructions_text_2">Then, just press the screen to shoot the ball. The longer you press, the faster it goes! Release the screen off the button to cancel the shot</string>
 
     <string name="hello_world">Hello world!</string>
 
