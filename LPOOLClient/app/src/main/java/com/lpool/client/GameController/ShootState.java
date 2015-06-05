@@ -166,6 +166,10 @@ public class ShootState implements GameState, SensorEventListener {
         paused = false;
     }
 
+    public Boolean isSameAsCmd(Connector.ProtocolCmd cmd) {
+        return (cmd == Connector.ProtocolCmd.PLAY);
+    }
+
     public void onPause() {
         sensorManager.unregisterListener(this);
         //shooting = true;
@@ -210,12 +214,22 @@ public class ShootState implements GameState, SensorEventListener {
         //shooting = true;
         interrupted = true;
         sensorManager.unregisterListener(this);
-        own_layout.setVisibility(View.INVISIBLE);
+
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                own_layout.setVisibility(View.INVISIBLE);
+            }
+        });
+
         active = false;
     }
 
     public void start() {
-        own_layout.setVisibility(View.VISIBLE);
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                own_layout.setVisibility(View.VISIBLE);
+            }
+        });
         initializeSensors();
         initializeAngleSender();
         initializeElements();

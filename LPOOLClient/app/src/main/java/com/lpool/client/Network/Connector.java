@@ -18,7 +18,15 @@ import java.util.ArrayList;
  */
 public class Connector {
 
-    public static enum ProtocolCmd {
+    public enum EndReason
+    {
+        BLACK_BALL_SCORED_AS_LAST,
+        BLACK_BALL_SCORED_ACCIDENTALLY,
+        TIMEOUT,
+        DISCONNECT
+    }
+
+    public enum ProtocolCmd {
         ANGLE, // angle
         FIRE, // force[0, 1] x-spin[-1, 1] y-spin[-1, 1]
         PING,
@@ -26,10 +34,12 @@ public class Connector {
         JOIN,
         QUIT,
         KICK,
-        BIH,
-        ACKBIH,
         MOVECB, // x-pos[0, 1] y-pos[0, 1]
-        PLACECB // x-pos[0, 1] y-pos[0, 1]
+        PLACECB, // x-pos[0, 1] y-pos[0, 1]
+        PLAY,
+        WAIT,
+        BIH,
+        END // winner(boolean) End.Reason
     };
 
     // TCP
@@ -49,6 +59,7 @@ public class Connector {
         running = true;
         receivers = new ArrayList<Receiver>();
         initializeClientThread(); // Initializes receiver/heartbeat thread
+        System.out.println("Connecting to " + serverIP + " " + serverPort);
     }
 
     public Boolean sendUDPMessage(String message) {
@@ -118,7 +129,7 @@ public class Connector {
                         break;
                     }
                     System.out.println("Received message \"" + str + "\"");
-                    if(str.equals(ProtocolCmd.PING + ""))
+                    if(str.equals(ProtocolCmd.PING.ordinal() + ""))
                     {
                         System.out.println("Got PING");
                         sendTCPMessage("" + ProtocolCmd.PONG.ordinal());
@@ -165,5 +176,18 @@ public class Connector {
         running = true;
         initializeClientThread();
         initializeReceiverThread();
+    }
+
+    public void disconnect() {
+        stop();
+        try {
+            if(datagramSocket != null) {
+                datagramSocket.disconnect();
+            if(socket != null)
+                socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

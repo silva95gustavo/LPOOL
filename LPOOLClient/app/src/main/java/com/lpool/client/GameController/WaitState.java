@@ -3,6 +3,7 @@ package com.lpool.client.GameController;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.lpool.client.Network.Connector;
 import com.lpool.client.R;
 
 /**
@@ -22,12 +23,20 @@ public class WaitState implements GameState {
     }
 
     public void start() {
-        own_layout.setVisibility(View.VISIBLE);
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                own_layout.setVisibility(View.VISIBLE);
+            }
+        });
         active = true;
     }
 
     public void interrupt() {
-        own_layout.setVisibility(View.INVISIBLE);
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                own_layout.setVisibility(View.INVISIBLE);
+            }
+        });
         active = false;
     }
 
@@ -42,4 +51,8 @@ public class WaitState implements GameState {
     public void onPause() {}
 
     public void onResume() {}
+
+    public Boolean isSameAsCmd(Connector.ProtocolCmd cmd) {
+        return (cmd == Connector.ProtocolCmd.WAIT);
+    }
 }

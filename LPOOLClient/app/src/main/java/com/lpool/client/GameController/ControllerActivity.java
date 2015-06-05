@@ -3,6 +3,8 @@ package com.lpool.client.GameController;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -47,10 +49,13 @@ public class ControllerActivity extends Activity implements Receiver{
 
         connector = new Connector(server_ip, server_port);
         connector.addReceiver(this);
+        connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
     }
 
 
     public void temp_funct(View v) {
+        // TODO remove
+        sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
         // TODO remove
         switch (currentState.getValue()) {
             case WAIT:
@@ -72,7 +77,37 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
     public void getMessage(String message) {
-        // TODO continuar
+        System.out.println("Got message " + message);
+        GameCommand cmd = new GameCommand(message);
+        if(cmd.getCmd() == null) return;
+
+        System.out.println("Received command " + cmd.getCmd());
+
+        if(!currentState.isSameAsCmd(cmd.getCmd())) {
+            currentState.interrupt();
+            switch (cmd.getCmd()) {
+                case WAIT:
+                    currentState = states[GameState.Value.WAIT.ordinal()];
+                    break;
+                case PLAY:
+                    currentState = states[GameState.Value.SHOOT.ordinal()];
+                    break;
+                case BIH:
+                    currentState = states[GameState.Value.PLACE_BALL.ordinal()];
+                    break;
+                case END:
+                    currentState = states[GameState.Value.WAIT.ordinal()];
+                    break;
+                case KICK:
+                    terminate();
+                    return;
+                default:
+                    currentState = states[GameState.Value.WAIT.ordinal()];
+                    break;
+            }
+            currentState.start();
+        }
+
     }
 
     public GameState getCurrentState() {
@@ -90,7 +125,11 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
     public void switchStateValue(GameState.Value value) {
-        // TODO
+        if(value != currentState.getValue()) {
+            currentState.interrupt();
+            currentState = states[value.ordinal()];
+            currentState.start();
+        }
     }
 
     public Boolean sendUDPMessage(String message) {
@@ -115,5 +154,19 @@ public class ControllerActivity extends Activity implements Receiver{
     protected void onResume() {
         super.onResume();
         currentState.onResume();
+    }
+
+    public void terminate() {
+        currentState.interrupt();
+        connector.disconnect();
+        this.finish();
+    }
+
+    public void onBackPressed() {
+        terminate();
+        /*Intent setIntent = new Intent(Intent.ACTION_MAIN);
+        setIntent.addCategory(Intent.CATEGORY_HOME);
+        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(setIntent);*/
     }
 }
