@@ -98,14 +98,15 @@ public class ControllerActivity extends Activity implements Receiver{
                 case END:
                     currentState = states[GameState.Value.WAIT.ordinal()];
                     break;
+                case KICK:
+                    terminate();
+                    return;
                 default:
                     currentState = states[GameState.Value.WAIT.ordinal()];
                     break;
             }
             currentState.start();
         }
-
-        // TODO continuar
 
     }
 
@@ -161,7 +162,6 @@ public class ControllerActivity extends Activity implements Receiver{
         this.finish();
     }
 
-    @Override
     public void onBackPressed() {
         terminate();
         /*Intent setIntent = new Intent(Intent.ACTION_MAIN);

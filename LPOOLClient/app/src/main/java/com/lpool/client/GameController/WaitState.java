@@ -23,12 +23,20 @@ public class WaitState implements GameState {
     }
 
     public void start() {
-        own_layout.setVisibility(View.VISIBLE);
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                own_layout.setVisibility(View.VISIBLE);
+            }
+        });
         active = true;
     }
 
     public void interrupt() {
-        own_layout.setVisibility(View.INVISIBLE);
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                own_layout.setVisibility(View.INVISIBLE);
+            }
+        });
         active = false;
     }
 
