@@ -45,7 +45,7 @@ public class BallTest {
 		Vector2 pos = new Vector2(0, 0);
 		Ball b = new Ball(w, pos, 4, null);
 		
-		b.makeShot(0, 1000);
+		b.makeShot(0, 1000, 0, 0);
 		w.step(1, 10, 10);
 		b.tick(1);
 		
@@ -110,8 +110,8 @@ public class BallTest {
 			}
 			
 		});
-		b1.makeShot(0, 10000);
-		b2.makeShot((float)Math.PI, 10000);
+		b1.makeShot(0, 10000, 0, 0);
+		b2.makeShot((float)Math.PI, 10000, 0, 0);
 		w.step(10, 10, 10);
 		assertEquals(0, r[0].x, 0.01 * Match.physicsScaleFactor);
 		assertEquals(0, r[0].y, 0.01 * Match.physicsScaleFactor);

@@ -5,7 +5,7 @@ import lpool.logic.state.State;
 import lpool.logic.state.TransitionState;
 
 public class BallsMoving implements State<Match>{
-	
+
 	@Override
 	public void enter(Match match) {
 	}
@@ -18,7 +18,7 @@ public class BallsMoving implements State<Match>{
 		if (allStopped(match.getBalls()))
 			continueMatch(match);
 	}
-	
+
 	private boolean allStopped(Ball[] balls)
 	{
 		for (int i = 0; i < balls.length; i++)
@@ -28,7 +28,7 @@ public class BallsMoving implements State<Match>{
 		}
 		return true;
 	}
-	
+
 	private void continueMatch(Match match)
 	{
 		if (matchEnded(match))
@@ -38,16 +38,19 @@ public class BallsMoving implements State<Match>{
 			match.getStateMachine().changeState(new End(reason, winner));
 		}
 		else if (match.isBallInHand())
+		{
+			//match.changeCurrentPlayer();
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new CueBallInHand()));
+		}
 		else
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new Play()));
 	}
-	
+
 	private boolean matchEnded(Match match)
 	{
 		return !match.getBlackBall().isOnTable();
 	}
-	
+
 	private End.Reason whyMatchEnded(Match match, Integer winner)
 	{
 		Ball[] balls = match.getBalls();
@@ -55,7 +58,20 @@ public class BallsMoving implements State<Match>{
 		{
 			if (!balls[i].isOnTable())
 				continue;
-			if (match.getPlayerBallsType(match.getCurrentPlayer()).equals(balls[i].getType()))
+			if (
+					match.
+					getPlayerBallsType
+					(
+							match.
+							getCurrentPlayer()
+							)
+							.
+							equals
+							(
+									balls
+									[i]
+											.
+											getType()))
 			{
 				winner = (match.getCurrentPlayer() == 0 ? 1 : 0);
 				return End.Reason.BLACK_BALL_SCORED_ACCIDENTALLY;

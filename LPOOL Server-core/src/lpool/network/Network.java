@@ -153,7 +153,7 @@ public class Network {
 		if (comms[clientID] == null)
 			return false;
 
-		comms[clientID].send(Game.ProtocolCmd.KICK + "");
+		comms[clientID].send(Game.ProtocolCmd.KICK.ordinal() + "");
 		
 		try {
 			comms[clientID].getSocket().close();

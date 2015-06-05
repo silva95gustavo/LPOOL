@@ -8,11 +8,15 @@ import java.util.Random;
 
 import lpool.gui.assets.Sounds;
 import lpool.logic.BodyInfo;
+import lpool.logic.Game;
 import lpool.logic.ObservableCollision;
 import lpool.logic.Table;
 import lpool.logic.BodyInfo.Type;
 import lpool.logic.ball.Ball;
 import lpool.logic.state.Context;
+import lpool.logic.state.State;
+import lpool.logic.state.TransitionState;
+import lpool.network.Message;
 import lpool.network.Network;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -46,11 +50,11 @@ public class Match implements Observer{
 	private Ball[] balls;
 
 	private float cueAngle = (float)Math.PI;
-	private boolean ballInHand;
-	private boolean cueTouchedBallThisPlay;
 	private Ball.Type ballsPlayer[];
 	private int playNum;
 	private int currentPlayer;
+	private boolean openingShot;
+	private PlayValidator playValidator;
 
 	private ObservableCollision observableCollision;
 
@@ -61,6 +65,8 @@ public class Match implements Observer{
 		this.playNum = 0;
 		Random r = new Random();
 		this.currentPlayer = r.nextInt(2);
+		this.currentPlayer = 0;
+		this.openingShot = true;
 
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
@@ -72,7 +78,6 @@ public class Match implements Observer{
 		balls1 = new Ball[ballsPerPlayer];
 		balls2 = new Ball[ballsPerPlayer];
 		balls = new Ball[ballsPerPlayer * 2 + 2];
-		setBallInHand(false);
 
 		createBalls();
 
@@ -186,9 +191,9 @@ public class Match implements Observer{
 		cueAngle = angle;
 	}
 
-	public void makeShot(float force)
+	public void makeShot(float force, float xSpin, float ySpin)
 	{
-		cueBall.makeShot(cueAngle, force);
+		cueBall.makeShot(cueAngle, force, xSpin, ySpin);
 	}
 
 	public float getCueAngle()
@@ -291,10 +296,17 @@ public class Match implements Observer{
 				{
 				case BALL: ballBallCollisionHandler(Math.min(userDataA.getID(), userDataB.getID()), Math.max(userDataA.getID(), userDataB.getID())); break;
 				case HOLE: ballInHoleHandler(userDataA.getID(), userDataB.getID()); break;
+				case TABLE: ballTableCollisionHandler(userDataA.getID());
 				default: break;
 				}
 				break;
-			case TABLE: break;
+			case TABLE:
+				switch(userDataB.getType())
+				{
+				case BALL: ballTableCollisionHandler(userDataB.getID()); break;
+				default: break;
+				}
+				break;
 			case HOLE:
 				switch (userDataB.getType())
 				{
@@ -308,23 +320,21 @@ public class Match implements Observer{
 		}
 	}
 
+	private void ballTableCollisionHandler(int ballNumber)
+	{
+		playValidator.actionBorderHit();
+	}
+
 	private void ballBallCollisionHandler(int ball1, int ball2)
 	{
-		if (ball1 != 0) return; // Ignore if not cue ball
-		if (isCueTouchedBallThisPlay()) return; // Ignore if the cue ball has already hit other one this round
-		if (!playerBallsDefined()) return;
-		
-		if (ballsPlayer[currentPlayer] != balls[ball2].getType())
-			setBallInHand(true); // First touch was not on the player balls
+		if (balls[ball1].getType() != Ball.Type.CUE) return; // Ignore if not cue ball
+		playValidator.actionBallHit(balls[ball2].getType());
 	}
-	
+
 	private void ballInHoleHandler(int ballNumber, int holeNumber)
 	{
 		balls[ballNumber].enterHole(holeNumber);
 
-		if (ballNumber == 0)
-			setBallInHand(true);
-		
 		if (!playerBallsDefined())
 		{
 			int otherPlayer = (currentPlayer == 0 ? 1 : 0);
@@ -340,6 +350,8 @@ public class Match implements Observer{
 			}
 			// Do nothing if cue or black ball
 		}
+
+		playValidator.actionBallScore(balls[ballNumber].getType());
 	}
 
 	public lpool.logic.state.Context<Match> getStateMachine() {
@@ -357,11 +369,7 @@ public class Match implements Observer{
 	}
 
 	public boolean isBallInHand() {
-		return ballInHand;
-	}
-
-	public void setBallInHand(boolean ballInHand) {
-		this.ballInHand = ballInHand;
+		return !playValidator.isValid();
 	}
 
 	public int getPlayNum()
@@ -376,21 +384,11 @@ public class Match implements Observer{
 
 	public Ball.Type getPlayerBallsType(int playerID)
 	{
-		if (playerID > 0 && playerID < 2)
+		if (playerID >= 0 && playerID < 2)
 			return ballsPlayer[playerID];
 		return null;
 	}
 
-	
-	public boolean isCueTouchedBallThisPlay() {
-		return cueTouchedBallThisPlay;
-	}
-	
-
-	public void setCueTouchedBallThisPlay(boolean cueTouchedBallThisPlay) {
-		this.cueTouchedBallThisPlay = cueTouchedBallThisPlay;
-	}
-	
 	/**
 	 * 
 	 * @return true if it has been already defined who plays for the solid balls and who plays for the stripe balls, false otherwise
@@ -399,9 +397,64 @@ public class Match implements Observer{
 	{
 		return ballsPlayer[0] != null;
 	}
-	
+
 	public int getCurrentPlayer()
 	{
 		return currentPlayer;
+	}
+
+
+	public boolean isOpeningShot() {
+		return openingShot;
+	}
+
+	public void setOpeningShot(boolean openingShot) {
+		this.openingShot = openingShot;
+	}
+
+	public PlayValidator getPlayValidator() {
+		return playValidator;
+	}
+
+	public void setPlayValidator(PlayValidator playValidator) {
+		this.playValidator = playValidator;
+	}
+	
+	public void sendStateToClients()
+	{
+		State<Match> currentState = stateMachine.getCurrentState();
+		if (currentState instanceof TransitionState || currentState instanceof FreezeTime)
+		{
+			for (int i = 0; i < Game.numPlayers; i++)
+				network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
+		}
+		else if (currentState instanceof Play)
+		{
+			for (int i = 0; i < Game.numPlayers; i++)
+				if (currentPlayer == i)
+					network.send(new Message(i, Game.ProtocolCmd.PLAY.ordinal()));
+				else network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
+		}
+		else if (currentState instanceof CueBallInHand)
+		{
+			for (int i = 0; i < Game.numPlayers; i++)
+				if (currentPlayer == i)
+					network.send(new Message(i, Game.ProtocolCmd.BIH.ordinal()));
+				else network.send(new Message(i, Game.ProtocolCmd.WAIT.ordinal()));
+		}
+		else if (currentState instanceof End)
+		{
+			End endState = (End)currentState;
+			for (int i = 0; i < Game.numPlayers; i++)
+				if (currentPlayer == i)
+					network.send(new Message(i, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == i ? true : false, endState.getReason()));
+				else network.send(new Message(i, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == i ? true : false, endState.getReason()));
+		}
+	}
+	
+	public void changeCurrentPlayer()
+	{
+		currentPlayer += 1;
+		currentPlayer %= Game.numPlayers;
 	}
 }

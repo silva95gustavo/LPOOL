@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 
 public class BallModel {
 	//private static final float scale = 0.025f * Match.physicsScaleFactor;
-	private static final float scale = 0.1f * Match.physicsScaleFactor;
+	private static final float scale = 1;
 	private static final Vector3 scaleVec = new Vector3(scale, scale, scale);
 	private Model model;
 

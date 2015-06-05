@@ -28,7 +28,8 @@ public class Play implements State<Match>, Observer{
 		lastAngle = (float)Math.PI;
 		lastAngleTime = System.currentTimeMillis();
 		match.getNetwork().addMsgObserver(this);
-		match.setBallInHand(false);
+		match.setPlayValidator(new PlayValidator(false, match.playerBallsDefined(), match.getPlayerBallsType(match.getCurrentPlayer()), match.getBalls())); // TODO opening shot
+		match.sendStateToClients();
 	}
 
 	@Override
@@ -66,8 +67,14 @@ public class Play implements State<Match>, Observer{
 		{
 			if (!sc.hasNextFloat())
 				break;
-			float force = sc.nextFloat() * Match.physicsScaleFactor;
-			match.makeShot(force);
+			float force = sc.nextFloat();
+			if (!sc.hasNextFloat())
+				break;
+			float xSpin = sc.nextFloat();
+			if (!sc.hasNextFloat())
+				break;
+			float ySpin = sc.nextFloat();
+			match.makeShot(force, xSpin, ySpin);
 			match.getStateMachine().changeState(new BallsMoving());
 			match.getNetwork().deleteMsgObserver(this);
 			break;
