@@ -28,12 +28,12 @@ public class ControllerActivity extends Activity implements Receiver{
 
         states = new GameState[3];
 
-        currentState = new WaitState(this);
-        currentState.start();
-
-        states[GameState.Value.WAIT.ordinal()] = currentState;
+        states[GameState.Value.WAIT.ordinal()] = new WaitState(this);
         states[GameState.Value.SHOOT.ordinal()] = new ShootState(this);
-        //states[GameState.Value.PLACE_BALL.ordinal()] = new PlaceBallState(this);
+        states[GameState.Value.PLACE_BALL.ordinal()] = new PlaceBallState(this);
+
+        currentState = states[GameState.Value.WAIT.ordinal()];
+        currentState.start();
 
         Bundle b = getIntent().getExtras();
         int server_port = b.getInt("port");
@@ -60,10 +60,13 @@ public class ControllerActivity extends Activity implements Receiver{
                 break;
             case SHOOT:
                 currentState.interrupt();
-                currentState = states[GameState.Value.WAIT.ordinal()];
+                currentState = states[GameState.Value.PLACE_BALL.ordinal()];
                 currentState.start();
                 break;
             case PLACE_BALL:
+                currentState.interrupt();
+                currentState = states[GameState.Value.WAIT.ordinal()];
+                currentState.start();
                 break;
         }
     }
