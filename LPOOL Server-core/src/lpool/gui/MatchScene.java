@@ -89,6 +89,8 @@ public class MatchScene implements Screen, Observer{
 
 	public MatchScene(lpool.logic.Game game, com.badlogic.gdx.Game GdxGame, int width, int height)
 	{
+		Sounds.getInstance().getRacking().play();
+		
 		camera = new OrthographicCamera();
 		camera.position.set(Table.width / 2, worldHeight / 2 - tableMargin, 3);
 		camera.near = 0.1f; 
@@ -319,12 +321,16 @@ public class MatchScene implements Screen, Observer{
 				ballBallCollisionHandler(userDataA.getID(), userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
 			else if (userDataB.getType() == BodyInfo.Type.TABLE)
 				ballTableCollisionHandler(userDataA.getID(), contact.getWorldManifold().getPoints()[0]);
+			else if (userDataB.getType() == BodyInfo.Type.HOLE)
+				ballHoleCollisionHandler();
 			break;
 		case TABLE:
 			if (userDataB.getType() == BodyInfo.Type.BALL)
 				ballTableCollisionHandler(userDataB.getID(), contact.getWorldManifold().getPoints()[0]);
 			break;
 		case HOLE:
+			if (userDataB.getType() == BodyInfo.Type.BALL)
+				ballHoleCollisionHandler();
 			break;
 		case BALL_SENSOR:
 			break;
@@ -345,6 +351,11 @@ public class MatchScene implements Screen, Observer{
 		// TODO sound
 	}
 
+	private void ballHoleCollisionHandler()
+	{
+		Sounds.getInstance().getBallInHole().play();
+	}
+	
 	private void updateEnvironment()
 	{
 		updateEnvironment(dialogMessage.getBackgroundBrightness());

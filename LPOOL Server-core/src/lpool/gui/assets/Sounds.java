@@ -13,6 +13,9 @@ public class Sounds { // Singleton
 	private Sounds() {
 		AssetManager am = Manager.getInstance().getAssetManager();
 		am.load("ballBallCollision.wav", Sound.class);
+		am.load("sounds/ball_hitting_ball.mp3", Sound.class);
+		am.load("sounds/ball_in_hole.mp3", Sound.class);
+		am.load("sounds/racking.mp3", Sound.class);
 	}
 	
 	public static Sounds getInstance()
@@ -25,6 +28,19 @@ public class Sounds { // Singleton
 	
 	public Sound getBallBallCollision()
 	{
-		return Manager.getInstance().getAssetManager().get("ballBallCollision.wav");
+		if (Math.random() < 0.5f)
+			return Manager.getInstance().getAssetManager().get("ballBallCollision.wav");
+		else
+			return Manager.getInstance().getAssetManager().get("sounds/ball_hitting_ball.mp3");
+	}
+	
+	public Sound getBallInHole()
+	{
+		return Manager.getInstance().getAssetManager().get("sounds/ball_in_hole.mp3", Sound.class);
+	}
+	
+	public Sound getRacking()
+	{
+		return Manager.getInstance().getAssetManager().get("sounds/racking.mp3", Sound.class);
 	}
 }
