@@ -21,8 +21,9 @@ import java.util.TimerTask;
 public class Connector {
 
     public static final int HEARTBEAT_TIMEOUT = 30; // seconds
-    public static final int HEARTBEAT_INTERVAL = 20; // seconds
+    public static final int HEARTBEAT_INTERVAL = 10; // seconds
     private Timer timer;
+    private Thread connectionChecker;
     private Boolean gotPONG = false;
 
     public enum EndReason
@@ -119,16 +120,45 @@ public class Connector {
         return true;
     }
 
+    public void checkerThread() {
+        connectionChecker = new Thread( new Runnable() {
+            public void run() {
+                while(running){
+                    try {
+                        Thread.sleep(1000);
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(socket == null || datagramSocket == null) {
+                        System.out.println("Innactive connection");
+                        stopReceivers();
+                        disconnect();
+                    }
+                }
+            }
+        });
+
+        connectionChecker.start();
+    }
+
     class ClientThread implements Runnable {
         public void run() {
+            checkerThread();
             try {
+                System.out.println("Part 1");
                 InetAddress serverAddr = InetAddress.getByName(serverIP);
+                System.out.println("Part 2");
                 socket = new Socket(serverAddr, serverPort);
+                System.out.println("Part 3");
                 datagramSocket = new DatagramSocket(serverPort);
+                System.out.println("Part 4");
                 initializeReceiverThread();
             } catch (UnknownHostException e1) {
+                System.out.println("Error 1");
                 e1.printStackTrace();
             } catch (IOException e1) {
+                System.out.println("Error 2");
                 e1.printStackTrace();
             }
         }
@@ -137,7 +167,11 @@ public class Connector {
     class receiverThread implements Runnable    {
         @Override
         public void run() {
+            System.out.println("Receiver");
             startHeartBeat();
+            if(connectionChecker != null) {
+                connectionChecker.interrupt();
+            }
             while (running)
             {
                 try {
@@ -146,6 +180,8 @@ public class Connector {
                     String str = br.readLine();
                     if (str == null) {
                         System.out.println("received null");
+                        stopReceivers();
+                        disconnect();
                         break;
                     }
                     System.out.println("Received message \"" + str + "\"");
@@ -161,6 +197,7 @@ public class Connector {
                     } else
                         spreadMessage(str);
                 } catch (IOException e) {
+                    System.out.println("Error 3");
                     e.printStackTrace();
                 }
             }
@@ -215,7 +252,7 @@ public class Connector {
     }
 
     public void startHeartBeat() {
-        timer.schedule(new HeartBeatTask(), HEARTBEAT_INTERVAL * 1000);
+        timer.schedule(new HeartBeatTask(), 1000);
     }
 
     private class HeartBeatTask extends TimerTask {
@@ -247,89 +284,4 @@ public class Connector {
         }
     }
 
-    public static Boolean isServerRunning(String ip, int port) {
-
-        testSocket = null;
-        pw = null;
-        final int tempPort = port;
-        final String tempIP = ip;
-        final Boolean result[] = new Boolean[1];
-        result[0] = true;
-
-        Thread attempt = new Thread( new Runnable() {
-            public void run() {
-                try {
-                    tempServerAddr = InetAddress.getByName(tempIP);
-                    if(!tempServerAddr.isAnyLocalAddress() && !tempServerAddr.isLinkLocalAddress() && !tempServerAddr.isLoopbackAddress() && !tempServerAddr.isMulticastAddress() && !tempServerAddr.isSiteLocalAddress()) {
-                        result[0] = false;
-                        System.out.println("serverAddr bad");
-                        tempServerAddr = null;
-                        return;
-                    }
-                    testSocket = new Socket(tempServerAddr, tempPort);
-                    if(testSocket == null) {
-                        System.out.println("NULL");
-                    }
-                } catch (UnknownHostException e1) {
-                    result[0] = false;
-                    return;
-                } catch (IOException e1) {
-                    result[0] = false;
-                    return;
-                }
-            }
-        });
-
-        attempt.start();
-        try {
-            Thread.sleep(100);
-        } catch(InterruptedException e) {
-            return false;
-        }
-
-        System.out.println("1");
-        if (testSocket == null) {
-            tempServerAddr = null;
-            return false;
-        }
-        System.out.println("2");
-
-        if(!result[0]) {
-            attempt.interrupt();
-            tempServerAddr = null;
-            try {
-                testSocket.close();
-            } catch(IOException e2) {}
-            testSocket = null;
-            return false;
-        }
-
-        System.out.println("3");
-        try {
-            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(testSocket.getOutputStream())), true);
-            pw.println("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
-        } catch (IOException e) {
-            System.out.println("4");
-            tempServerAddr = null;
-            attempt.interrupt();
-            try {
-                testSocket.close();
-            } catch(IOException e2) {}
-            pw.close();
-            testSocket = null;
-            pw = null;
-            return false;
-        }
-        System.out.println("5");
-
-        tempServerAddr = null;
-        attempt.interrupt();
-        try {
-            testSocket.close();
-        } catch(IOException e2) {}
-        pw.close();
-        testSocket = null;
-        pw = null;
-        return true;
-    }
 }

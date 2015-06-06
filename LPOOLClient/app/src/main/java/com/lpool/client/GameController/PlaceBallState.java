@@ -109,5 +109,6 @@ public class PlaceBallState implements GameState {
             }
         });
         initializeElements();
+        // TODO reset ball position
     }
 }
