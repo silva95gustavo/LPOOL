@@ -83,24 +83,17 @@ public class MainScreenActivity extends ActionBarActivity {
         return true;
     }
 
-    public void connectToServer(View v)
-    {
+    public void connectToServer(View v) {
         server_ip = server_ip_text.getText().toString();
-        if(Utilities.isValidIP(server_ip) && Utilities.isValidPort(server_port)) {
+        if (Utilities.isValidIP(server_ip) && Utilities.isValidPort(server_port)) {
 
-            if(Connector.isServerRunning(server_ip, server_port)) {
-                Intent intent = new Intent(MainScreenActivity.this, ControllerActivity.class);
-                Bundle params = new Bundle();
-                params.putInt("port", server_port);
-                params.putString("ip", server_ip);
-                intent.putExtras(params);
-                startActivity(intent);
-            }
-            else {
-                Toast.makeText(this, "Connection Failed." + '\n' + "The specified server isn't active.", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else
+            Intent intent = new Intent(MainScreenActivity.this, ControllerActivity.class);
+            Bundle params = new Bundle();
+            params.putInt("port", server_port);
+            params.putString("ip", server_ip);
+            intent.putExtras(params);
+            startActivity(intent);
+        } else
             Toast.makeText(this, "Connection Failed." + '\n' + "The IP entered is invalid.", Toast.LENGTH_SHORT).show();
     }
 
