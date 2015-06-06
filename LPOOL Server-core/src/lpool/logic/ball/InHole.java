@@ -19,4 +19,10 @@ public class InHole implements State<Ball> {
 
 	}
 
+	@Override
+	public void exit(Ball owner) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

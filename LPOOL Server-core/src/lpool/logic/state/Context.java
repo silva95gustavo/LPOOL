@@ -22,8 +22,8 @@ public class Context<E> {
 	}
 	
 	public void changeState(State<E> newState) {
+		currentState.exit(owner);
 		previousState = currentState;
-		
 		currentState = newState;
 		currentState.enter(owner);
 	}

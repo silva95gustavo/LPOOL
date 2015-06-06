@@ -76,12 +76,16 @@ public class Play implements State<Match>, Observer{
 			float ySpin = sc.nextFloat();
 			match.makeShot(force, xSpin, ySpin);
 			match.getStateMachine().changeState(new BallsMoving());
-			match.getNetwork().deleteMsgObserver(this);
 			break;
 		}
 		default:
 			break;
 		}
 		sc.close();
+	}
+
+	@Override
+	public void exit(Match match) {
+		match.getNetwork().deleteMsgObserver(this);
 	}
 }
