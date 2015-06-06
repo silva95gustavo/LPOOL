@@ -26,7 +26,10 @@ public class End implements State<Match> {
 		match.deleteCollisionObserver(match);
 		match.getWorld().dispose();
 		for (int i = 0; i < Game.numPlayers; i++)
+		{
+			match.getNetwork().send(new Message(i, Game.ProtocolCmd.END.ordinal() + " " + (winner == i ? 1 : 0) + " " + reason.ordinal()));
 			match.getNetwork().send(new Message(i, Game.ProtocolCmd.KICK.ordinal()));
+		}
 	}
 
 	@Override

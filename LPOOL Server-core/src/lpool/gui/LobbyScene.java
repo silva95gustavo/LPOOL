@@ -56,10 +56,10 @@ public class LobbyScene implements Screen, Observer {
 	private float readyTime;
 	private float brightness;
 
-	public LobbyScene(com.badlogic.gdx.Game GdxGame, FadingColor fadingColor) {
+	public LobbyScene(lpool.logic.Game game, com.badlogic.gdx.Game GdxGame, FadingColor fadingColor) {
 		this.width = Gdx.graphics.getWidth();
 		this.height = Gdx.graphics.getHeight();
-
+		this.game = game;
 		this.GdxGame = GdxGame;
 
 		camera = new OrthographicCamera();
@@ -75,7 +75,6 @@ public class LobbyScene implements Screen, Observer {
 		batch = new ShaderBatch(100);
 		batch.setProjectionMatrix(camera.combined);
 
-		game = new Game();
 		game.getNetwork().addConnObserver(this);
 
 		this.fadingColor = fadingColor;
@@ -131,7 +130,7 @@ public class LobbyScene implements Screen, Observer {
 		if (player1 || player2) // TODO change to &&
 		{
 			if (readyTime <= 0)
-				GdxGame.setScreen(new MatchScene(game, width, height));
+				GdxGame.setScreen(new MatchScene(game, GdxGame, width, height));
 			else
 			{
 				readyTime -= delta;

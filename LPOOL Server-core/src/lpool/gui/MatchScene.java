@@ -51,6 +51,7 @@ import lpool.logic.BodyInfo;
 import lpool.logic.Table;
 import lpool.logic.ball.Ball;
 import lpool.logic.match.CueBallInHand;
+import lpool.logic.match.End;
 import lpool.logic.match.FreezeTime;
 import lpool.logic.match.Match;
 import lpool.logic.match.Play;
@@ -79,13 +80,14 @@ public class MatchScene implements Screen, Observer{
 	private DirectionalLight directionalLight;
 
 	private lpool.logic.Game game;
+	private com.badlogic.gdx.Game GdxGame;
 
 	public static final float tableMargin = Table.border;
 	public static final float headerHeight = 3 * Table.border;
 	public static final float worldWidth = Table.width + 2 * tableMargin;
 	public static final float worldHeight = Table.height + 2 * tableMargin + headerHeight;
 
-	public MatchScene(lpool.logic.Game game, int width, int height)
+	public MatchScene(lpool.logic.Game game, com.badlogic.gdx.Game GdxGame, int width, int height)
 	{
 		camera = new OrthographicCamera();
 		camera.position.set(Table.width / 2, worldHeight / 2 - tableMargin, 3);
@@ -113,6 +115,7 @@ public class MatchScene implements Screen, Observer{
 		cue = new Sprite(Textures.getInstance().getCue());
 		cue.setSize(1.5f, 0.04f);
 		this.game = game;
+		this.GdxGame = GdxGame;
 		game.startMatch();
 		game.getMatch().addColisionObserver(this);
 	}
@@ -143,6 +146,8 @@ public class MatchScene implements Screen, Observer{
 			if (dialogMessage == null)
 				if (((TransitionState) currentState).getNextState() instanceof Play)
 					dialogMessage = new DialogMessage(batch, "Shot #" + m.getPlayNum(), "It is player #" + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+				else if (((TransitionState) currentState).getNextState() instanceof End)
+					dialogMessage = new DialogMessage(batch, "Player #" + (((End)currentState).getWinner() + 1) + " won!", reasonToMessage(((End)currentState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else
 					dialogMessage = new DialogMessage(batch, "Foul", "Player #" + (m.getCurrentPlayer() + 1) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 			updateEnvironment();
@@ -222,10 +227,27 @@ public class MatchScene implements Screen, Observer{
 			if (dialogMessage == null)
 				((TransitionState) currentState).next();
 		}
+		else if (currentState instanceof End)
+		{
+			if (dialogMessage == null)
+				GdxGame.setScreen(new LobbyScene(game, GdxGame, new FadingColor(GameProject.blackgroundColorPeriod)));
+		}
 		if (dialogMessage != null)
 			dialogMessage.renderDialog();
 		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
+	}
+	
+	private String reasonToMessage(End.Reason reason)
+	{
+		switch (reason)
+		{
+		case BLACK_BALL_SCORED_ACCIDENTALLY: return "The black ball was accidentally scored by the losing player.";
+		case BLACK_BALL_SCORED_AS_LAST: return "The black ball was successfully scored.";
+		case DISCONNECT: return "The losing player disconnected from the match.";
+		case TIMEOUT: return "The losing player timed out.";
+		default: return null;
+		}
 	}
 
 	private void drawCue(Vector2 cueBallPos, float force, float angle)
