@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.lpool.client.GameController.ControllerActivity;
+import com.lpool.client.Network.Connector;
 import com.lpool.client.Network.Utilities;
 import com.lpool.client.R;
 
@@ -76,7 +77,6 @@ public class MainScreenActivity extends ActionBarActivity {
             server_port_text.setText("" + server_port);
     }
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_get_i, menu);
@@ -87,12 +87,18 @@ public class MainScreenActivity extends ActionBarActivity {
     {
         server_ip = server_ip_text.getText().toString();
         if(Utilities.isValidIP(server_ip) && Utilities.isValidPort(server_port)) {
-            Intent intent = new Intent(MainScreenActivity.this, ControllerActivity.class);
-            Bundle params = new Bundle();
-            params.putInt("port", server_port);
-            params.putString("ip", server_ip);
-            intent.putExtras(params);
-            startActivity(intent);
+
+            if(Connector.isServerRunning(server_ip, server_port)) {
+                Intent intent = new Intent(MainScreenActivity.this, ControllerActivity.class);
+                Bundle params = new Bundle();
+                params.putInt("port", server_port);
+                params.putString("ip", server_ip);
+                intent.putExtras(params);
+                startActivity(intent);
+            }
+            else {
+                Toast.makeText(this, "Connection Failed." + '\n' + "The specified server isn't active.", Toast.LENGTH_SHORT).show();
+            }
         }
         else
             Toast.makeText(this, "Connection Failed." + '\n' + "The IP entered is invalid.", Toast.LENGTH_SHORT).show();
@@ -155,8 +161,7 @@ public class MainScreenActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 }

@@ -51,6 +51,9 @@ public class Connector {
 
     // TCP
     private volatile Socket socket;
+    private static volatile Socket testSocket;
+    private static InetAddress tempServerAddr;
+    private static PrintWriter pw;
     // UDP
     private DatagramSocket datagramSocket;
 
@@ -235,5 +238,91 @@ public class Connector {
             if(receivers.get(i) != null)
                 receivers.get(i).disconnect();
         }
+    }
+
+    public static Boolean isServerRunning(String ip, int port) {
+
+        testSocket = null;
+        pw = null;
+        final int tempPort = port;
+        final String tempIP = ip;
+        final Boolean result[] = new Boolean[1];
+        result[0] = true;
+
+        Thread attempt = new Thread( new Runnable() {
+            public void run() {
+                try {
+                    tempServerAddr = InetAddress.getByName(tempIP);
+                    if(!tempServerAddr.isAnyLocalAddress() && !tempServerAddr.isLinkLocalAddress() && !tempServerAddr.isLoopbackAddress() && !tempServerAddr.isMulticastAddress() && !tempServerAddr.isSiteLocalAddress()) {
+                        result[0] = false;
+                        System.out.println("serverAddr bad");
+                        tempServerAddr = null;
+                        return;
+                    }
+                    testSocket = new Socket(tempServerAddr, tempPort);
+                    if(testSocket == null) {
+                        System.out.println("NULL");
+                    }
+                } catch (UnknownHostException e1) {
+                    result[0] = false;
+                    return;
+                } catch (IOException e1) {
+                    result[0] = false;
+                    return;
+                }
+            }
+        });
+
+        attempt.start();
+        try {
+            Thread.sleep(100);
+        } catch(InterruptedException e) {
+            return false;
+        }
+
+        System.out.println("1");
+        if (testSocket == null) {
+            tempServerAddr = null;
+            return false;
+        }
+        System.out.println("2");
+
+        if(!result[0]) {
+            attempt.interrupt();
+            tempServerAddr = null;
+            try {
+                testSocket.close();
+            } catch(IOException e2) {}
+            testSocket = null;
+            return false;
+        }
+
+        System.out.println("3");
+        try {
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(testSocket.getOutputStream())), true);
+            pw.println("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
+        } catch (IOException e) {
+            System.out.println("4");
+            tempServerAddr = null;
+            attempt.interrupt();
+            try {
+                testSocket.close();
+            } catch(IOException e2) {}
+            pw.close();
+            testSocket = null;
+            pw = null;
+            return false;
+        }
+        System.out.println("5");
+
+        tempServerAddr = null;
+        attempt.interrupt();
+        try {
+            testSocket.close();
+        } catch(IOException e2) {}
+        pw.close();
+        testSocket = null;
+        pw = null;
+        return true;
     }
 }
