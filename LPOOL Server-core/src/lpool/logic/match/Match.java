@@ -475,4 +475,9 @@ public class Match implements Observer{
 	{
 		observableCollision.deleteObserver(obs);
 	}
+	
+	public void respawnCueBall(Vector2 pos)
+	{
+		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
+	}
 }

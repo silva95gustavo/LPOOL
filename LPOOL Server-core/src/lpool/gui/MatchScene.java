@@ -218,8 +218,9 @@ public class MatchScene implements Screen, Observer{
 		}
 		else if (currentState instanceof CueBallInHand)
 		{
+			CueBallInHand cbih = (CueBallInHand)currentState;
 			batch.begin();
-			batch.draw(((CueBallInHand)currentState).isValidPosition() ? cueBallPrediction : cueBallPredictionBlocked, m.getCueBall().getPosition().x, m.getCueBall().getPosition().y, Ball.radius * 2, Ball.radius * 2);
+			batch.draw(((CueBallInHand)currentState).isValidPosition() ? cueBallPrediction : cueBallPredictionBlocked, cbih.getAttemptedPosition().x - Ball.radius, cbih.getAttemptedPosition().y - Ball.radius, Ball.radius * 2, Ball.radius * 2);
 			batch.end();
 		}
 		else if (currentState instanceof TransitionState)

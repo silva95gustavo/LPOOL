@@ -17,7 +17,7 @@ import lpool.network.Message;
 public class CueBallInHand implements State<Match>, Observer{
 	private Match match;
 	private boolean validPosition;
-
+	private Vector2 attemptedPosition;
 	public CueBallInHand()
 	{
 		this.validPosition = false;
@@ -28,6 +28,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		this.match = match;
 		match.getNetwork().addMsgObserver(this);
 		match.sendStateToClients();
+		attemptedPosition = match.getCueBall().getPosition();
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		Message msg = (Message)obj;
 		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
-
+		if (cmd == null) return;
 		switch (cmd)
 		{
 		case MOVECB: // x-pos[0, 1] y-pos[0, 1]
@@ -48,10 +49,11 @@ public class CueBallInHand implements State<Match>, Observer{
 			if (!sc.hasNextFloat())
 				break;
 			float yPos = sc.nextFloat();
-
-			validPosition = tryMoveCueBall(new Vector2(xPos, yPos));
+			attemptedPosition = new Vector2(xPos, yPos);
+			validPosition = isPositionValid(attemptedPosition);
 			if (cmd.equals(Game.ProtocolCmd.PLACECB) && validPosition)
 			{
+				match.respawnCueBall(attemptedPosition);
 				match.getStateMachine().changeState(new Play());
 			}
 			break;
@@ -62,10 +64,12 @@ public class CueBallInHand implements State<Match>, Observer{
 		sc.close();
 	}
 
-	private boolean tryMoveCueBall(Vector2 dest)
+	private boolean isPositionValid(Vector2 dest)
 	{
-		if (dest.x < 0 || dest.x > 1 || dest.y < 0 || dest.y > 1)
-			return false;
+		if (dest.x < 0) dest.x = 0;
+		else if (dest.x > 1) dest.x = 1;
+		if (dest.y < 0) dest.y = 0;
+		else if (dest.y > 1) dest.y = 1;
 
 		dest.y = 1 - dest.y;		
 		dest.scl(Table.width - 2 * Ball.radius, Table.height - 2 * Ball.radius).add(new Vector2(Ball.radius, Ball.radius));
@@ -75,8 +79,6 @@ public class CueBallInHand implements State<Match>, Observer{
 			if (dest.dst(match.getBalls()[i].getPosition()) < 2 * Ball.radius)
 				return false;
 		}
-
-		match.getCueBall().setPosition(dest);
 		return true;
 	}
 
@@ -87,5 +89,10 @@ public class CueBallInHand implements State<Match>, Observer{
 	public boolean isValidPosition()
 	{
 		return validPosition;
+	}
+	
+	public Vector2 getAttemptedPosition()
+	{
+		return attemptedPosition;
 	}
 }
