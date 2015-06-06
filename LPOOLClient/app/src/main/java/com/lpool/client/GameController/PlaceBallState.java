@@ -70,6 +70,7 @@ public class PlaceBallState implements GameState {
     }
 
     private void moveCueBall() {
+        System.out.println("Moving to: " + ballX + " " + ballY);
         caller.sendTCPMessage("" + Connector.ProtocolCmd.MOVECB.ordinal() + " " + ballX + " " + ballY + " " + '\n');
     }
 

@@ -267,6 +267,7 @@ public class ShootState implements GameState, SensorEventListener {
                     txt.setText(caller.getResources().getString(R.string.balltype_none));
                 }
             });
+            return;
         }
 
         Connector.BallType btype = Connector.BallType.values()[type];
@@ -312,8 +313,6 @@ public class ShootState implements GameState, SensorEventListener {
                 break;
 
         }
-        // TODO create enum for ball type
-        // TODO update image
     }
 
     public Boolean isActive() {
