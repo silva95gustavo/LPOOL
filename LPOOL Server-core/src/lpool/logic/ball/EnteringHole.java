@@ -36,4 +36,10 @@ public class EnteringHole implements State<Ball> {
 		ball.setPosition(droppingPoint.cpy().lerp(holePos, t * droppingSpeed / Table.holeRadius));
 	}
 
+	@Override
+	public void exit(Ball owner) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

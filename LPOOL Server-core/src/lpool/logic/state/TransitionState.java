@@ -35,4 +35,10 @@ public class TransitionState<E> implements State<E> {
 	{
 		context.changeState(next);
 	}
+
+	@Override
+	public void exit(E owner) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -19,4 +19,10 @@ public class FreezeTime implements State<Match> {
 			match.getStateMachine().changeState(new Play());
 	}
 
+	@Override
+	public void exit(Match owner) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -75,4 +75,8 @@ public class BallsMoving implements State<Match>{
 			return End.Reason.BLACK_BALL_SCORED_AS_LAST;
 		}
 	}
+
+	@Override
+	public void exit(Match owner) {
+	}
 }

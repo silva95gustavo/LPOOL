@@ -27,7 +27,7 @@ public class End implements State<Match> {
 		match.getWorld().dispose();
 		for (int i = 0; i < Game.numPlayers; i++)
 		{
-			match.getNetwork().send(new Message(i, Game.ProtocolCmd.END.ordinal() + " " + (winner == i ? 1 : 0) + " " + reason.ordinal()));
+			match.getNetwork().send(new Message(i, Game.ProtocolCmd.END.ordinal(), winner == i ? 1 : 0, reason.ordinal()));
 			match.getNetwork().send(new Message(i, Game.ProtocolCmd.KICK.ordinal()));
 		}
 	}
@@ -42,5 +42,11 @@ public class End implements State<Match> {
 
 	public Reason getReason() {
 		return reason;
+	}
+
+	@Override
+	public void exit(Match owner) {
+		// TODO Auto-generated method stub
+		
 	}
 }

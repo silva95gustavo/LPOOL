@@ -478,6 +478,8 @@ public class Match implements Observer{
 	
 	public void respawnCueBall(Vector2 pos)
 	{
+		System.out.println("--------- Respawning cue ball... -------------");
 		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
+		System.out.println("--------- Cue ball respawned -------------");
 	}
 }

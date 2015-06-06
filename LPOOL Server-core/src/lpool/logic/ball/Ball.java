@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Ball {
 	static public final float radius = 0.028575f * Match.physicsScaleFactor;
 	static public final float mass = 0.163f;
+	static public final Vector2 hiddenPos = new Vector2(-999, -999);
 	public static final short cat = 0x0001;
 
 	private int number;
@@ -30,9 +31,8 @@ public class Ball {
 	private Vector2 position;
 	private boolean onTable = true;
 	private boolean visible = true;
-	
 	private lpool.logic.state.Context<Ball> stateMachine;
-
+	
 	private Body body;
 	private FixtureDef ballBallFixtureDef;
 	private FixtureDef ballBorderFixtureDef;
@@ -95,7 +95,10 @@ public class Ball {
 	
 	public void updatePosition()
 	{
-		this.position = body.getPosition().cpy();
+		if (body == null)
+			this.position = hiddenPos;
+		else
+			this.position = body.getPosition().cpy();
 	}
 	
 	public void setPosition(Vector2 position)
@@ -115,19 +118,24 @@ public class Ball {
 
 	public void setVelocity(Vector2 velocity)
 	{
-		body.setLinearVelocity(velocity);
+		if (body != null)
+			body.setLinearVelocity(velocity);
 	}
 	
 	public Vector2 getVelocity()
 	{
-		return body.getLinearVelocity();
+		if (body == null)
+			return new Vector2(0, 0);
+		else
+			return body.getLinearVelocity();
 	}
 
 	public void tick(float deltaT)
 	{
+		updatePosition();
 		stateMachine.update(deltaT);
 		
-		if (!onTable)
+		if (!onTable || body == null)
 			return;
 		
 		if (body.getLinearVelocity().len() < 0.0125 * Match.physicsScaleFactor)
@@ -169,6 +177,8 @@ public class Ball {
 
 	public void makeShot(float angle, float force, float xSpin, float ySpin)
 	{
+		if (body == null)
+			return;
 		body.applyLinearImpulse(new Vector2(2 * force * Match.physicsScaleFactor, 0).rotateRad(angle), body.getPosition().cpy(), true);
 		body.setAngularVelocity(force * xSpin * 150);
 		horSpin = new Vector3(4f * force * ySpin, 0, 0).rotateRad(Vector3.Z, angle);
@@ -228,7 +238,10 @@ public class Ball {
 	
 	public void setToBeDeleted()
 	{
-		ballsToBeDeleted.add(body);
+		this.onTable = false;
+		if (body != null)
+			ballsToBeDeleted.add(body);
+		body = null;
 	}
 
 	public boolean isVisible() {
@@ -241,6 +254,9 @@ public class Ball {
 	
 	public boolean isStopped()
 	{
+		if (body == null)
+			return true;
+		
 		if (stateMachine.getCurrentState().getClass() == InHole.class)
 			return true;
 		
@@ -280,6 +296,8 @@ public class Ball {
 	}
 	public void stop()
 	{
+		if (body == null)
+			return;
 		body.setLinearVelocity(new Vector2(0, 0));
 		body.setAngularVelocity(0);
 		horSpin = new Vector3(0, 0, 0);

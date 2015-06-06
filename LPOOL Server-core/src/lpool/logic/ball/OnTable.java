@@ -19,4 +19,10 @@ public class OnTable implements State<Ball> {
 		ball.updatePosition();
 	}
 
+	@Override
+	public void exit(Ball owner) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
