@@ -35,6 +35,7 @@ public class Textures { // Singleton
 		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
 		{
 			am.load("balls/" + i + ".jpg", Texture.class);
+			am.load("match/ball_icons/" + i + ".png", Texture.class);
 		}
 	}
 	
@@ -119,5 +120,10 @@ public class Textures { // Singleton
 	public Texture getDialogBox()
 	{
 		return Manager.getInstance().getAssetManager().get("dialog_box.png");
+	}
+	
+	public Texture getBallIcon(int ballNumber)
+	{
+		return Manager.getInstance().getAssetManager().get("match/ball_icons/" + ballNumber + ".png");
 	}
 }

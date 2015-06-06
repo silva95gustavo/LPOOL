@@ -19,6 +19,7 @@ import lpool.logic.state.State;
 import lpool.logic.state.TransitionState;
 import lpool.network.Message;
 import lpool.network.Network;
+import lpool.network.ObservableConnection;
 import lpool.network.ObservableMessage;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -34,7 +35,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Match implements Observer{
+public class Match implements Observer {
 	public static int ballsPerPlayer = 7;
 	public static float physicsScaleFactor = 10;
 
@@ -62,6 +63,7 @@ public class Match implements Observer{
 	public Match(Network network) {
 		stateMachine = new Context<Match>(this, new FreezeTime());
 		this.network = network;
+		network.addConnObserver(this);
 		this.ballsPlayer = new Ball.Type[2];
 		this.playNum = 0;
 		Random r = new Random();
@@ -318,7 +320,7 @@ public class Match implements Observer{
 			default: break;
 			}
 		}
-		if (o instanceof ObservableMessage && obj instanceof Message)
+		else if (o instanceof ObservableMessage && obj instanceof Message)
 		{
 			Message msg = (Message)obj;
 			Scanner sc = new Scanner(msg.body);
@@ -326,6 +328,10 @@ public class Match implements Observer{
 			if (cmd == Game.ProtocolCmd.JOIN)
 				sendStateToClient(msg.clientID);
 			sc.close();
+		}
+		else if (o instanceof ObservableConnection && obj instanceof Integer)
+		{
+			stateMachine.changeState(new TransitionState<Match>(stateMachine, stateMachine.getCurrentState(), new End(End.Reason.DISCONNECT, (Integer)obj == 0 ? 1 : 0)));
 		}
 	}
 
