@@ -1,5 +1,6 @@
 package lpool.network;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -45,6 +46,11 @@ public class Communication {
 		rec.stopMe();
 		sen.stopMe();
 		alive = false;
+		try {
+			s.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean isConnClosed()

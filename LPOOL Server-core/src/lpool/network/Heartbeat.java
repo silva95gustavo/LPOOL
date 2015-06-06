@@ -31,7 +31,7 @@ public class Heartbeat extends Timer.Task implements Observer{
 			@Override
 			public void run() {
 				System.out.println("TIMEOUT");
-				comm.setAlive(false);
+				//comm.setAlive(false); TODO uncomment
 			}
 		}, timeout);
 	}
