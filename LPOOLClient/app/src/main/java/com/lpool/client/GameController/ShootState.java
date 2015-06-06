@@ -90,23 +90,6 @@ public class ShootState implements GameState, SensorEventListener {
             }
         });
 
-        /*final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
-        final RelativeLayout placeBall = (RelativeLayout) caller.findViewById(R.id.tableandball);
-
-        placeBall.setOnTouchListener(new View.OnTouchListener()
-        {
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                caller.runOnUiThread(new Runnable() {
-                    public void run() {
-                        cueBallPlace.setX(event.getX());
-                        cueBallPlace.setY(event.getY());
-                    }
-                });
-                return true;
-            }
-        });*/
-
         initializeAiming();
     }
 
@@ -245,9 +228,14 @@ public class ShootState implements GameState, SensorEventListener {
     }
 
     public void start() {
+        final ImageView cueBall = (ImageView) caller.findViewById(R.id.cueBall);
+        final RelativeLayout horizontal = (RelativeLayout) caller.findViewById(R.id.horizontalLine);
+        final RelativeLayout vertical = (RelativeLayout) caller.findViewById(R.id.verticalLine);
         caller.runOnUiThread(new Runnable() {
             public void run() {
                 own_layout.setVisibility(View.VISIBLE);
+                vertical.setX(cueBall.getX()+cueBall.getWidth()/2);
+                horizontal.setY(cueBall.getY()+cueBall.getHeight()/2);
             }
         });
         initializeSensors();

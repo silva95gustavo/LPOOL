@@ -67,28 +67,6 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
 
-    public void temp_funct(View v) {
-        // TODO remove
-        sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
-        switch (currentState.getValue()) {
-            case WAIT:
-                currentState.interrupt();
-                currentState = states[GameState.Value.SHOOT.ordinal()];
-                currentState.start();
-                break;
-            case SHOOT:
-                currentState.interrupt();
-                currentState = states[GameState.Value.PLACE_BALL.ordinal()];
-                currentState.start();
-                break;
-            case PLACE_BALL:
-                currentState.interrupt();
-                currentState = states[GameState.Value.WAIT.ordinal()];
-                currentState.start();
-                break;
-        }
-    }
-
     public void getMessage(String message) {
         System.out.println("Got message " + message);
         GameCommand cmd = new GameCommand(message);

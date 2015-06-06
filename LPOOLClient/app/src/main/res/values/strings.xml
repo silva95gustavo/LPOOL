@@ -19,6 +19,9 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="wait_text">Please wait for your turn </string>
+    <string name="wait_text_dot1">.</string>
+    <string name="wait_text_dot2">. .</string>
+    <string name="wait_text_dot3">. . .</string>
     <string name="title_activity_title_screen">TitleScreenActivity</string>
 
     <string name="win_black_last">You won because you scored the black ball! Congratulations!</string>
