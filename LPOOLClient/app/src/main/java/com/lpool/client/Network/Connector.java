@@ -43,11 +43,18 @@ public class Connector {
         KICK,
         MOVECB, // x-pos[0, 1] y-pos[0, 1]
         PLACECB, // x-pos[0, 1] y-pos[0, 1]
-        PLAY,
+        PLAY,  // 0(no ball), 1(not-stripes), 2(stripes), 3(black ball)    TODO
         WAIT,
         BIH,
         END // winner(boolean) End.Reason
-    };
+    }
+
+    public enum BallType {
+        NONE,
+        SOLID,
+        STRIPE,
+        BLACK
+    }
 
     // TCP
     private volatile Socket socket;

@@ -36,9 +36,14 @@ public class GameCommand {
 
         switch (cmd) {
             case KICK:
-            case PLAY:
             case WAIT:
             case BIH:
+                break;
+            case PLAY:
+                if(!sc.hasNextInt())
+                    return;
+                int ball_type = sc.nextInt();
+                arguments.add(ball_type);
                 break;
             case END:
                 if (!sc.hasNextBoolean()) {

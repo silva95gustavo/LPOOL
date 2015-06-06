@@ -32,6 +32,8 @@ public class ControllerActivity extends Activity implements Receiver{
 
     private Connector connector;
 
+    private int current_ball_type = 0;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         runOnUiThread(new Runnable() {
@@ -82,6 +84,10 @@ public class ControllerActivity extends Activity implements Receiver{
                     break;
                 case PLAY:
                     currentState = states[GameState.Value.SHOOT.ordinal()];
+                    if(cmd.getArgs().size() == 1)
+                        current_ball_type = (int) cmd.getArgs().get(0);
+                    else
+                        current_ball_type = -1;
                     break;
                 case BIH:
                     currentState = states[GameState.Value.PLACE_BALL.ordinal()];
@@ -97,6 +103,14 @@ public class ControllerActivity extends Activity implements Receiver{
             currentState.start();
         }
 
+    }
+
+    private void set_ball_type(int type) {
+        current_ball_type = type;
+    }
+
+    public int ball_type() {
+        return current_ball_type;
     }
 
     private void game_ended(GameCommand cmd) {
