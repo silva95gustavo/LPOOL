@@ -34,6 +34,8 @@ public class ControllerActivity extends Activity implements Receiver{
 
     private int current_ball_type = 0;
 
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         runOnUiThread(new Runnable() {
@@ -62,12 +64,13 @@ public class ControllerActivity extends Activity implements Receiver{
             finish();
         }
 
+        // TODO change connection
+
         connector = new Connector(server_ip, server_port);
         connector.addReceiver(this);
         connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
     }
-
 
     public void getMessage(String message) {
         System.out.println("Got message " + message);
