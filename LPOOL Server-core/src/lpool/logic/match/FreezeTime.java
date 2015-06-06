@@ -4,7 +4,7 @@ import lpool.logic.state.State;
 
 public class FreezeTime implements State<Match> {	
 	
-	public static final float freezeTime = 3;
+	public static final float freezeTime = 5;
 	private float elapsedTime;
 	
 	@Override

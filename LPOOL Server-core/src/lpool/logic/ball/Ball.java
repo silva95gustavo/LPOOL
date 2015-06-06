@@ -278,4 +278,10 @@ public class Ball {
 			return Type.STRIPE;
 		return null;
 	}
+	public void stop()
+	{
+		body.setLinearVelocity(new Vector2(0, 0));
+		body.setAngularVelocity(0);
+		horSpin = new Vector3(0, 0, 0);
+	}
 }

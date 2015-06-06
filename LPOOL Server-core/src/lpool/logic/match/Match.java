@@ -380,6 +380,11 @@ public class Match implements Observer{
 	public boolean isBallInHand() {
 		return !playValidator.isValid();
 	}
+	
+	public boolean currentPlayerPlaysAgain()
+	{
+		return playValidator.playsAgain();
+	}
 
 	public int getPlayNum()
 	{
@@ -469,5 +474,10 @@ public class Match implements Observer{
 	public void deleteCollisionObserver(Observer obs)
 	{
 		observableCollision.deleteObserver(obs);
+	}
+	
+	public void respawnCueBall(Vector2 pos)
+	{
+		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
 	}
 }

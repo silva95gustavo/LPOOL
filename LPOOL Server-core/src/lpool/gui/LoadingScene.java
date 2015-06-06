@@ -5,6 +5,7 @@ import lpool.gui.assets.Manager;
 import lpool.gui.assets.BallModels;
 import lpool.gui.assets.Sounds;
 import lpool.gui.assets.Textures;
+import lpool.logic.Game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -65,7 +66,7 @@ public class LoadingScene implements Screen {
 		logo = new Texture(Gdx.files.internal("logo.png"));
 		logo.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		fadingColor = new FadingColor(2);
+		fadingColor = new FadingColor(GameProject.blackgroundColorPeriod);
 	}
 
 	@Override
@@ -92,7 +93,7 @@ public class LoadingScene implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		if (manager.getAssetManager().update())
-			GdxGame.setScreen(new LobbyScene(GdxGame, fadingColor));
+			GdxGame.setScreen(new LobbyScene(new Game(), GdxGame, fadingColor));
 
 		int barWidth = 1000;
 		int barHeight = barWidth / 20;

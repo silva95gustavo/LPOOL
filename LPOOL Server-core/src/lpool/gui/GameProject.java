@@ -17,6 +17,7 @@ public class GameProject extends Game {
 	public static final String QR_IP_TYPE = "png";
 	public static final String QR_ANDROID_APP_DIR = "./data/android_app_qrcode.png";
 	public static final String QR_ANDROID_APP_TYPE = "png";
+	public static final float blackgroundColorPeriod = 2;
 	
 	SpriteBatch batch;
 	Texture img;

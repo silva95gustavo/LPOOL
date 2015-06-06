@@ -37,14 +37,24 @@ public class BallsMoving implements State<Match>{
 			Integer winner = new Integer(0);
 			End.Reason reason = whyMatchEnded(match, winner);
 			match.getStateMachine().changeState(new End(reason, winner));
+			return;
 		}
-		else if (match.isBallInHand())
+		match.incrementPlayNum();
+		if (match.isBallInHand())
 		{
 			//match.changeCurrentPlayer(); // TODO uncomment
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new CueBallInHand()));
 		}
 		else
-			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new Play()));
+		{
+			if (match.currentPlayerPlaysAgain())
+				match.getStateMachine().changeState(new Play());
+			else
+			{
+				//match.changeCurrentPlayer(); // TODO uncomment
+				match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new Play()));
+			}
+		}
 	}
 
 	private boolean matchEnded(Match match)
