@@ -12,6 +12,7 @@ public class Sounds { // Singleton
 		am.load("sounds/ball_hitting_ball.mp3", Sound.class);
 		am.load("sounds/ball_in_hole.mp3", Sound.class);
 		am.load("sounds/racking.mp3", Sound.class);
+		am.load("sounds/cue_hitting_cue_ball.mp3", Sound.class);
 	}
 	
 	public static Sounds getInstance()
@@ -38,5 +39,10 @@ public class Sounds { // Singleton
 	public Sound getRacking()
 	{
 		return Manager.getInstance().getAssetManager().get("sounds/racking.mp3", Sound.class);
+	}
+	
+	public Sound getCueHittingCueBall()
+	{
+		return Manager.getInstance().getAssetManager().get("sounds/cue_hitting_cue_ball.mp3", Sound.class);
 	}
 }

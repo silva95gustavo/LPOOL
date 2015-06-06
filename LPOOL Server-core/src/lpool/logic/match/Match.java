@@ -68,7 +68,7 @@ public class Match implements Observer {
 		this.playNum = 0;
 		Random r = new Random();
 		this.currentPlayer = r.nextInt(2);
-		this.currentPlayer = 0;
+		this.currentPlayer = 0; // TODO remove this line
 
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
@@ -331,7 +331,8 @@ public class Match implements Observer {
 		}
 		else if (o instanceof ObservableConnection && obj instanceof Integer)
 		{
-			stateMachine.changeState(new TransitionState<Match>(stateMachine, stateMachine.getCurrentState(), new End(End.Reason.DISCONNECT, (Integer)obj == 0 ? 1 : 0)));
+			if (!(stateMachine.getCurrentState() instanceof End))
+				stateMachine.changeState(new TransitionState<Match>(stateMachine, stateMachine.getCurrentState(), new End(End.Reason.DISCONNECT, (Integer)obj == 0 ? 1 : 0)));
 		}
 	}
 
@@ -458,8 +459,8 @@ public class Match implements Observer {
 		{
 			End endState = (End)currentState;
 			if (currentPlayer == clientID)
-				network.send(new Message(clientID, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == clientID ? true : false, endState.getReason()));
-			else network.send(new Message(clientID, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == clientID ? true : false, endState.getReason()));
+				network.send(new Message(clientID, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == clientID ? 1 : 0, endState.getReason().ordinal()));
+			else network.send(new Message(clientID, Game.ProtocolCmd.END.ordinal(), endState.getWinner() == clientID ? 1 : 0, endState.getReason().ordinal()));
 		}
 	}
 
@@ -484,8 +485,6 @@ public class Match implements Observer {
 	
 	public void respawnCueBall(Vector2 pos)
 	{
-		System.out.println("--------- Respawning cue ball... -------------");
 		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
-		System.out.println("--------- Cue ball respawned -------------");
 	}
 }
