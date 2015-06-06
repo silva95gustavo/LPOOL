@@ -114,6 +114,8 @@ public class MatchScene implements Screen, Observer{
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cueBallPredictionBlocked = Textures.getInstance().getCueBallPredictionBlocked();
 		cueBallPredictionBlocked.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
+			Textures.getInstance().getBallIcon(i).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cue = new Sprite(Textures.getInstance().getCue());
 		cue.setSize(1.5f, 0.04f);
 		this.game = game;
@@ -145,13 +147,14 @@ public class MatchScene implements Screen, Observer{
 		}
 		else if (currentState instanceof TransitionState)
 		{
+			State nextState = ((TransitionState)currentState).getNextState();
 			if (dialogMessage == null)
-				if (((TransitionState) currentState).getNextState() instanceof Play)
+				if (nextState instanceof Play)
 					dialogMessage = new DialogMessage(batch, "Shot #" + (m.getPlayNum() + 1), "It is player #" + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
-				else if (((TransitionState) currentState).getNextState() instanceof End)
-					dialogMessage = new DialogMessage(batch, "Player " + (((End)currentState).getWinner() + 1) + " won!", reasonToMessage(((End)currentState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+				else if (nextState instanceof End)
+					dialogMessage = new DialogMessage(batch, "Player " + (((End)nextState).getWinner() + 1) + " won!", reasonToMessage(((End)nextState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else
-					dialogMessage = new DialogMessage(batch, "Foul", "Player #" + (m.getCurrentPlayer() + 1) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+					dialogMessage = new DialogMessage(batch, "Foul", "Player " + (m.getCurrentPlayer() + 1) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 			updateEnvironment();
 			updateBatch();
 			if (!dialogMessage.update(delta))
@@ -167,6 +170,8 @@ public class MatchScene implements Screen, Observer{
 		batch.draw(Textures.getInstance().getBackground(), -tableMargin, -tableMargin, worldWidth, worldHeight);
 		batch.draw(table, 0, 0, Table.width, Table.height);
 		batch.end();
+		
+		drawBallIcons(m);
 
 		modelInstances.clear();
 		Ball[] balls = m.getBalls();
@@ -267,6 +272,33 @@ public class MatchScene implements Screen, Observer{
 		batch.end();
 	}
 
+	private void drawBallIcons(Match match)
+	{
+		if (!match.playerBallsDefined())
+			return;
+		float y = Table.height * 1.2f;
+		float ballSize = Table.width * 0.03f;
+		batch.begin();
+		// Scored balls
+		for (int i = 0; i < 2 * match.ballsPerPlayer + 2; i++)
+			if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(0))
+				batch.draw(Textures.getInstance().getBallIcon(i), ballSize * i, y, ballSize, ballSize);
+			else if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
+				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, Table.height * 1.2f, ballSize, ballSize);
+		batch.end();
+		batch.brightness = 0.5f * batch.brightness - 0.5f;
+		batch.contrast = batch.brightness + 1;
+		batch.begin();
+		// Balls on table
+		for (int i = 0; i < 2 * match.ballsPerPlayer + 2; i++)
+			if (!match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(0))
+				batch.draw(Textures.getInstance().getBallIcon(i), ballSize * i, y, ballSize, ballSize);
+			else if (!match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
+				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, Table.height * 1.2f, ballSize, ballSize);
+		batch.end();
+		updateBatch();
+	}
+	
 	@Override
 	public void dispose() {
 		modelBatch.dispose();
@@ -373,7 +405,10 @@ public class MatchScene implements Screen, Observer{
 
 	private void updateBatch()
 	{
-		updateBatch(dialogMessage.getBackgroundBrightness(), dialogMessage.getBackgroundContrast());
+		if (dialogMessage == null)
+			updateBatch(0, 1);
+		else
+			updateBatch(dialogMessage.getBackgroundBrightness(), dialogMessage.getBackgroundContrast());
 	}
 
 	private void updateBatch(float brightness, float contrast)
