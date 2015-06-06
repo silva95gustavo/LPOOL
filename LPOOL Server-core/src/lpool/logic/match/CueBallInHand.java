@@ -28,7 +28,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		this.match = match;
 		match.getNetwork().addMsgObserver(this);
 		match.sendStateToClients();
-		attemptedPosition = match.getCueBall().getPosition();
+		attemptedPosition = new Vector2(Table.width / 2, Table.height / 2);
 		if (match.getCueBall().isOnTable())
 		{
 			match.getCueBall().setToBeDeleted();
