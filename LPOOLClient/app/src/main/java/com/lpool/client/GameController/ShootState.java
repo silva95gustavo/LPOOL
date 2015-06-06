@@ -5,15 +5,19 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lpool.client.Network.Connector;
 import com.lpool.client.R;
+
+import org.w3c.dom.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -246,6 +250,70 @@ public class ShootState implements GameState, SensorEventListener {
         //shooting = false;
         interrupted = false;
         shot_active = false;
+
+        update_ball_type(caller.ball_type());
+    }
+
+    private void update_ball_type(int type) {
+        final LinearLayout layout = (LinearLayout) caller.findViewById(R.id.ball_type_layout);
+        final ImageView img = (ImageView) caller.findViewById(R.id.ball_type_img);
+        final TextView txt = (TextView) caller.findViewById(R.id.ball_type_txt);
+
+        if(type == -1) {
+            caller.runOnUiThread(new Runnable() {
+                public void run() {
+                    layout.setVisibility(View.INVISIBLE);
+                    img.setVisibility(View.INVISIBLE);
+                    txt.setText(caller.getResources().getString(R.string.balltype_none));
+                }
+            });
+        }
+
+        Connector.BallType btype = Connector.BallType.values()[type];
+        switch (btype) {
+            case NONE:
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        layout.setVisibility(View.VISIBLE);
+                        img.setVisibility(View.INVISIBLE);
+                        txt.setText(caller.getResources().getString(R.string.balltype_none));
+                    }
+                });
+                break;
+            case STRIPE:
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        layout.setVisibility(View.VISIBLE);
+                        img.setVisibility(View.VISIBLE);
+                        img.setImageResource(R.mipmap.stripe);
+                        txt.setText(caller.getResources().getString(R.string.balltype_stripe));
+                    }
+                });
+                break;
+            case SOLID:
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        layout.setVisibility(View.VISIBLE);
+                        img.setVisibility(View.VISIBLE);
+                        img.setImageResource(R.mipmap.solid);
+                        txt.setText(caller.getResources().getString(R.string.balltype_solid));
+                    }
+                });
+                break;
+            case BLACK:
+                caller.runOnUiThread(new Runnable() {
+                    public void run() {
+                        layout.setVisibility(View.VISIBLE);
+                        img.setVisibility(View.VISIBLE);
+                        img.setImageResource(R.mipmap.black);
+                        txt.setText(caller.getResources().getString(R.string.balltype_black));
+                    }
+                });
+                break;
+
+        }
+        // TODO create enum for ball type
+        // TODO update image
     }
 
     public Boolean isActive() {

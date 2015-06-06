@@ -24,6 +24,11 @@
     <string name="wait_text_dot3">. . .</string>
     <string name="title_activity_title_screen">TitleScreenActivity</string>
 
+    <string name="balltype_none">You still haven\'t scored any balls.</string>
+    <string name="balltype_solid">You are playing "solid" balls.</string>
+    <string name="balltype_stripe">You are playing "striped" balls.</string>
+    <string name="balltype_black">Only the 8 ball left!</string>
+
     <string name="win_black_last">You won because you scored the black ball! Congratulations!</string>
     <string name="lose_black_last">You have lost because your opponent scored the black ball... Better luck next time!</string>
     <string name="win_black_accident">You won because your opponent accidentally scored the black ball. Congratulations!</string>
