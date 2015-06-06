@@ -145,7 +145,7 @@ public class MatchScene implements Screen, Observer{
 		{
 			if (dialogMessage == null)
 				if (((TransitionState) currentState).getNextState() instanceof Play)
-					dialogMessage = new DialogMessage(batch, "Shot #" + m.getPlayNum(), "It is player #" + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+					dialogMessage = new DialogMessage(batch, "Shot #" + (m.getPlayNum() + 1), "It is player #" + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else if (((TransitionState) currentState).getNextState() instanceof End)
 					dialogMessage = new DialogMessage(batch, "Player #" + (((End)currentState).getWinner() + 1) + " won!", reasonToMessage(((End)currentState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else

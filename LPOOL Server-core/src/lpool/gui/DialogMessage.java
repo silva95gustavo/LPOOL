@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Interpolation;
 
 public class DialogMessage {
-	public static final float animTime = 0.75f;
+	public static final float animTime = 0.4f;
 	public static final float brightness = -0.5f;
 	public static final float widthPct = 0.6f;
 	public static final float heightPct = 0.2f;
@@ -91,7 +91,7 @@ public class DialogMessage {
 		{
 			float a = time / animTime;
 			backgroundBrightness = Interpolation.linear.apply(0, brightness, a);
-			messageX = Interpolation.swingIn.apply(worldX + worldWidth, worldX + (worldWidth - width) / 2, a);
+			messageX = Interpolation.swingOut.apply(worldX + worldWidth, worldX + (worldWidth - width) / 2, a);
 		}
 		else if (time <= animTime + duration)
 		{
@@ -101,7 +101,7 @@ public class DialogMessage {
 		{
 			float a = (time - (animTime + duration)) / animTime;
 			backgroundBrightness = Interpolation.linear.apply(brightness, 0, a);
-			messageX = Interpolation.swingOut.apply(worldX + (worldWidth - width) / 2, worldX - width, a);
+			messageX = Interpolation.swingIn.apply(worldX + (worldWidth - width) / 2, worldX - width, a);
 		}
 		else backgroundBrightness = 0;
 		backgroundContrast = backgroundBrightness + 1;
