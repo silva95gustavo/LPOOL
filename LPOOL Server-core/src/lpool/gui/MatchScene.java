@@ -51,6 +51,7 @@ import lpool.logic.BodyInfo;
 import lpool.logic.Table;
 import lpool.logic.ball.Ball;
 import lpool.logic.match.CueBallInHand;
+import lpool.logic.match.FreezeTime;
 import lpool.logic.match.Match;
 import lpool.logic.match.Play;
 import lpool.logic.state.State;
@@ -59,13 +60,13 @@ import lpool.logic.state.TransitionState;
 public class MatchScene implements Screen, Observer{
 	private OrthographicCamera camera;
 	private Viewport viewport;
-	
+
 	private ModelBatch modelBatch = new ModelBatch();
 	private ModelBatch shadowBatch = new ModelBatch(new DepthShaderProvider());
 	private Environment environment;
 
 	private ShapeRenderer shapeRenderer;
-	private SpriteBatch batch;
+	private ShaderBatch batch;
 	private Texture table;
 	private Texture table_border;
 
@@ -73,47 +74,37 @@ public class MatchScene implements Screen, Observer{
 	private Texture cueBallPredictionBlocked;
 	private Sprite cue;
 	private Array<ModelInstance> modelInstances;
+	private DialogMessage dialogMessage;
 
-	private DirectionalShadowLight shadowLight;
+	private DirectionalLight directionalLight;
 
 	private lpool.logic.Game game;
-	
-	private final float tableMargin = Table.border;
-	private final float headerHeight = 3 * Table.border;
-	private final float worldWidth = Table.width + 2 * tableMargin;
-	private final float worldHeight = Table.height + 2 * tableMargin + headerHeight;
+
+	public static final float tableMargin = Table.border;
+	public static final float headerHeight = 3 * Table.border;
+	public static final float worldWidth = Table.width + 2 * tableMargin;
+	public static final float worldHeight = Table.height + 2 * tableMargin + headerHeight;
 
 	public MatchScene(lpool.logic.Game game, int width, int height)
 	{
 		camera = new OrthographicCamera();
 		camera.position.set(Table.width / 2, worldHeight / 2 - tableMargin, 3);
-		//camera.lookAt(Table.width / 2, Table.height / 2, 0);
 		camera.near = 0.1f; 
 		camera.far = 300.0f;
 		camera.update();
 		viewport = new FitViewport(worldWidth, worldHeight, camera);
+		dialogMessage = null;
 
-		//shadowLight = new DirectionalShadowLight(2048, 2048, camera.viewportWidth, camera.viewportHeight, camera.near, camera.far);
-		//shadowLight.set(0.1f, 0.1f, 0.1f, -0.08f, -0.08f, -1f);
-
+		directionalLight = new DirectionalLight();
 		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.Specular, 0.8f, 0.8f, 0.8f, 1f));
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.2f, 0.2f, 0.2f, 1f));
-		environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, -0.1f, -0.1f, -1f));
-		//environment.add(shadowLight);
-		//environment.shadowMap = shadowLight;
+		environment.add(directionalLight);
 
 		modelInstances = new Array<ModelInstance>();
-
-		batch = new SpriteBatch();
+		batch = new ShaderBatch(100);
 		shapeRenderer = new ShapeRenderer();
 
 		table = Textures.getInstance().getTable();
 		table_border = Textures.getInstance().getTableBorder();
-
-		//Material matTable = new Material(new TextureAttribute(TextureAttribute.Diffuse, table));
-		//ModelBuilder mb = new ModelBuilder();
-		//table3D = mb.createRect(0, 0, 0, Table.width, 0, 0, Table.width, Table.height, 0, 0, Table.height, 0, 0, 0, 1, matTable, Usage.Normal | Usage.Position | Usage.TextureCoordinates);
 
 		cueBallPrediction = Textures.getInstance().getCueBallPrediction();
 		cueBallPrediction.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -130,13 +121,41 @@ public class MatchScene implements Screen, Observer{
 	public void render(float delta)
 	{
 		game.tick(delta);
-		
+
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		lpool.logic.match.Match m = game.getMatch();
 
 		batch.setProjectionMatrix(camera.combined);
+		State<Match> currentState = m.getStateMachine().getCurrentState();
+		if (currentState instanceof FreezeTime)
+		{
+			if (dialogMessage == null)
+				dialogMessage = new DialogMessage(batch, "LPOOL", "A new match is about to begin...", FreezeTime.freezeTime - 2 * DialogMessage.animTime, -tableMargin, -tableMargin, worldWidth, worldHeight);
+			updateEnvironment();
+			updateBatch();
+			if (!dialogMessage.update(delta))
+				dialogMessage = null;
+		}
+		else if (currentState instanceof TransitionState)
+		{
+			if (dialogMessage == null)
+				if (((TransitionState) currentState).getNextState() instanceof Play)
+					dialogMessage = new DialogMessage(batch, "Shot #" + m.getPlayNum(), "It is player #" + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+				else
+					dialogMessage = new DialogMessage(batch, "Foul", "Player #" + (m.getCurrentPlayer() + 1) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+			updateEnvironment();
+			updateBatch();
+			if (!dialogMessage.update(delta))
+				dialogMessage = null;
+		}
+		else
+		{
+			updateEnvironment(0);
+			updateBatch(0, 1);
+		}
+
 		batch.begin();
 		batch.draw(Textures.getInstance().getBackground(), -tableMargin, -tableMargin, worldWidth, worldHeight);
 		batch.draw(table, 0, 0, Table.width, Table.height);
@@ -149,31 +168,24 @@ public class MatchScene implements Screen, Observer{
 			if (balls[i].isVisible())
 			{
 				modelInstances.add(BallModels.getInstance().getBall(balls[i].getNumber()).instanciateModel(balls[i].getPosition(), balls[i].getRotation()));
-				
+
 				batch.begin();
 				batch.draw(Textures.getInstance().getBallShadow(), balls[i].getPosition().x - 6 * Ball.radius / 5, balls[i].getPosition().y - 3 * Ball.radius / 2, 2 * Ball.radius, 2 * Ball.radius);
 				batch.end();
 			}
 		}
-		
+
 		batch.begin();
 		batch.draw(table_border, 0, 0, Table.width, Table.height);
 		batch.end();
-		//modelInstances.add(new ModelInstance(table3D));
-
-		/*shadowLight.begin(camera.position, camera.direction);
-		shadowBatch.begin(camera);
-		shadowBatch.render(modelInstances);
-		shadowBatch.end();
-		shadowLight.end();*/
 
 		modelBatch.begin(camera);
 		modelBatch.render(modelInstances, environment);
 		modelBatch.end();
 
-		State<Match> currentState = m.getStateMachine().getCurrentState();
 		if (currentState instanceof Play)
 		{
+			dialogMessage = null;
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
 			shapeRenderer.setColor(Color.WHITE);
@@ -207,10 +219,13 @@ public class MatchScene implements Screen, Observer{
 		}
 		else if (currentState instanceof TransitionState)
 		{
-			((TransitionState) currentState).next();
+			if (dialogMessage == null)
+				((TransitionState) currentState).next();
 		}
-		Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-		debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
+		if (dialogMessage != null)
+			dialogMessage.renderDialog();
+		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
 	}
 
 	private void drawCue(Vector2 cueBallPos, float force, float angle)
@@ -301,9 +316,37 @@ public class MatchScene implements Screen, Observer{
 		Vector2 impactVelocity = balls[ballNumber1].getVelocity().sub(balls[ballNumber2].getVelocity());
 		Sounds.getInstance().getBallBallCollision().play(impactVelocity.len() / 40, 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
 	}
-	
+
 	private void ballTableCollisionHandler(int ballNumber, Vector2 contactPoint)
 	{
-		// TODO
+		// TODO sound
+	}
+
+	private void updateEnvironment()
+	{
+		updateEnvironment(dialogMessage.getBackgroundBrightness());
+	}
+
+	private void updateEnvironment(float brightness)
+	{
+		float factor = brightness + 1;
+		directionalLight.set(factor * 0.7f, factor * 0.7f, factor * 0.7f, -0.1f, -0.1f, -1f);
+		environment.clear();
+		environment.set(new ColorAttribute(ColorAttribute.Specular, factor * 0.8f, factor * 0.8f, factor * 0.8f, 1f));
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, factor * 0.2f, factor * 0.2f, factor * 0.2f, 1f));
+		environment.add(directionalLight);
+	}
+
+	private void updateBatch()
+	{
+		updateBatch(dialogMessage.getBackgroundBrightness(), dialogMessage.getBackgroundContrast());
+	}
+
+	private void updateBatch(float brightness, float contrast)
+	{
+		batch.brightness = brightness;
+		batch.contrast = contrast;
+		batch.begin();
+		batch.end();
 	}
 }

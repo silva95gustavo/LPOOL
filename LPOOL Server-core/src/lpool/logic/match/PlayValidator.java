@@ -12,6 +12,7 @@ public class PlayValidator {
 	private boolean validBallScored;
 	private boolean cueBallScored;
 	private boolean blackBallAccidentallyScored;
+	private boolean scoredHisBall;
 	private Ball[] balls;
 	public PlayValidator(boolean openingShot, boolean playerBallsDefined, Ball.Type currentPlayerBalls, Ball[] balls) {
 		this.openingShot = openingShot;
@@ -23,6 +24,7 @@ public class PlayValidator {
 		this.validBallScored = false;
 		this.blackBallAccidentallyScored = false;
 		this.cueBallScored = false;
+		this.scoredHisBall = false;
 		this.balls = balls;
 	}
 
@@ -41,16 +43,21 @@ public class PlayValidator {
 
 	public void actionBallScore(Ball.Type scoredBallType)
 	{
-		if (scoredBallType == Ball.Type.SOLID || scoredBallType == Ball.Type.STRIPE)
-			validBallScored = true;
-		else if (scoredBallType == Ball.Type.CUE)
-			cueBallScored = true;
-		else if (scoredBallType == Ball.Type.BLACK)
+		if (scoredBallType == Ball.Type.BLACK)
 		{
 			if (isPlayingForBlack())
 				validBallScored = true;
 			else
 				blackBallAccidentallyScored = true;
+		}
+		else
+		{
+			if (scoredBallType == Ball.Type.SOLID || scoredBallType == Ball.Type.STRIPE)
+				validBallScored = true;
+			else if (scoredBallType == Ball.Type.CUE)
+				cueBallScored = true;
+			if (scoredBallType == currentPlayerBalls)
+				scoredHisBall = true;
 		}
 	}
 
@@ -62,6 +69,11 @@ public class PlayValidator {
 			return (numBorderHits >= 4) || validBallScored;
 		else
 			return (numBorderHits >= 1) || validBallScored;
+	}
+
+	public boolean playsAgain()
+	{
+		return scoredHisBall && isValid();
 	}
 
 	private boolean isValidBall(Ball.Type ballType)

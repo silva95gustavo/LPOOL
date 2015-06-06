@@ -11,7 +11,6 @@ public class TransitionState<E> implements State<E> {
 		this.context = context;
 		this.previous = previous;
 		this.next = next;
-		this.time = 0;
 	}
 
 	@Override
@@ -20,7 +19,6 @@ public class TransitionState<E> implements State<E> {
 
 	@Override
 	public void update(E owner, float dt) {
-		time += dt;
 	}
 
 	public State<E> getPreviousState()
