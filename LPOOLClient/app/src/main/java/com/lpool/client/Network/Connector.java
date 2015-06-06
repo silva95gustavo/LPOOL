@@ -43,7 +43,7 @@ public class Connector {
         KICK,
         MOVECB, // x-pos[0, 1] y-pos[0, 1]
         PLACECB, // x-pos[0, 1] y-pos[0, 1]
-        PLAY,  // 0(no ball), 1(not-stripes), 2(stripes), 3(black ball)    TODO
+        PLAY,  // 0(no ball), 1(not-stripes), 2(stripes), 3(black ball)
         WAIT,
         BIH,
         END // winner(boolean) End.Reason

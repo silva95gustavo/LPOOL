@@ -108,6 +108,10 @@ public class MainScreenActivity extends ActionBarActivity {
         startActivity(new Intent(MainScreenActivity.this, InstructionsActivity.class));
     }
 
+    public void openAbout(View v) {
+        startActivity(new Intent(MainScreenActivity.this, AboutActivity.class));
+    }
+
     public void readInfoFromQR(View v) {
         IntentIntegrator.initiateScan(this, IntentIntegrator.QR_CODE_TYPES, "Please point the camera to the QR Code on the server application.");
     }
@@ -148,9 +152,8 @@ public class MainScreenActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            // TODO Menu de about maybe?
-            Toast.makeText(this, "Settings are currently unavailable", Toast.LENGTH_LONG).show();
+        if (id == R.id.action_about) {
+            openAbout(null);
             return true;
         } else if(id == R.id.action_instructions) {
             openInstructions(null);
