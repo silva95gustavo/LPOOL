@@ -380,6 +380,11 @@ public class Match implements Observer{
 	public boolean isBallInHand() {
 		return !playValidator.isValid();
 	}
+	
+	public boolean currentPlayerPlaysAgain()
+	{
+		return playValidator.playsAgain();
+	}
 
 	public int getPlayNum()
 	{

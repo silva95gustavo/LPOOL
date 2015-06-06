@@ -30,6 +30,7 @@ public class Textures { // Singleton
 		am.load("lobby/disconnected.png", Texture.class);
 		am.load("lobby/connected.png", Texture.class);
 		am.load("lobby/starting_in.png", Texture.class);
+		am.load("dialog_box.png", Texture.class);
 		
 		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
 		{
@@ -113,5 +114,10 @@ public class Textures { // Singleton
 	public Texture getStartingIn()
 	{
 		return Manager.getInstance().getAssetManager().get("lobby/starting_in.png");
+	}
+	
+	public Texture getDialogBox()
+	{
+		return Manager.getInstance().getAssetManager().get("dialog_box.png");
 	}
 }
