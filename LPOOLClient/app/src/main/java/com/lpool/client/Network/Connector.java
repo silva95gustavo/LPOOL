@@ -20,8 +20,8 @@ import java.util.TimerTask;
  */
 public class Connector {
 
-    public static final int HEARTBEAT_TIMEOUT = 30; // seconds
-    public static final int HEARTBEAT_INTERVAL = 10; // seconds
+    public static final int HEARTBEAT_TIMEOUT = 10; // seconds
+    public static final int HEARTBEAT_INTERVAL = 5; // seconds
     private Timer timer;
     private Thread connectionChecker;
     private Boolean gotPONG = false;
