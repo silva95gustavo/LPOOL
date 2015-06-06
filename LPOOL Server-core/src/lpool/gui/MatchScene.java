@@ -90,7 +90,7 @@ public class MatchScene implements Screen, Observer{
 	public MatchScene(lpool.logic.Game game, com.badlogic.gdx.Game GdxGame, int width, int height)
 	{
 		Sounds.getInstance().getRacking().play();
-		
+
 		camera = new OrthographicCamera();
 		camera.position.set(Table.width / 2, worldHeight / 2 - tableMargin, 3);
 		camera.near = 0.1f; 
@@ -232,15 +232,15 @@ public class MatchScene implements Screen, Observer{
 		}
 		else if (currentState instanceof End)
 		{
-			if (dialogMessage == null)
-				GdxGame.setScreen(new LobbyScene(game, GdxGame, new FadingColor(GameProject.blackgroundColorPeriod)));
+			//if (dialogMessage == null)
+				//GdxGame.setScreen(new LobbyScene(game, GdxGame, new FadingColor(GameProject.blackgroundColorPeriod)));
 		}
 		if (dialogMessage != null)
 			dialogMessage.renderDialog();
 		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
 	}
-	
+
 	private String reasonToMessage(End.Reason reason)
 	{
 		switch (reason)
@@ -355,7 +355,7 @@ public class MatchScene implements Screen, Observer{
 	{
 		Sounds.getInstance().getBallInHole().play();
 	}
-	
+
 	private void updateEnvironment()
 	{
 		updateEnvironment(dialogMessage.getBackgroundBrightness());

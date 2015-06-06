@@ -34,6 +34,7 @@ public class End implements State<Match> {
 
 	@Override
 	public void update(Match match, float dt) {
+		System.out.println("I'm ended");
 	}
 
 	public int getWinner() {

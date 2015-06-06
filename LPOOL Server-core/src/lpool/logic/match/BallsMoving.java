@@ -36,7 +36,7 @@ public class BallsMoving implements State<Match>{
 		{
 			Integer winner = new Integer(0);
 			End.Reason reason = whyMatchEnded(match, winner);
-			match.getStateMachine().changeState(new End(reason, winner));
+			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new End(reason, winner)));
 			return;
 		}
 		match.incrementPlayNum();
