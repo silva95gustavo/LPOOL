@@ -33,6 +33,7 @@ public class ControllerActivity extends Activity implements Receiver{
     private Connector connector;
 
     private int current_ball_type = 0;
+    private boolean terminating = false;
 
 
 
@@ -64,8 +65,6 @@ public class ControllerActivity extends Activity implements Receiver{
             finish();
         }
 
-        // TODO change connection
-
         connector = new Connector(server_ip, server_port);
         connector.addReceiver(this);
         connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
@@ -75,7 +74,7 @@ public class ControllerActivity extends Activity implements Receiver{
     public void getMessage(String message) {
         System.out.println("Got message " + message);
         GameCommand cmd = new GameCommand(message);
-        if(cmd.getCmd() == null) return;
+        if(cmd.getCmd() == null || terminating) return;
 
         System.out.println("Received command " + cmd.getCmd());
 
@@ -247,6 +246,7 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
     private void stop() {
+        terminating = true;
         currentState.interrupt();
         connector.disconnect();
     }

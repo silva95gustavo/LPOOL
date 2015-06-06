@@ -34,7 +34,6 @@ public class WaitState implements GameState {
         final String dot3 = caller.getResources().getString(R.string.wait_text_dot3);
         anim = new Thread( new Runnable() {
             public void run() {
-                // TODO not working very well
                 while(active) {
                     caller.runOnUiThread(new Runnable() {
                         public void run() {
