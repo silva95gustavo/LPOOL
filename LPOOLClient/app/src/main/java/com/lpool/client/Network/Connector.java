@@ -58,12 +58,11 @@ public class Connector {
     }
 
     // TCP
-    private volatile Socket socket;
-    private static volatile Socket testSocket;
+    private static volatile Socket socket = null;
     private static InetAddress tempServerAddr;
     private static PrintWriter pw;
     // UDP
-    private DatagramSocket datagramSocket;
+    private static DatagramSocket datagramSocket = null;
 
     private String serverIP;
     private int serverPort;
@@ -149,9 +148,11 @@ public class Connector {
                 System.out.println("Part 1");
                 InetAddress serverAddr = InetAddress.getByName(serverIP);
                 System.out.println("Part 2");
-                socket = new Socket(serverAddr, serverPort);
+                if(socket == null)
+                    socket = new Socket(serverAddr, serverPort);
                 System.out.println("Part 3");
-                datagramSocket = new DatagramSocket(serverPort);
+                if(datagramSocket == null)
+                    datagramSocket = new DatagramSocket(serverPort);
                 System.out.println("Part 4");
                 initializeReceiverThread();
             } catch (UnknownHostException e1) {
@@ -242,9 +243,12 @@ public class Connector {
         stop();
         try {
             if(datagramSocket != null) {
-                datagramSocket.disconnect();
-            if(socket != null)
+                datagramSocket.close();
+                datagramSocket = null;
+            }
+            if(socket != null) {
                 socket.close();
+                socket = null;
             }
         } catch (IOException e) {
             e.printStackTrace();
