@@ -73,7 +73,7 @@ public class PlayValidator {
 
 	public boolean playsAgain()
 	{
-		return scoredHisBall && isValid();
+		return (validBallScored && openingShot) || (scoredHisBall && isValid());
 	}
 
 	private boolean isValidBall(Ball.Type ballType)
