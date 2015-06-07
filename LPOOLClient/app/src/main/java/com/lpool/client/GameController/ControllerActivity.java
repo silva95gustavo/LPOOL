@@ -284,6 +284,7 @@ public class ControllerActivity extends Activity implements Receiver{
                     txt.setText(getResources().getString(R.string.disconnected_quit));
             }
         });
+        finish();
     }
 
     public void onBackPressed() {

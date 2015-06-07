@@ -75,6 +75,7 @@ public class PlaceBallState implements GameState {
     }
 
     public void placeCueBall(View v) {
+        System.out.println("Placing ball on: " + ballX + " " + ballY);
         caller.sendTCPMessage("" + Connector.ProtocolCmd.PLACECB.ordinal() + " " + ballX + " " + ballY + " " + '\n');
     }
 
@@ -106,6 +107,15 @@ public class PlaceBallState implements GameState {
         caller.runOnUiThread(new Runnable() {
             public void run() {
                 own_layout.setVisibility(View.VISIBLE);
+            }
+        });
+        ballX = (float)0.5;
+        ballY = (float)0.5;
+        final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
+        caller.runOnUiThread(new Runnable() {
+            public void run() {
+                cueBallPlace.setX(ballX);
+                cueBallPlace.setY(ballY);
             }
         });
         initializeElements();
