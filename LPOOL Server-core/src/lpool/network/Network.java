@@ -23,7 +23,7 @@ public class Network {
 	private DatagramSocket UDPServerSocket;
 	private Connector con;
 	private DatagramReceiver dg;
-	private Communication[] comms;
+	private Communication[] playerComms;
 
 	private Queue<Integer> clientConnEvents;
 	private Queue<Integer> clientCommEvents;
@@ -58,7 +58,7 @@ public class Network {
 		this.UDPreceived = new ConcurrentLinkedQueue<DatagramPacket>();
 		dg = new DatagramReceiver(UDPServerSocket, UDPreceived);
 		dg.start();
-		this.comms = new Communication[maxClients];
+		this.playerComms = new Communication[maxClients];
 		this.maxClients = maxClients;
 		this.numClients = 0;
 		this.clientConnEvents = new LinkedList<Integer>();
@@ -86,9 +86,9 @@ public class Network {
 
 		for (int i = 0; i < maxClients; i++)
 		{
-			if (comms[i] != null)
+			if (playerComms[i] != null)
 			{
-				if (comms[i].isConnClosed())
+				if (playerComms[i].isConnClosed())
 				{
 					clientConnEvents.add(i);
 					kickClient(i);
@@ -123,27 +123,27 @@ public class Network {
 			return false; // Too many clients
 		}
 
-		for (int i = 0; i < comms.length; i++)
+		for (int i = 0; i < playerComms.length; i++)
 		{
-			if (comms[i] == null)
+			if (playerComms[i] == null)
 				continue;
 
-			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected
+			if (client.getInetAddress().getHostAddress().equals(playerComms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected
 			{
-				/*comms[i].close();
-				comms[i] = new Communication(this, client, i);
+				/*playerComms[i].close();
+				playerComms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
 				return true;*/
 				return false;
 			}
 		}
 
-		for (int i = 0; i < comms.length; i++)
+		for (int i = 0; i < playerComms.length; i++)
 		{
-			if (comms[i] == null)
+			if (playerComms[i] == null)
 			{
 				numClients++;
-				comms[i] = new Communication(this, client, i);
+				playerComms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
 				return true; // Success
 			}
@@ -156,11 +156,11 @@ public class Network {
 		if (clientID >= maxClients)
 			return false;
 
-		if (comms[clientID] == null)
+		if (playerComms[clientID] == null)
 			return false;
 
-		comms[clientID].close();
-		comms[clientID] = null;
+		playerComms[clientID].close();
+		playerComms[clientID] = null;
 		numClients--;
 		return true;
 	}
@@ -198,10 +198,10 @@ public class Network {
 			{
 				if (isClientConnected(i))
 				{
-					ConcurrentLinkedQueue<String> q = comms[i].getClientCommEvents();
+					ConcurrentLinkedQueue<String> q = playerComms[i].getClientCommEvents();
 					if (q.isEmpty())
 						continue;
-					comms[i].resetHeartbeat();
+					playerComms[i].resetHeartbeat();
 					clientID = i;
 					body = q.poll();
 					break;
@@ -220,7 +220,7 @@ public class Network {
 	}
 
 	public boolean isClientConnected(int clientID) {
-		return clientID >= 0 && clientID < maxClients && comms[clientID] != null;
+		return clientID >= 0 && clientID < maxClients && playerComms[clientID] != null;
 	}
 
 	public int addressToID(InetAddress ip)
@@ -231,7 +231,7 @@ public class Network {
 			if (!isClientConnected(i))
 				continue;
 
-			if (comms[i].getSocket().getInetAddress().getHostAddress().equals(hostAddress))
+			if (playerComms[i].getSocket().getInetAddress().getHostAddress().equals(hostAddress))
 				return i;
 		}
 		return -1;
@@ -264,7 +264,7 @@ public class Network {
 		if (!isClientConnected(clientID))
 			return null;
 		
-		return comms[clientID];
+		return playerComms[clientID];
 	}
 	
 	public void send(Message message)
@@ -273,6 +273,6 @@ public class Network {
 			return;
 		if (!isClientConnected(message.clientID))
 			return;
-		comms[message.clientID].send(message.body);
+		playerComms[message.clientID].send(message.body);
 	}
 }

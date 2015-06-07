@@ -20,7 +20,7 @@ public class Table {
 	public static final float height = 1.1f * Match.physicsScaleFactor + 2 * border;
 	public static final float width = (height - 2 * border) * 2 + 2 * border;
 	public static final float holeOffset = border / 6;
-	public static final float holeRadius = 0.045f * Match.physicsScaleFactor;
+	public static final float holeRadius = 0.052f * Match.physicsScaleFactor;
 	public static final int numHoles = 6;
 
 	private Body body;
