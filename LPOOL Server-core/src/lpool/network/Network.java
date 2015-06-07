@@ -13,6 +13,7 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import lpool.logic.Game;
+import lpool.logic.match.CueBallInHand;
 
 public class Network {
 	public final int maxClients;
@@ -129,10 +130,11 @@ public class Network {
 
 			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected, restart Communication
 			{
-				comms[i].close();
+				/*comms[i].close();
 				comms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
-				return true;
+				return true;*/
+				return false;
 			}
 		}
 
