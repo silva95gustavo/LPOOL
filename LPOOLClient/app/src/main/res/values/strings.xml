@@ -3,8 +3,9 @@
 
     <string name="action_about">About</string>
     <string name="action_instructions">Instructions</string>
-    <string name="ip_text_hint">Server IP (e.x: XXX.XXX.X.XX)</string>
-    <string name="port_text_hint">Server Port (e.x: 2200)</string>
+    <string name="ip_text_hint">Server IP</string>
+    <string name="port_text_hint">Server Port</string>
+    <string name="name_text_hint">Player Name</string>
     <string name="shot_act_name">Shot Activity</string>
     <string name="instructions_act_name">Instructions Activity</string>
     <string name="title_activity_instructions">InstructionsActivity</string>

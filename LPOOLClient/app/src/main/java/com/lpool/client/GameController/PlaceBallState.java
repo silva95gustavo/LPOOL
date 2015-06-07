@@ -147,6 +147,5 @@ public class PlaceBallState implements GameState {
                 cueBallPlace.setY(ballY*placeBall.getHeight()-cueBallPlace.getHeight()/2);
             }
         });
-        // TODO reset ball position
     }
 }
