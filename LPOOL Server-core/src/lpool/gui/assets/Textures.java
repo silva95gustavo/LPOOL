@@ -25,12 +25,14 @@ public class Textures { // Singleton
 		am.load("match/cue_ball_prediction.png", Texture.class);
 		am.load("match/cue_ball_prediction_blocked.png", Texture.class);
 		am.load("match/background.png", Texture.class);
+		am.load("match/name_background.png", Texture.class);
 		am.load("balls/ball_shadow.png", Texture.class);
 		am.load("lobby/lobby.png", Texture.class);
 		am.load("lobby/disconnected.png", Texture.class);
 		am.load("lobby/connected.png", Texture.class);
 		am.load("lobby/starting_in.png", Texture.class);
 		am.load("dialog_box.png", Texture.class);
+		am.load("logo.png", Texture.class);
 		
 		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
 		{
@@ -70,6 +72,11 @@ public class Textures { // Singleton
 	public Texture getCue()
 	{
 		return Manager.getInstance().getAssetManager().get("match/cue.png");
+	}
+	
+	public Texture getNameBackground()
+	{
+		return Manager.getInstance().getAssetManager().get("match/name_background.png");
 	}
 	
 	public Texture getBallShadow()

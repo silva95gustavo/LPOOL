@@ -150,7 +150,7 @@ public class MatchScene implements Screen, Observer{
 			State nextState = ((TransitionState)currentState).getNextState();
 			if (dialogMessage == null)
 				if (nextState instanceof Play)
-					dialogMessage = new DialogMessage(batch, "Shot #" + (m.getPlayNum() + 1), "It is player #" + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+					dialogMessage = new DialogMessage(batch, "Shot " + (m.getPlayNum() + 1), "It's player " + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else if (nextState instanceof End)
 					dialogMessage = new DialogMessage(batch, "Player " + (((End)nextState).getWinner() + 1) + " won!", reasonToMessage(((End)nextState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else
@@ -171,7 +171,7 @@ public class MatchScene implements Screen, Observer{
 		batch.draw(table, 0, 0, Table.width, Table.height);
 		batch.end();
 		
-		drawBallIcons(m);
+		drawHeader(m);
 
 		modelInstances.clear();
 		Ball[] balls = m.getBalls();
@@ -274,20 +274,43 @@ public class MatchScene implements Screen, Observer{
 		cue.draw(batch);
 		batch.end();
 	}
+	
+	private void drawHeader(Match match)
+	{
+		batch.begin();
+		
+		// Name background
+		float nameDisplacement = worldWidth * 0.2f;
+		float nameWidth = Table.width * 0.2f;
+		float nameHeight = nameWidth * Textures.getInstance().getNameBackground().getHeight() / (float)Textures.getInstance().getNameBackground().getWidth();
+		batch.draw(Textures.getInstance().getNameBackground(), worldWidth / 2 - tableMargin -nameWidth - nameDisplacement, worldHeight * 0.85f - tableMargin, nameWidth, nameHeight);
+		batch.draw(Textures.getInstance().getNameBackground(), worldWidth / 2 - tableMargin + nameDisplacement, worldHeight * 0.85f - tableMargin, nameWidth, nameHeight);
+		
+		// Logo
+		float logoWidth = 0.3f * Table.width;
+		float logoHeight = logoWidth * Textures.getInstance().getLogo().getHeight() / (float)Textures.getInstance().getLogo().getWidth();
+		batch.draw(Textures.getInstance().getLogo(), (Table.width - logoWidth) / 2, worldHeight * 0.75f, logoWidth, logoHeight);
+		
+		// Name
+		
+		
+		batch.end();
+		drawBallIcons(match);
+	}
 
 	private void drawBallIcons(Match match)
 	{
 		if (!match.playerBallsDefined())
 			return;
-		float y = Table.height * 1.2f;
-		float ballSize = Table.width * 0.03f;
+		float y = worldHeight * 0.7f;
+		float ballSize = Table.width * 0.025f;
 		batch.begin();
 		// Scored balls
 		for (int i = 0; i < 2 * match.ballsPerPlayer + 2; i++)
 			if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(0))
 				batch.draw(Textures.getInstance().getBallIcon(i), ballSize * i, y, ballSize, ballSize);
 			else if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
-				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, Table.height * 1.2f, ballSize, ballSize);
+				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, y, ballSize, ballSize);
 		batch.end();
 		batch.brightness = 0.6f * batch.brightness - (1 - 0.6f);
 		batch.contrast = batch.brightness + 1;
@@ -297,7 +320,7 @@ public class MatchScene implements Screen, Observer{
 			if (!match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(0))
 				batch.draw(Textures.getInstance().getBallIcon(i), ballSize * i, y, ballSize, ballSize);
 			else if (!match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
-				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, Table.height * 1.2f, ballSize, ballSize);
+				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, y, ballSize, ballSize);
 		batch.end();
 		updateBatch();
 	}
