@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 
 import lpool.logic.Game.ProtocolCmd;
 import lpool.logic.state.State;
+import lpool.logic.state.TransitionState;
 import lpool.network.Message;
 
 public class Play implements State<Match>, Observer{
@@ -76,7 +77,9 @@ public class Play implements State<Match>, Observer{
 				break;
 			float ySpin = sc.nextFloat();
 			match.makeShot(force, xSpin, ySpin);
-			match.getStateMachine().changeState(new BallsMoving());
+			TransitionState<Match> next = new TransitionState<Match>(match.getStateMachine(), this, new BallsMoving());
+			next.data = force;
+			match.getStateMachine().changeState(next);
 			break;
 		}
 		default:

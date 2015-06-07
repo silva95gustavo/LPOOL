@@ -12,7 +12,7 @@ import lpool.network.ObservableMessage;
 
 public class Game implements Observer {
 	public static final int numPlayers = 2;
-	public static final int maxNameLength = 20;
+	public static final int maxNameLength = 16;
 	private Network network;
 	private Match match;
 	private String playerNames[];

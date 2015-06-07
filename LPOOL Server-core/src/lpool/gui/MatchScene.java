@@ -34,6 +34,7 @@ import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -52,6 +53,7 @@ import lpool.gui.assets.Textures;
 import lpool.logic.BodyInfo;
 import lpool.logic.Table;
 import lpool.logic.ball.Ball;
+import lpool.logic.match.BallsMoving;
 import lpool.logic.match.CueBallInHand;
 import lpool.logic.match.End;
 import lpool.logic.match.FreezeTime;
@@ -156,11 +158,11 @@ public class MatchScene implements Screen, Observer{
 					dialogMessage = new DialogMessage(batch, "Shot " + (m.getPlayNum() + 1), "It's player " + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else if (nextState instanceof End)
 					dialogMessage = new DialogMessage(batch, "Player " + (((End)nextState).getWinner() + 1) + " won!", reasonToMessage(((End)nextState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
-				else
+				else if (nextState instanceof CueBallInHand)
 					dialogMessage = new DialogMessage(batch, "Foul", "Player " + (m.getCurrentPlayer() + 1) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 			updateEnvironment();
 			updateBatch();
-			if (!dialogMessage.update(delta))
+			if (dialogMessage != null && !dialogMessage.update(delta))
 				dialogMessage = null;
 		}
 		else
@@ -224,7 +226,7 @@ public class MatchScene implements Screen, Observer{
 
 			shapeRenderer.end();
 
-			drawCue(m.getCueBall().getPosition(), 0, m.getCueAngle());
+			drawCue(m.getCueBall().getPosition(), Ball.radius, m.getCueAngle());
 		}
 		else if (currentState instanceof CueBallInHand)
 		{
@@ -235,8 +237,24 @@ public class MatchScene implements Screen, Observer{
 		}
 		else if (currentState instanceof TransitionState)
 		{
-			if (dialogMessage == null)
-				((TransitionState) currentState).next();
+			TransitionState<Match> transitionState = (TransitionState)currentState;
+			if (transitionState.getNextState() instanceof BallsMoving)
+			{
+				float cueAnimTime = 0.4f;
+				float force = (transitionState.data instanceof Float) ? (Float)transitionState.data : 1;
+				if (transitionState.getTime() >= cueAnimTime)
+				{
+					Sounds.getInstance().getCueHittingCueBall().play(force);
+					transitionState.next();
+				}
+				else // Animate cue
+				{
+					drawCue(balls[0].getPosition(), animateCue(force, cueAnimTime, transitionState.getTime()), m.getCueAngle());
+				}
+			}
+			else if (dialogMessage == null)
+				transitionState.next();
+			
 		}
 		else if (currentState instanceof End)
 		{
@@ -251,6 +269,21 @@ public class MatchScene implements Screen, Observer{
 		//Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 		//debugRenderer.render(m.getWorld(), batch.getProjectionMatrix());
 	}
+	
+	private float animateCue(float force, float animTime, float t)
+	{
+		System.out.println("animTime: " + animTime + " t: " + t);
+		float startingDist = Ball.radius;
+		float backDist = 20 * force * Ball.radius;
+		float backDuration = 0.6f * animTime;
+		float forwardDuration = animTime - backDuration;
+		if (t <= backDuration)
+			return Interpolation.linear.apply(startingDist, backDist, t / backDuration);
+		else
+			return Interpolation.linear.apply(backDist, 0, (t - backDuration) / forwardDuration);
+						
+		//return Interpolation.sineOut.apply(Ball.radius, 0,t);
+	}
 
 	private String reasonToMessage(End.Reason reason)
 	{
@@ -264,11 +297,11 @@ public class MatchScene implements Screen, Observer{
 		}
 	}
 
-	private void drawCue(Vector2 cueBallPos, float force, float angle)
+	private void drawCue(Vector2 cueBallPos, float distance, float angle)
 	{
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		Vector2 cuePos = cueBallPos.cpy().add(new Vector2(2 * Ball.radius + force, 0).rotateRad(angle + (float)Math.PI)).add(new Vector2(0, 0.02f * Match.physicsScaleFactor));
+		Vector2 cuePos = cueBallPos.cpy().add(new Vector2(Ball.radius + distance, 0).rotateRad(angle + (float)Math.PI)).add(new Vector2(0, 0.02f * Match.physicsScaleFactor));
 		Vector2 cueSize = new Vector2(1.5f * Match.physicsScaleFactor, 0.04f * Match.physicsScaleFactor);
 		cue.setOrigin(1.5f * Match.physicsScaleFactor, Match.physicsScaleFactor * 0.04f / 2);
 		cue.setRotation((float)Math.toDegrees(angle));
@@ -434,7 +467,10 @@ public class MatchScene implements Screen, Observer{
 
 	private void updateEnvironment()
 	{
-		updateEnvironment(dialogMessage.getBackgroundBrightness());
+		if (dialogMessage == null)
+			updateEnvironment(0);
+		else
+			updateEnvironment(dialogMessage.getBackgroundBrightness());
 	}
 
 	private void updateEnvironment(float brightness)
