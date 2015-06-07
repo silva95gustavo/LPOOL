@@ -41,6 +41,8 @@ public class Network {
 	
 	private ObservableConnection obsConn;
 	private ObservableMessage obsMsg;
+	
+	private String[] playerNames;
 
 	public Network(int maxClients) {
 		try {
@@ -74,14 +76,8 @@ public class Network {
 		while (!clientSockets.isEmpty())
 		{
 			Socket clientSocket = clientSockets.poll();
-			if (!addClient(clientSocket))
-			{
-				try {
-					clientSocket.close();
-				} catch (IOException e) {
-					// Do nothing
-				}
-			}
+			JoinReceiver jr = new JoinReceiver(this, clientSocket);
+			jr.run(); // TODO check for timeout in case the JoinReceiver receives nothing
 		}
 
 		for (int i = 0; i < maxClients; i++)
@@ -116,7 +112,7 @@ public class Network {
 		}
 	}
 
-	private boolean addClient(Socket client)
+	boolean addClient(Socket client, String name)
 	{
 		if (numClients >= maxClients)
 		{
@@ -130,8 +126,8 @@ public class Network {
 
 			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected
 			{
-				/*comms[i].close();
-				comms[i] = new Communication(this, client, i);
+				/*playerComms[i].close();
+				playerComms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
 				return true;*/
 				return false;
@@ -145,6 +141,7 @@ public class Network {
 				numClients++;
 				comms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
+				comms[i].getClientCommEvents().add(new Message(i, Game.ProtocolCmd.JOIN.ordinal(), name == null ? "" : name).body);
 				return true; // Success
 			}
 		}

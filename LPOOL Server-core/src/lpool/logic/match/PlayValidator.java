@@ -73,7 +73,16 @@ public class PlayValidator {
 
 	public boolean playsAgain()
 	{
-		return (validBallScored && openingShot) || (scoredHisBall && isValid());
+		if (!playerBallsDefined && validBallScored)
+			return true;
+		
+		if (validBallScored && openingShot)
+			return true;
+		
+		if (scoredHisBall && isValid())
+			return true;
+		
+		return false;
 	}
 
 	private boolean isValidBall(Ball.Type ballType)
