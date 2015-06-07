@@ -55,6 +55,7 @@ public class MatchTest {
 		for (int i = 0; i < balls.length; i++)
 			balls[i] = new Ball(createDefaultWorld(), new Vector2(0, 0), i, null);
 		PlayValidator pv = new PlayValidator(true, false, null, balls);
+		assertEquals(false, pv.isValid());
 		pv.actionBallHit(Ball.Type.SOLID);
 		assertEquals(false, pv.isValid());
 		pv.actionBallHit(Ball.Type.STRIPE);
@@ -68,6 +69,25 @@ public class MatchTest {
 		pv.actionBorderHit();
 		assertEquals(true, pv.isValid());
 		pv.actionBallScore(Ball.Type.SOLID);
+		assertEquals(true, pv.isValid());
+		pv.actionBallScore(Ball.Type.CUE);
+		assertEquals(false, pv.isValid());
+		
+		for (int i = 0; i < balls.length; i++)
+			if (balls[i].getType() == Ball.Type.SOLID) balls[i].enterHole(0);
+		pv = new PlayValidator(false, true, Ball.Type.SOLID, balls);
+		assertEquals(false, pv.isValid());
+		pv.actionBallHit(Ball.Type.BLACK);
+		assertEquals(false, pv.isValid());
+		pv.actionBorderHit();
+		assertEquals(true, pv.isValid());
+		pv.actionBallHit(Ball.Type.STRIPE);
+		assertEquals(true, pv.isValid());
+		pv.actionBallScore(Ball.Type.BLACK);
+		assertEquals(true, pv.isValid());
+		pv.actionBallHit(Ball.Type.STRIPE);
+		assertEquals(true, pv.isValid());
+		pv.actionBorderHit();
 		assertEquals(true, pv.isValid());
 		pv.actionBallScore(Ball.Type.CUE);
 		assertEquals(false, pv.isValid());
