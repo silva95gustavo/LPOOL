@@ -58,11 +58,9 @@ public class Connector {
     }
 
     // TCP
-    private static volatile Socket socket = null;
-    private static InetAddress tempServerAddr;
-    private static PrintWriter pw;
+    private volatile Socket socket;
     // UDP
-    private static DatagramSocket datagramSocket = null;
+    private DatagramSocket datagramSocket;
 
     private String serverIP;
     private int serverPort;

@@ -40,6 +40,7 @@ public class PlaceBallState implements GameState {
             {
                 final float x = event.getX();
                 final float y = event.getY();
+
                 if(x >= 0 + xProportionLimit*placeBall.getWidth() &&
                         x <= placeBall.getX() + placeBall.getWidth() - cueBallPlace.getWidth() - xProportionLimit*placeBall.getWidth() &&
                         y >= 0 + yProportionLimit*placeBall.getHeight() &&
@@ -112,13 +113,14 @@ public class PlaceBallState implements GameState {
         ballX = (float)0.5;
         ballY = (float)0.5;
         final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
+        final RelativeLayout placeBall = (RelativeLayout) caller.findViewById(R.id.tableandball);
+        initializeElements();
         caller.runOnUiThread(new Runnable() {
             public void run() {
-                cueBallPlace.setX(ballX);
-                cueBallPlace.setY(ballY);
+                cueBallPlace.setX(ballX*placeBall.getWidth()+cueBallPlace.getWidth()/2);
+                cueBallPlace.setY(ballY*placeBall.getHeight()+cueBallPlace.getHeight()/2);
             }
         });
-        initializeElements();
         // TODO reset ball position
     }
 }

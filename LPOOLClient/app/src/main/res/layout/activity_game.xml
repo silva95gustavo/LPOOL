@@ -9,59 +9,6 @@
     android:id="@+id/mainLayout">
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/placeBallLayout"
-        android:visibility="invisible">
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.2"
-            android:id="@+id/tableandball">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/poolTable"
-                    android:layout_gravity="center_vertical"
-                    android:src="@mipmap/pooltable"
-                    android:layout_weight="0.20"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="false"
-                    android:layout_centerInParent="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true" />
-            </RelativeLayout>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/cueBallPlacable"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:src="@mipmap/cue" />
-
-        </RelativeLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Place Ball"
-            android:clickable="true"
-            android:id="@+id/placeBallButton"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -341,6 +288,59 @@
                 android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/placeBallLayout"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.2"
+            android:id="@+id/tableandball">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/poolTable"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/pooltable"
+                    android:layout_weight="0.20"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="false"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true" />
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/cueBallPlacable"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/cue" />
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Place Ball"
+            android:clickable="true"
+            android:id="@+id/placeBallButton"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1" />
 
     </LinearLayout>
 
