@@ -239,7 +239,7 @@ public class Ball {
 	public void setToBeDeleted()
 	{
 		this.onTable = false;
-		if (body != null)
+		if (body != null && ballsToBeDeleted != null)
 			ballsToBeDeleted.add(body);
 		body = null;
 	}
