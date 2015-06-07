@@ -30,8 +30,8 @@ public class Receiver extends Thread {
 					stopMe();
 				else
 				{
-					clientCommEvents.add(str);
 					System.out.println("Received message: " + str);
+					clientCommEvents.add(str);
 				}
 			} catch (IOException e) {
 				stopMe();

@@ -37,6 +37,7 @@ public class Game implements Observer {
 		network = new Network(2);
 		network.startConnecting();
 		network.addConnObserver(this);
+		network.addMsgObserver(this);
 		playerNames = new String[numPlayers];
 		
 		for(int i = 0; i < playerNames.length; i++)
@@ -65,6 +66,7 @@ public class Game implements Observer {
 	
 	protected void commEvent(Message msg)
 	{
+		System.out.println("message: " + msg.body);
 		if (match != null) return; // Ignore if the match has already started
 		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
@@ -73,12 +75,14 @@ public class Game implements Observer {
 		{
 		case JOIN:
 		{
+			playerNames[msg.clientID] = "Player " + (msg.clientID + 1);
 			if (!sc.hasNextLine()) break;
 			String name = sc.nextLine();
 			name = name.trim();
 			if (name.length() > maxNameLength) {
 			    name = name.substring(0, maxNameLength);
 			}
+			playerNames[msg.clientID] = name;
 		}
 		default:
 			break;
