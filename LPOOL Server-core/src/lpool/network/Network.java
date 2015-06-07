@@ -183,8 +183,9 @@ public class Network {
 			return clientConnEvents.poll();
 	}
 	
-	public String pollClientCommQueue(Integer clientID)
+	public Message pollClientCommQueue()
 	{
+		int clientID = 0;
 		String body = null;
 		if (!clientCommEvents.isEmpty())
 		{
@@ -203,16 +204,19 @@ public class Network {
 					comms[i].resetHeartbeat();
 					clientID = i;
 					body = q.poll();
+					break;
 				}
 			}
 		}
 		if (body == null) return null;
 		
+		Message msg = new Message(clientID, body);
 		Scanner sc = new Scanner(body);
 		Game.ProtocolCmd cmd = Message.readCmd(sc);
+		sc.close();
 		if (cmd.equals(Game.ProtocolCmd.PING))
 			send(new Message(clientID, Game.ProtocolCmd.PONG.ordinal()));
-		return body;
+		return msg;
 	}
 
 	public boolean isClientConnected(int clientID) {

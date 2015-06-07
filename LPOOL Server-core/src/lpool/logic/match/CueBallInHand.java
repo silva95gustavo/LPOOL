@@ -39,18 +39,11 @@ public class CueBallInHand implements State<Match>, Observer{
 
 	@Override
 	public void update(Observable o, Object obj) {
-		System.out.println("debug1");
 		Message msg = (Message)obj;
-		System.out.println("debug2, clientID: " + msg.clientID + " currentPlayer: " + match.getCurrentPlayer());
 		if (msg.clientID != match.getCurrentPlayer()) return;
-		System.out.println("debug3");
 		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
-		System.out.println("debug4");
 		if (cmd == null) return;
-		if (cmd == Game.ProtocolCmd.MOVECB || cmd == Game.ProtocolCmd.PLACECB)
-		System.out.println("Received BIH response: " + cmd + " " + msg.body);
-		System.out.println("debug5");
 		switch (cmd)
 		{
 		case MOVECB: // x-pos[0, 1] y-pos[0, 1]
