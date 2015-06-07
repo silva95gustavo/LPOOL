@@ -58,6 +58,7 @@ public class ControllerActivity extends Activity implements Receiver{
         Bundle b = getIntent().getExtras();
         int server_port = b.getInt("port");
         String server_ip = b.getString("ip");
+        String username = b.getString("name");
 
         if(!Utilities.isValidPort(server_port) || server_ip == null || !Utilities.isValidIP(server_ip))
         {
@@ -67,7 +68,7 @@ public class ControllerActivity extends Activity implements Receiver{
 
         connector = new Connector(server_ip, server_port);
         connector.addReceiver(this);
-        connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + '\n');
+        connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + username + " " + '\n');
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
     }
 
