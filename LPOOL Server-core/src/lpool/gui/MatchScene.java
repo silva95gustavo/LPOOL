@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -43,6 +44,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sun.media.sound.ModelSource;
 
+import lpool.gui.assets.Fonts;
 import lpool.gui.assets.Manager;
 import lpool.gui.assets.BallModels;
 import lpool.gui.assets.Sounds;
@@ -86,6 +88,7 @@ public class MatchScene implements Screen, Observer{
 	public static final float headerHeight = 3 * Table.border;
 	public static final float worldWidth = Table.width + 2 * tableMargin;
 	public static final float worldHeight = Table.height + 2 * tableMargin + headerHeight;
+	public static final float worldXCenter = worldWidth / 2 - tableMargin;
 
 	public MatchScene(lpool.logic.Game game, com.badlogic.gdx.Game GdxGame, int width, int height)
 	{
@@ -283,8 +286,8 @@ public class MatchScene implements Screen, Observer{
 		float nameDisplacement = worldWidth * 0.2f;
 		float nameWidth = Table.width * 0.2f;
 		float nameHeight = nameWidth * Textures.getInstance().getNameBackground().getHeight() / (float)Textures.getInstance().getNameBackground().getWidth();
-		batch.draw(Textures.getInstance().getNameBackground(), worldWidth / 2 - tableMargin -nameWidth - nameDisplacement, worldHeight * 0.85f - tableMargin, nameWidth, nameHeight);
-		batch.draw(Textures.getInstance().getNameBackground(), worldWidth / 2 - tableMargin + nameDisplacement, worldHeight * 0.85f - tableMargin, nameWidth, nameHeight);
+		batch.draw(Textures.getInstance().getNameBackground(), worldXCenter -nameWidth - nameDisplacement, worldHeight * 0.85f - tableMargin, nameWidth, nameHeight);
+		batch.draw(Textures.getInstance().getNameBackground(), worldXCenter + nameDisplacement, worldHeight * 0.85f - tableMargin, nameWidth, nameHeight);
 		
 		// Logo
 		float logoWidth = 0.3f * Table.width;
@@ -292,35 +295,50 @@ public class MatchScene implements Screen, Observer{
 		batch.draw(Textures.getInstance().getLogo(), (Table.width - logoWidth) / 2, worldHeight * 0.75f, logoWidth, logoHeight);
 		
 		// Name
-		
+		BitmapFont nameFont = Fonts.getInstance().getArial100();
+		nameFont.setScale(0.005f);
+		nameFont.setColor(Color.BLACK);
+		nameFont.drawMultiLine(batch, "Player 1", worldXCenter - nameDisplacement - worldHeight * 0.02f, worldHeight * 0.83f, 0, BitmapFont.HAlignment.RIGHT);
+		nameFont.drawMultiLine(batch, "Player 2", worldXCenter + nameDisplacement + worldHeight * 0.02f, worldHeight * 0.83f, 0, BitmapFont.HAlignment.LEFT);
+		nameFont.setScale(1);
 		
 		batch.end();
-		drawBallIcons(match);
+		drawBallIcons(match, nameDisplacement);
 	}
 
-	private void drawBallIcons(Match match)
+	private void drawBallIcons(Match match, float displacement)
 	{
 		if (!match.playerBallsDefined())
 			return;
-		float y = worldHeight * 0.7f;
+		displacement += worldHeight * 0.01f; // Shadow margin
+		float y = worldHeight * 0.75f;
 		float ballSize = Table.width * 0.025f;
+		float ballsWidth = Match.ballsPerPlayer * ballSize;
+		
+		Ball[] p1Balls = match.getPlayerBallsType(0) == Ball.Type.SOLID ? match.getBallsSolid() : match.getBallsStripe();
+		Ball[] p2Balls = match.getPlayerBallsType(1) == Ball.Type.STRIPE ? match.getBallsStripe() : match.getBallsSolid();
+		
 		batch.begin();
-		// Scored balls
-		for (int i = 0; i < 2 * match.ballsPerPlayer + 2; i++)
-			if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(0))
-				batch.draw(Textures.getInstance().getBallIcon(i), ballSize * i, y, ballSize, ballSize);
-			else if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
-				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, y, ballSize, ballSize);
+		// Balls on table
+		for (int i = 0; i < p1Balls.length; i++)
+		{
+			if (p1Balls[i].isOnTable())
+				batch.draw(Textures.getInstance().getBallIcon(p1Balls[i].getNumber()), worldXCenter - displacement - ballsWidth + ballSize * i, y, ballSize, ballSize);
+			if (p2Balls[i].isOnTable())
+				batch.draw(Textures.getInstance().getBallIcon(p2Balls[i].getNumber()), worldXCenter + displacement + ballsWidth - ballSize * (i + 1), y, ballSize, ballSize);
+		}
 		batch.end();
 		batch.brightness = 0.6f * batch.brightness - (1 - 0.6f);
 		batch.contrast = batch.brightness + 1;
 		batch.begin();
-		// Balls on table
-		for (int i = 0; i < 2 * match.ballsPerPlayer + 2; i++)
-			if (!match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(0))
-				batch.draw(Textures.getInstance().getBallIcon(i), ballSize * i, y, ballSize, ballSize);
-			else if (!match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
-				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, y, ballSize, ballSize);
+		// Scored balls
+		for (int i = 0; i < p2Balls.length; i++)
+		{
+			if (!p1Balls[i].isOnTable())
+				batch.draw(Textures.getInstance().getBallIcon(p1Balls[i].getNumber()), worldXCenter - displacement - ballsWidth + ballSize * i, y, ballSize, ballSize);
+			if (!p2Balls[i].isOnTable())
+				batch.draw(Textures.getInstance().getBallIcon(p2Balls[i].getNumber()), worldXCenter + displacement + ballsWidth - ballSize * (i + 1), y, ballSize, ballSize);
+		}
 		batch.end();
 		updateBatch();
 	}
