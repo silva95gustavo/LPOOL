@@ -51,6 +51,7 @@ public class Match implements Observer {
 	private Ball blackBall;
 	private Ball cueBall;
 	private Ball[] balls;
+	private String[] playerNames;
 
 	private float cueAngle = (float)Math.PI;
 	private Ball.Type ballsPlayer[];
@@ -60,7 +61,7 @@ public class Match implements Observer {
 
 	private ObservableCollision observableCollision;
 
-	public Match(Network network) {
+	public Match(Network network, String[] playerNames) {
 		stateMachine = new Context<Match>(this, new FreezeTime());
 		this.network = network;
 		network.addConnObserver(this);
@@ -80,6 +81,7 @@ public class Match implements Observer {
 		ballsSolid = new Ball[ballsPerPlayer];
 		ballsStripe = new Ball[ballsPerPlayer];
 		balls = new Ball[ballsPerPlayer * 2 + 2];
+		this.playerNames = playerNames;
 
 		createBalls();
 
@@ -486,5 +488,12 @@ public class Match implements Observer {
 	public void respawnCueBall(Vector2 pos)
 	{
 		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
+	}
+	
+	public String getPlayerName(int playerID)
+	{
+		if (playerID >= 0 && playerID < Game.numPlayers)
+			return playerNames[playerID];
+		else return null;
 	}
 }

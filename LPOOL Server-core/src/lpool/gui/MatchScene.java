@@ -298,8 +298,8 @@ public class MatchScene implements Screen, Observer{
 		BitmapFont nameFont = Fonts.getInstance().getArial100();
 		nameFont.setScale(0.005f);
 		nameFont.setColor(Color.BLACK);
-		nameFont.drawMultiLine(batch, "Player 1", worldXCenter - nameDisplacement - worldHeight * 0.02f, worldHeight * 0.83f, 0, BitmapFont.HAlignment.RIGHT);
-		nameFont.drawMultiLine(batch, "Player 2", worldXCenter + nameDisplacement + worldHeight * 0.02f, worldHeight * 0.83f, 0, BitmapFont.HAlignment.LEFT);
+		nameFont.drawMultiLine(batch, match.getPlayerName(0), worldXCenter - nameDisplacement - worldHeight * 0.02f, worldHeight * 0.83f, 0, BitmapFont.HAlignment.RIGHT);
+		nameFont.drawMultiLine(batch, match.getPlayerName(1), worldXCenter + nameDisplacement + worldHeight * 0.02f, worldHeight * 0.83f, 0, BitmapFont.HAlignment.LEFT);
 		nameFont.setScale(1);
 		
 		batch.end();
