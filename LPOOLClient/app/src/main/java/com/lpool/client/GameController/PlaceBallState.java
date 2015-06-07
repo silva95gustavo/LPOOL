@@ -31,33 +31,59 @@ public class PlaceBallState implements GameState {
     }
 
     private void initializeElements() {
-        final ImageView cueBallPlace = (ImageView) caller.findViewById(R.id.cueBallPlacable);
-        final RelativeLayout placeBall = (RelativeLayout) caller.findViewById(R.id.tableandball);
+        final ImageView ball = (ImageView) caller.findViewById(R.id.cueBallPlacable);
+        final ImageView table = (ImageView) caller.findViewById(R.id.poolTable);
 
-        placeBall.setOnTouchListener(new View.OnTouchListener()
+        table.setOnTouchListener(new View.OnTouchListener()
         {
             public boolean onTouch(View v, MotionEvent event)
             {
                 final float x = event.getX();
                 final float y = event.getY();
+                System.out.println("Touched " + x + " " + y);
 
-                if(x >= 0 + xProportionLimit*placeBall.getWidth() &&
-                        x <= placeBall.getX() + placeBall.getWidth() - cueBallPlace.getWidth() - xProportionLimit*placeBall.getWidth() &&
-                        y >= 0 + yProportionLimit*placeBall.getHeight() &&
-                        y <= placeBall.getY() + placeBall.getHeight() - cueBallPlace.getHeight() - yProportionLimit*placeBall.getHeight()) {
+
+                if((x - ball.getWidth()/2) >= table.getX() + xProportionLimit*table.getWidth()
+                        && (x + ball.getWidth()/2) <= table.getX()+table.getWidth()-xProportionLimit*table.getWidth()
+                        && (y-ball.getHeight()/2) >= table.getY()+yProportionLimit*table.getHeight()
+                        && (y+ball.getHeight()/2) <= table.getY()+table.getHeight()-yProportionLimit*table.getHeight()
+                        )
+                {
+                    ballX = (x-ball.getWidth()/2-table.getX()-xProportionLimit*table.getWidth())/(table.getWidth()-ball.getWidth()-xProportionLimit*table.getWidth()*2);
+                    ballY = (y-ball.getHeight()/2-table.getY()-yProportionLimit*table.getHeight())/(table.getHeight()-ball.getHeight()-yProportionLimit*table.getHeight()*2);
+
+                    caller.runOnUiThread(new Runnable() {
+                        public void run() {
+                            ball.setX(x-ball.getWidth()/2);
+                            ball.setY(y-ball.getHeight()/2);
+                        }
+                    });
+
+                    moveCueBall();
+
+                }
+
+                /*if(x >= 0 + xProportionLimit*table.getWidth() &&
+                        x <= table.getX() + table.getWidth() - ball.getWidth() - xProportionLimit*table.getWidth() &&
+                        y >= 0 + yProportionLimit*table.getHeight() &&
+                        y <= table.getY() + table.getHeight() - ball.getHeight() - yProportionLimit*table.getHeight()) {
+
+                    ballX = (x)/(table.getWidth() - ball.getWidth());
+                    ballY = (y)/(table.getHeight() - ball.getHeight());
+
+                    ballX = (x+ball.getWidth()/2)/(table.getWidth()-ball.getWidth());
+                    ballY = (y+ball.getHeight()/2)/(table.getHeight()-ball.getHeight());
 
 
                     caller.runOnUiThread(new Runnable() {
                         public void run() {
-                            cueBallPlace.setX(x);
-                            cueBallPlace.setY(y);
+                            ball.setX(ballX*table.getWidth()-ball.getWidth()/2);
+                            ball.setY(ballY*table.getHeight()-ball.getHeight()/2);
                         }
                     });
 
-                    ballX = (x)/(placeBall.getWidth() - cueBallPlace.getWidth());
-                    ballY = (y)/(placeBall.getHeight() - cueBallPlace.getHeight());
                     moveCueBall();
-                }
+                }*/
                 return true;
             }
         });
@@ -117,8 +143,8 @@ public class PlaceBallState implements GameState {
         initializeElements();
         caller.runOnUiThread(new Runnable() {
             public void run() {
-                cueBallPlace.setX(ballX*placeBall.getWidth()+cueBallPlace.getWidth()/2);
-                cueBallPlace.setY(ballY*placeBall.getHeight()+cueBallPlace.getHeight()/2);
+                cueBallPlace.setX(ballX*placeBall.getWidth()-cueBallPlace.getWidth()/2);
+                cueBallPlace.setY(ballY*placeBall.getHeight()-cueBallPlace.getHeight()/2);
             }
         });
         // TODO reset ball position
