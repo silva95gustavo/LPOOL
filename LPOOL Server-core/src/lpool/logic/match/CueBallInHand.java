@@ -58,13 +58,10 @@ public class CueBallInHand implements State<Match>, Observer{
 			float yPos = sc.nextFloat();
 			System.out.println("Updating attempted position to: " + attemptedPosition);
 			attemptedPosition = new Vector2(xPos, yPos);
-			if (attemptedPosition.x < 0) attemptedPosition.x = 0;
-			if (attemptedPosition.x > 1) attemptedPosition.x = 1;
-			if (attemptedPosition.y < 0) attemptedPosition.y = 0;
-			if (attemptedPosition.y > 1) attemptedPosition.y = 1;
 			validPosition = isPositionValid(attemptedPosition);
 			if (cmd.equals(Game.ProtocolCmd.PLACECB) && validPosition)
 			{
+				System.out.println("CAAAAAAAAAAAAALLLLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED");
 				match.respawnCueBall(attemptedPosition);
 				match.getStateMachine().changeState(new Play());
 			}
@@ -78,7 +75,10 @@ public class CueBallInHand implements State<Match>, Observer{
 
 	private boolean isPositionValid(Vector2 dest)
 	{
-		if (dest.x < 0 || dest.x > 1 || dest.y < 0 || dest.y > 1) return false;
+		if (dest.x < 0) dest.x = 0;
+		else if (dest.x > 1) dest.x = 1;
+		if (dest.y < 0) dest.y = 0;
+		else if (dest.y > 1) dest.y = 1;
 
 		dest.y = 1 - dest.y;		
 		dest.scl(Table.width - 2 * Ball.radius, Table.height - 2 * Ball.radius).add(new Vector2(Ball.radius, Ball.radius));
