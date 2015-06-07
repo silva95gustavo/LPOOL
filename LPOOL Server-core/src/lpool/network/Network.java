@@ -128,7 +128,7 @@ public class Network {
 			if (comms[i] == null)
 				continue;
 
-			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected, restart Communication
+			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected
 			{
 				/*comms[i].close();
 				comms[i] = new Communication(this, client, i);

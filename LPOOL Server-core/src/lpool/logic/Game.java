@@ -68,4 +68,9 @@ public class Game implements Observer {
 	{
 		match = new Match(network);
 	}
+	
+	public void endMatch()
+	{
+		match = null;
+	}
 }

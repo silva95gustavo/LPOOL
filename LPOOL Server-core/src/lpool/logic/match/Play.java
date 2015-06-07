@@ -42,7 +42,8 @@ public class Play implements State<Match>, Observer{
 		Message msg = (Message)obj;
 		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
-		
+		if (cmd == null) return;
+		if (msg.clientID != match.getCurrentPlayer()) return;
 		switch (cmd)
 		{
 		case ANGLE:

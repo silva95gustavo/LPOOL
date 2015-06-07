@@ -238,7 +238,10 @@ public class MatchScene implements Screen, Observer{
 		else if (currentState instanceof End)
 		{
 			if (dialogMessage == null)
+			{
+				game.endMatch();
 				GdxGame.setScreen(new LobbyScene(game, GdxGame, new FadingColor(GameProject.blackgroundColorPeriod)));
+			}
 		}
 		if (dialogMessage != null)
 			dialogMessage.renderDialog();
