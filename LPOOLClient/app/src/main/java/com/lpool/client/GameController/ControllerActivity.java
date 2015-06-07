@@ -59,6 +59,9 @@ public class ControllerActivity extends Activity implements Receiver{
         int server_port = b.getInt("port");
         String server_ip = b.getString("ip");
         String username = b.getString("name");
+        if(username == null || username.equals("")) {
+            username = "Player";
+        }
 
         if(!Utilities.isValidPort(server_port) || server_ip == null || !Utilities.isValidIP(server_ip))
         {
