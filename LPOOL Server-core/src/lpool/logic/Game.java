@@ -41,7 +41,7 @@ public class Game implements Observer {
 		playerNames = new String[numPlayers];
 		
 		for(int i = 0; i < playerNames.length; i++)
-			playerNames[i] = new String("Player " + (i + 1));
+			playerNames[i] = defaultPlayerName(i);
 	}
 
 	public void tick(float dt)
@@ -61,7 +61,10 @@ public class Game implements Observer {
 		if (network.isClientConnected(clientID))
 			System.out.println("Client #" + clientID + " connected!");
 		else
+		{
+			playerNames[clientID] = defaultPlayerName(clientID);
 			System.out.println("Client #" + clientID + " disconnected!");
+		}
 	}
 	
 	protected void commEvent(Message msg)
@@ -75,7 +78,7 @@ public class Game implements Observer {
 		{
 		case JOIN:
 		{
-			playerNames[msg.clientID] = "Player " + (msg.clientID + 1);
+			playerNames[msg.clientID] = defaultPlayerName(msg.clientID);
 			if (!sc.hasNextLine()) break;
 			String name = sc.nextLine();
 			name = name.trim();
@@ -88,6 +91,11 @@ public class Game implements Observer {
 			break;
 		}
 		sc.close();
+	}
+	
+	public String defaultPlayerName(int clientID)
+	{
+		return new String("Player " + (clientID + 1));
 	}
 	
 	public Network getNetwork()

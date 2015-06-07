@@ -25,10 +25,8 @@ public class JoinReceiver extends Thread {
 		while (!finished)
 		{
 			try {
-				System.out.println("starting read...");
 				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				String str = br.readLine();
-				System.out.println("sasdadsadag read..." + str);
 				if (str == null)
 					stopMe();
 				else
