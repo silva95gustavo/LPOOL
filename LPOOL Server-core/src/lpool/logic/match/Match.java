@@ -46,8 +46,8 @@ public class Match implements Observer {
 	private World world;
 	private Queue<Body> ballsToBeDeleted;
 
-	private Ball[] balls1;
-	private Ball[] balls2;
+	private Ball[] ballsSolid;
+	private Ball[] ballsStripe;
 	private Ball blackBall;
 	private Ball cueBall;
 	private Ball[] balls;
@@ -77,8 +77,8 @@ public class Match implements Observer {
 		addColisionObserver(this);
 		ballsToBeDeleted = new LinkedList<Body>();
 
-		balls1 = new Ball[ballsPerPlayer];
-		balls2 = new Ball[ballsPerPlayer];
+		ballsSolid = new Ball[ballsPerPlayer];
+		ballsStripe = new Ball[ballsPerPlayer];
 		balls = new Ball[ballsPerPlayer * 2 + 2];
 
 		createBalls();
@@ -118,11 +118,11 @@ public class Match implements Observer {
 		if (number == 0)
 			cueBall = ball;
 		else if (number < 8)
-			balls1[number - 1] = ball;
+			ballsSolid[number - 1] = ball;
 		else if (number == 8)
 			blackBall = ball;
 		else if (number < 16)
-			balls2[number - 9] = ball;
+			ballsStripe[number - 9] = ball;
 		else return null;
 		return balls[number] = ball;
 	}
@@ -169,14 +169,14 @@ public class Match implements Observer {
 		return blackBall;
 	}
 
-	public Ball[] getBalls1()
+	public Ball[] getBallsSolid()
 	{
-		return balls1;
+		return ballsSolid;
 	}
 
-	public Ball[] getBalls2()
+	public Ball[] getBallsStripe()
 	{
-		return balls2;
+		return ballsStripe;
 	}
 
 	public Ball getCueBall() {
@@ -351,7 +351,7 @@ public class Match implements Observer {
 	{
 		balls[ballNumber].enterHole(holeNumber);
 
-		if (!playerBallsDefined())
+		if (!playerBallsDefined() && !isOpeningShot())
 		{
 			int otherPlayer = (currentPlayer == 0 ? 1 : 0);
 			if (balls[ballNumber].isSolid())
