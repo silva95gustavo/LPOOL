@@ -42,7 +42,7 @@ public class BallsMoving implements State<Match>{
 		match.incrementPlayNum();
 		if (match.isBallInHand())
 		{
-			//match.changeCurrentPlayer(); // TODO uncomment
+			match.changeCurrentPlayer(); // TODO uncomment
 			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new CueBallInHand()));
 		}
 		else
@@ -51,7 +51,7 @@ public class BallsMoving implements State<Match>{
 				match.getStateMachine().changeState(new Play());
 			else
 			{
-				//match.changeCurrentPlayer(); // TODO uncomment
+				match.changeCurrentPlayer(); // TODO uncomment
 				match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new Play()));
 			}
 		}

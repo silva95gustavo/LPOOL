@@ -11,12 +11,11 @@ public class ObservableMessage extends Observable {
 	
 	public void tick()
 	{
-		Integer clientID = new Integer(0);
-		String msg;
-		while ((msg = network.pollClientCommQueue(clientID)) != null)
+		Message msg;
+		while ((msg = network.pollClientCommQueue()) != null)
 		{
 			setChanged();
-			notifyObservers(new Message(clientID, msg));
+			notifyObservers(msg);
 		}
 	}
 }

@@ -237,8 +237,8 @@ public class MatchScene implements Screen, Observer{
 		}
 		else if (currentState instanceof End)
 		{
-			//if (dialogMessage == null)
-				//GdxGame.setScreen(new LobbyScene(game, GdxGame, new FadingColor(GameProject.blackgroundColorPeriod)));
+			if (dialogMessage == null)
+				GdxGame.setScreen(new LobbyScene(game, GdxGame, new FadingColor(GameProject.blackgroundColorPeriod)));
 		}
 		if (dialogMessage != null)
 			dialogMessage.renderDialog();
@@ -286,7 +286,7 @@ public class MatchScene implements Screen, Observer{
 			else if (match.getBalls()[i].isOnTable() && match.getBalls()[i].getType() == match.getPlayerBallsType(1))
 				batch.draw(Textures.getInstance().getBallIcon(i), Table.width / 2 + ballSize * i, Table.height * 1.2f, ballSize, ballSize);
 		batch.end();
-		batch.brightness = 0.5f * batch.brightness - 0.5f;
+		batch.brightness = 0.6f * batch.brightness - (1 - 0.6f);
 		batch.contrast = batch.brightness + 1;
 		batch.begin();
 		// Balls on table

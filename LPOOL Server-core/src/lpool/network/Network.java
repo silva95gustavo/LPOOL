@@ -13,6 +13,7 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import lpool.logic.Game;
+import lpool.logic.match.CueBallInHand;
 
 public class Network {
 	public final int maxClients;
@@ -127,9 +128,13 @@ public class Network {
 			if (comms[i] == null)
 				continue;
 
-			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress()))
+			if (client.getInetAddress().getHostAddress().equals(comms[i].getSocket().getInetAddress().getHostAddress())) // Client already connected, restart Communication
 			{
-				return false; // Client already connected
+				/*comms[i].close();
+				comms[i] = new Communication(this, client, i);
+				clientConnEvents.add(i);
+				return true;*/
+				return false;
 			}
 		}
 
@@ -155,16 +160,11 @@ public class Network {
 			return false;
 
 		comms[clientID].close();
-		try {
-			comms[clientID].getSocket().close();
-		} catch (IOException e) {
-			// Do nothing
-		}
 		comms[clientID] = null;
 		numClients--;
 		return true;
 	}
-
+	
 	public void startConnecting()
 	{
 		con.start();
@@ -183,8 +183,9 @@ public class Network {
 			return clientConnEvents.poll();
 	}
 	
-	public String pollClientCommQueue(Integer clientID)
+	public Message pollClientCommQueue()
 	{
+		int clientID = 0;
 		String body = null;
 		if (!clientCommEvents.isEmpty())
 		{
@@ -203,16 +204,19 @@ public class Network {
 					comms[i].resetHeartbeat();
 					clientID = i;
 					body = q.poll();
+					break;
 				}
 			}
 		}
 		if (body == null) return null;
 		
+		Message msg = new Message(clientID, body);
 		Scanner sc = new Scanner(body);
 		Game.ProtocolCmd cmd = Message.readCmd(sc);
+		sc.close();
 		if (cmd.equals(Game.ProtocolCmd.PING))
 			send(new Message(clientID, Game.ProtocolCmd.PONG.ordinal()));
-		return body;
+		return msg;
 	}
 
 	public boolean isClientConnected(int clientID) {

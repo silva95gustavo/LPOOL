@@ -28,7 +28,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		this.match = match;
 		match.getNetwork().addMsgObserver(this);
 		match.sendStateToClients();
-		attemptedPosition = match.getCueBall().getPosition();
+		attemptedPosition = new Vector2(Table.width / 2, Table.height / 2);
 		if (match.getCueBall().isOnTable())
 		{
 			match.getCueBall().setToBeDeleted();
@@ -44,8 +44,6 @@ public class CueBallInHand implements State<Match>, Observer{
 		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
 		if (cmd == null) return;
-		if (cmd == Game.ProtocolCmd.MOVECB || cmd == Game.ProtocolCmd.PLACECB)
-		System.out.println("Received BIH response: " + cmd + " " + msg.body);
 		switch (cmd)
 		{
 		case MOVECB: // x-pos[0, 1] y-pos[0, 1]
@@ -58,6 +56,7 @@ public class CueBallInHand implements State<Match>, Observer{
 			if (!sc.hasNextFloat())
 				break;
 			float yPos = sc.nextFloat();
+			System.out.println("Updating attempted position to: " + attemptedPosition);
 			attemptedPosition = new Vector2(xPos, yPos);
 			validPosition = isPositionValid(attemptedPosition);
 			if (cmd.equals(Game.ProtocolCmd.PLACECB) && validPosition)
