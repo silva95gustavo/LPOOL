@@ -26,8 +26,10 @@ public class MainScreenActivity extends ActionBarActivity {
 
     private String server_ip;
     private int server_port;
+    private String username;
     private EditText server_ip_text;
     private EditText server_port_text;
+    private EditText username_text;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +37,10 @@ public class MainScreenActivity extends ActionBarActivity {
 
         server_ip = "";
         server_port = 0;
+        username = "";
         server_ip_text = (EditText) findViewById(R.id.ipField);
         server_port_text = (EditText) findViewById(R.id.portField);
+        username_text = (EditText) findViewById(R.id.playerNameField);
         updateLabels();
 
         server_ip_text.addTextChangedListener(new TextWatcher() {
@@ -66,6 +70,21 @@ public class MainScreenActivity extends ActionBarActivity {
                     server_port = Integer.parseInt(server_port_text.getText().toString());
             }
         });
+
+        username_text.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                if(username_text.getText() != null && !username_text.getText().equals("") )
+                    username = username_text.getText().toString();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(username_text.getText() != null && !username_text.getText().equals("") )
+                    username = username_text.getText().toString();
+            }
+        });
     }
 
     private void updateLabels() {
@@ -75,6 +94,9 @@ public class MainScreenActivity extends ActionBarActivity {
         server_port_text = (EditText) findViewById(R.id.portField);
         if(server_port_text != null && server_port != 0)
             server_port_text.setText("" + server_port);
+        username_text = (EditText) findViewById(R.id.playerNameField);
+        if(username_text != null && username != null)
+            username_text.setText(username);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,6 +113,7 @@ public class MainScreenActivity extends ActionBarActivity {
             Bundle params = new Bundle();
             params.putInt("port", server_port);
             params.putString("ip", server_ip);
+            params.putString("name", username);
             intent.putExtras(params);
             startActivity(intent);
         } else
