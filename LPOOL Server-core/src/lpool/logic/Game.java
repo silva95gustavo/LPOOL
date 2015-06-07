@@ -22,7 +22,7 @@ public class Game implements Observer {
 		FIRE, // force[0, 1] x-spin[-1, 1] y-spin[-1, 1]
 		PING,
 		PONG,
-		JOIN,
+		JOIN, // name
 		QUIT,
 		KICK,
 		MOVECB, // x-pos[0, 1] y-pos[0, 1]
