@@ -14,6 +14,11 @@ import java.util.concurrent.TimeoutException;
 import javafx.concurrent.Task;
 import lpool.logic.Game;
 
+/**
+ * Waits for the reception of the join command and tries to add the client after that.
+ * @author Gustavo
+ *
+ */
 public class JoinReceiver implements Runnable {
 	public static final long timeout = 5;
 	private Network n;

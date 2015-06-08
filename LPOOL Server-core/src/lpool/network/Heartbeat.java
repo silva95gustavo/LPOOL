@@ -8,6 +8,11 @@ import lpool.logic.Game;
 
 import com.badlogic.gdx.utils.Timer;
 
+/**
+ * Should be run periodically to make sure the client stays connected.
+ * @author Gustavo
+ *
+ */
 public class Heartbeat extends Timer.Task implements Observer{
 
 	public static final float timeout = 30;

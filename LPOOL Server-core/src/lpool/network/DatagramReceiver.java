@@ -5,6 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Receives data via UDP.
+ * @author Gustavo
+ *
+ */
 public class DatagramReceiver extends Thread{
 	private DatagramSocket UDPServerSocket;
 	private ConcurrentLinkedQueue<DatagramPacket> UDPreceived;

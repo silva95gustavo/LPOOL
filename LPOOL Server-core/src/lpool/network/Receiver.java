@@ -8,6 +8,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import lpool.logic.Game;
 
+/**
+ * Responsible for listening for messages in a client socket.
+ * @author Gustavo
+ *
+ */
 public class Receiver extends Thread {
 	private Socket s;
 	private ConcurrentLinkedQueue<String> clientCommEvents;

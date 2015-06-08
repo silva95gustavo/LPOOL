@@ -8,6 +8,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.badlogic.gdx.utils.Timer;
 
+/**
+ * Class responsible for handling a communication with a client, making sure it stays alive and managing the {@link Receiver} and {@link Sender}.
+ * @author Gustavo
+ *
+ */
 public class Communication {
 	private Socket s;
 	private Receiver rec;
@@ -20,6 +25,12 @@ public class Communication {
 
 	private boolean alive;
 
+	/**
+	 * Constructor.
+	 * @param network The network this communication is associated to.
+	 * @param s The socket this communication is associated to.
+	 * @param clientID The client this communication is associated to.
+	 */
 	public Communication(Network network, Socket s, int clientID) {
 		System.out.println("Creating communication...");
 		this.alive = true;
@@ -46,6 +57,10 @@ public class Communication {
 		return s;
 	}
 
+	/**
+	 * Closes the communication.
+	 * The socket is closed 1 second later to leave time for pending messages to be read.
+	 */
 	public void close()
 	{
 		System.out.println("Closing communication");
@@ -55,6 +70,10 @@ public class Communication {
 		Timer.schedule(new SocketCloseTask(s), 1000);
 	}
 
+	/**
+	 * 
+	 * @return True if the connection is closed, false otherwise.
+	 */
 	public boolean isConnClosed()
 	{
 		if (rec.finished)
@@ -70,27 +89,38 @@ public class Communication {
 		return true;
 	}
 
-	public ConcurrentLinkedQueue<String> getClientCommEvents()
+	/**
+	 * 
+	 * @return A queue with the messages received.
+	 */
+	ConcurrentLinkedQueue<String> getClientCommEvents()
 	{
 		return clientCommEvents;
 	}
 
-	public void send(String msg)
+	/**
+	 * Sends a message to this client.
+	 * @param msg The message to be sent.
+	 */
+	void send(String msg)
 	{
 		toBeSent.add(msg);
 	}
 
-	public void resetHeartbeat()
+	/**
+	 * Resets the {@link AliveKeeper}.
+	 */
+	void resetHeartbeat()
 	{
 		ak.reset();
 	}
 
-	public void setAlive(boolean alive)
+	void setAlive(boolean alive)
 	{
 		this.alive = alive;
 	}
 
-	public int getClientID()
+	int getClientID()
 	{
 		return clientID;
 	}

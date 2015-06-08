@@ -20,6 +20,11 @@ import javafx.concurrent.Task;
 import lpool.logic.Game;
 import lpool.logic.match.CueBallInHand;
 
+/**
+ * Responsible for handling all network connections of the game.
+ * @author Gustavo
+ *
+ */
 public class Network {
 	public final int maxClients;
 	public static final int port = 6900;

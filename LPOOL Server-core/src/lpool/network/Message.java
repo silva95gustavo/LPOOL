@@ -5,10 +5,20 @@ import java.util.Scanner;
 
 import lpool.logic.Game.ProtocolCmd;
 
+/**
+ * Represents a network message.
+ * @author Gustavo
+ *
+ */
 public class Message {
 	public int clientID;
 	public final String body;
 	
+	/**
+	 * Constructor.
+	 * @param clientID The ID of the client.
+	 * @param objects The message body.
+	 */
 	public Message(int clientID, Object... objects)
 	{
 		this.clientID = clientID;
@@ -20,6 +30,11 @@ public class Message {
 		this.body = s.substring(0, s.length() - 1);
 	}
 	
+	/**
+	 * Extracts the command from a scanner.
+	 * @param sc The scanner.
+	 * @return The extracted command.
+	 */
 	public static lpool.logic.Game.ProtocolCmd readCmd(Scanner sc)
 	{
 		sc.useLocale(Locale.US);

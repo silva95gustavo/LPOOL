@@ -9,6 +9,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import lpool.logic.Game;
 
+/**
+ * Sends messages to a client socket.
+ * @author Gustavo
+ *
+ */
 public class Sender extends Thread {
 	private Socket s;
 	private LinkedBlockingQueue<String> toBeSent;

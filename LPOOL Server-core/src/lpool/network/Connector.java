@@ -6,6 +6,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Class responsible for establishing a new connection with a client.
+ * @author Gustavo
+ *
+ */
 public class Connector extends Thread {
 	private ServerSocket serverSocket;
 	public ConcurrentLinkedQueue<Socket> clientSockets;
