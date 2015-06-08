@@ -127,7 +127,7 @@ public class MatchScene implements Screen, Observer{
 		this.game = game;
 		this.GdxGame = GdxGame;
 		game.startMatch();
-		game.getMatch().addColisionObserver(this);
+		game.getMatch().addCollisionObserver(this);
 	}
 
 	@Override

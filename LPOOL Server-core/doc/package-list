@@ -1,4 +1,10 @@
+lpool.gui
+lpool.gui.assets
+lpool.gui.zxing
+lpool.logger
 lpool.logic
 lpool.logic.ball
 lpool.logic.match
 lpool.logic.state
+lpool.network
+lpool.test

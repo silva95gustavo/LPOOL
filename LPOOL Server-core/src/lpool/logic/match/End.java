@@ -5,6 +5,11 @@ import lpool.logic.state.State;
 import lpool.network.Message;
 
 public class End implements State<Match> {
+	/**
+	 * Reason why the match ended.
+	 * @author Gustavo
+	 *
+	 */
 	public enum Reason
 	{
 		BLACK_BALL_SCORED_AS_LAST,
@@ -37,10 +42,18 @@ public class End implements State<Match> {
 		System.out.println("I'm ended");
 	}
 
+	/**
+	 * 
+	 * @return The winner of the match.
+	 */
 	public int getWinner() {
 		return winner;
 	}
 
+	/**
+	 * 
+	 * @return The reason why the match ended.
+	 */
 	public Reason getReason() {
 		return reason;
 	}
