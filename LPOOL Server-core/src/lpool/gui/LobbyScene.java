@@ -121,7 +121,7 @@ public class LobbyScene implements Screen, Observer {
 		renderPlayerStatus(batch);
 		renderQRCodes(batch);
 
-		if (player1 || player2)
+		if (player1 && player2)
 		{
 			if (readyTime <= 0)
 				GdxGame.setScreen(new MatchScene(game, GdxGame, width, height));
