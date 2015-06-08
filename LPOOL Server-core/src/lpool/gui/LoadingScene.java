@@ -72,18 +72,17 @@ public class LoadingScene implements Screen {
 	@Override
 	public void dispose() {
 		manager.dispose();
+		batch.dispose();
+		font.dispose();
+		logo.dispose();
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -131,14 +130,10 @@ public class LoadingScene implements Screen {
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

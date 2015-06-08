@@ -145,7 +145,7 @@ public class MatchScene implements Screen, Observer{
 		if (currentState instanceof FreezeTime)
 		{
 			if (dialogMessage == null)
-				dialogMessage = new DialogMessage(batch, "LPOOL", "A new match is about to begin...", FreezeTime.freezeTime - 2 * DialogMessage.animTime, -tableMargin, -tableMargin, worldWidth, worldHeight);
+				dialogMessage = new DialogMessage(batch, "LPOOL", "A new match is about to begin... " + m.getPlayerName(m.getCurrentPlayer()) + " starts.", FreezeTime.freezeTime - 2 * DialogMessage.animTime, -tableMargin, -tableMargin, worldWidth, worldHeight);
 			updateEnvironment();
 			updateBatch();
 			if (!dialogMessage.update(delta))
@@ -156,11 +156,11 @@ public class MatchScene implements Screen, Observer{
 			State nextState = ((TransitionState)currentState).getNextState();
 			if (dialogMessage == null)
 				if (nextState instanceof Play)
-					dialogMessage = new DialogMessage(batch, "Shot " + (m.getPlayNum() + 1), "It's player " + (m.getCurrentPlayer() + 1) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+					dialogMessage = new DialogMessage(batch, "Shot " + (m.getPlayNum() + 1), "It's " + m.getPlayerName(m.getCurrentPlayer()) + "'s turn.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else if (nextState instanceof End)
-					dialogMessage = new DialogMessage(batch, "Player " + (((End)nextState).getWinner() + 1) + " won!", reasonToMessage(((End)nextState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+					dialogMessage = new DialogMessage(batch, m.getPlayerName(((End)nextState).getWinner()) + " won!", reasonToMessage(((End)nextState).getReason()), 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 				else if (nextState instanceof CueBallInHand)
-					dialogMessage = new DialogMessage(batch, "Foul", "Player " + (m.getCurrentPlayer() + 1) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
+					dialogMessage = new DialogMessage(batch, "Foul", m.getPlayerName(m.getCurrentPlayer()) + " has the ball in his hand.", 4, -tableMargin, -tableMargin, worldWidth, worldHeight);
 			updateEnvironment();
 			updateBatch();
 			if (dialogMessage != null && !dialogMessage.update(delta))
@@ -387,14 +387,10 @@ public class MatchScene implements Screen, Observer{
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -404,14 +400,10 @@ public class MatchScene implements Screen, Observer{
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

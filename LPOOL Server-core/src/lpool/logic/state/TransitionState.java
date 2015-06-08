@@ -41,8 +41,6 @@ public class TransitionState<E> implements State<E> {
 
 	@Override
 	public void exit(E owner) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public float getTime()
