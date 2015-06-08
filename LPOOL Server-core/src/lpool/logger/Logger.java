@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Logger {
 	
@@ -17,13 +18,14 @@ public class Logger {
 	public static final String event_header = "Event";
 	public static final String separator = " || ";
 	private static final String initialized_event = "Log initialized";
+	private static final String log_print_start = "Previous events on current date:";
 	
 	private String logFileName;
 	private Boolean validFile = true;
 	private File logfile;
 	
 	public Logger() {
-		String date = new SimpleDateFormat("dd-MM-yy-HH-mm-ss").format(new Date());
+		String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		logFileName = default_path + date + log_extension;
 		validFile = initialize();
 		if(!validFile) {
@@ -83,9 +85,28 @@ public class Logger {
 	public String toString() {
 		String result = "";
 		
-		
+		try {
+			Scanner scanner = new Scanner(logfile);
+			if(scanner.hasNextLine())
+				scanner.nextLine();
+			
+			if(scanner.hasNextLine()) {
+				result += log_print_start + '\n';
+			}
+			
+			while (scanner.hasNextLine()) {
+				result += scanner.nextLine() + '\n';
+			}
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			   e.printStackTrace();
+		}
 		
 		return result;
+	}
+	
+	public void print() {
+		System.out.println(toString());
 	}
 	
 }
