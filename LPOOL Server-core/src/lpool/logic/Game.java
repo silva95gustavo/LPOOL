@@ -53,7 +53,7 @@ public class Game implements Observer {
 		 * Must be sent by the client in order to join the server.
 		 * Arguments: name(String).
 		 */
-		JOIN, // name
+		JOIN,
 		
 		/**
 		 * Sent by the client when he wants to leave the game.
@@ -69,16 +69,17 @@ public class Game implements Observer {
 		 * Sent by the client to move the cue ball when it is being repositioned.
 		 * Arguments: x-pos(float(0 to 1)), y-pos(float(0 to 1)).
 		 */
-		MOVECB, // x-pos[0, 1] y-pos[0, 1]
+		MOVECB,
 		
 		/**
 		 * Sent by the client to place the cue ball when it is being repositioned.
 		 * Arguments: x-pos(float(0 to 1)), y-pos(float(0 to 1)).
 		 */
-		PLACECB, // x-pos[0, 1] y-pos[0, 1]
+		PLACECB,
 		
 		/**
 		 * Sent by the server to notify the player that it's his turn to make a shot.
+		 * Arguments: target({@link lpool.logic.match.Match.PlayingForBall})
 		 */
 		PLAY,
 		
