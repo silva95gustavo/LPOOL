@@ -38,6 +38,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Match implements Observer {
 	public static int ballsPerPlayer = 7;
 	public static float physicsScaleFactor = 10;
+	public static int numPlayers = 2;
 
 	private lpool.logic.state.Context<Match> stateMachine;
 	private Network network;
@@ -65,11 +66,10 @@ public class Match implements Observer {
 		stateMachine = new Context<Match>(this, new FreezeTime());
 		this.network = network;
 		network.addConnObserver(this);
-		this.ballsPlayer = new Ball.Type[2];
+		this.ballsPlayer = new Ball.Type[numPlayers];
 		this.playNum = 0;
 		Random r = new Random();
-		this.currentPlayer = r.nextInt(2);
-		this.currentPlayer = 0; // TODO remove this line
+		this.currentPlayer = r.nextInt(numPlayers);
 
 		gravity = new Vector2(0, 0);
 		world = new World(gravity, false);
@@ -80,7 +80,7 @@ public class Match implements Observer {
 
 		ballsSolid = new Ball[ballsPerPlayer];
 		ballsStripe = new Ball[ballsPerPlayer];
-		balls = new Ball[ballsPerPlayer * 2 + 2];
+		balls = new Ball[ballsPerPlayer * numPlayers + 2];
 		this.playerNames = playerNames;
 
 		createBalls();

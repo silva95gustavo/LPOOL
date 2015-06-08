@@ -46,7 +46,5 @@ public class End implements State<Match> {
 
 	@Override
 	public void exit(Match owner) {
-		// TODO Auto-generated method stub
-		
 	}
 }

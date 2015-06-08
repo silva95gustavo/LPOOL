@@ -5,12 +5,14 @@ public class TransitionState<E> implements State<E> {
 	private State<E> previous;
 	private State<E> next;
 	protected float time;
+	public Object data;
 	
 	public TransitionState(Context<E> context, State<E> previous, State<E> next) {
 		super();
 		this.context = context;
 		this.previous = previous;
 		this.next = next;
+		this.time = 0;
 	}
 
 	@Override
@@ -19,6 +21,7 @@ public class TransitionState<E> implements State<E> {
 
 	@Override
 	public void update(E owner, float dt) {
+		time += dt;
 	}
 
 	public State<E> getPreviousState()
@@ -38,7 +41,10 @@ public class TransitionState<E> implements State<E> {
 
 	@Override
 	public void exit(E owner) {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	public float getTime()
+	{
+		return time;
 	}
 }

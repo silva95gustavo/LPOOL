@@ -14,6 +14,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Holds information about the table, its holes and the physics associated with both.
+ * @author Gustavo
+ *
+ */
 public class Table {
 	public static final short cat = 0x0002;
 	public static final float border = 0.125f * Match.physicsScaleFactor;
@@ -26,6 +31,10 @@ public class Table {
 	private Body body;
 	private Body[] holes = new Body[numHoles];
 
+	/**
+	 * Constructor
+	 * @param world The world this table should be added to.
+	 */
 	public Table(World world) {
 		BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("lpool.json"));
 
@@ -83,6 +92,11 @@ public class Table {
 		holes[number].setUserData(new BodyInfo(BodyInfo.Type.HOLE, number));
 	}
 
+	/**
+	 * 
+	 * @param holeID The hole whose position we want to obtain.
+	 * @return The position of the center of the hole.
+	 */
 	public static Vector2 getHolePos(int holeID)
 	{
 		switch (holeID)

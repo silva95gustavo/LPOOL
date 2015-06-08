@@ -12,10 +12,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameProject extends Game {	
-	
-	public static final String QR_IP_DIR = "./data/ip_qrcode.png";
+	public static final String DATA_DIR = "data/";
+	public static final String QR_IP_DIR = DATA_DIR;
+	public static final String QR_IP_FILENAME = "ip_qrcode.png";
 	public static final String QR_IP_TYPE = "png";
-	public static final String QR_ANDROID_APP_DIR = "./data/android_app_qrcode.png";
+	public static final String QR_ANDROID_APP_DIR = DATA_DIR;
+	public static final String QR_ANDROID_APP_FILENAME = "android_app_qrcode.png";
 	public static final String QR_ANDROID_APP_TYPE = "png";
 	public static final float blackgroundColorPeriod = 2;
 	
@@ -35,8 +37,8 @@ public class GameProject extends Game {
 			System.out.println("Unable to get IP address");
 		}
 
-		QRGenerator.generateFromStringToFile(ip_address + "\n" + Network.port, QR_IP_DIR, QR_IP_TYPE);
-		QRGenerator.generateFromStringToFile(Info.androidAppUrl, QR_ANDROID_APP_DIR, QR_ANDROID_APP_TYPE);
+		QRGenerator.generateFromStringToFile(ip_address + "\n" + Network.port, QR_IP_DIR, QR_IP_FILENAME, QR_IP_TYPE);
+		QRGenerator.generateFromStringToFile(Info.androidAppUrl, QR_ANDROID_APP_DIR, QR_ANDROID_APP_FILENAME, QR_ANDROID_APP_TYPE);
 
 		width = Gdx.graphics.getDesktopDisplayMode().width;
 		height = Gdx.graphics.getDesktopDisplayMode().height;

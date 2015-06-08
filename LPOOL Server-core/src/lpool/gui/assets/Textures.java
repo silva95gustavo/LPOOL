@@ -19,8 +19,8 @@ public class Textures { // Singleton
 		AssetManager am = Manager.getInstance().getAssetManager();
 		am.load("match/table.png", Texture.class);
 		am.load("match/table_border.png", Texture.class);
-		am.load(GameProject.QR_IP_DIR, Texture.class);
-		am.load(GameProject.QR_ANDROID_APP_DIR, Texture.class);
+		am.load(GameProject.QR_IP_DIR + GameProject.QR_IP_FILENAME, Texture.class);
+		am.load(GameProject.QR_ANDROID_APP_DIR + GameProject.QR_ANDROID_APP_FILENAME, Texture.class);
 		am.load("match/cue.png", Texture.class);
 		am.load("match/cue_ball_prediction.png", Texture.class);
 		am.load("match/cue_ball_prediction_blocked.png", Texture.class);
@@ -61,12 +61,12 @@ public class Textures { // Singleton
 	
 	public Texture getQRCode()
 	{
-		return Manager.getInstance().getAssetManager().get(GameProject.QR_IP_DIR);
+		return Manager.getInstance().getAssetManager().get(GameProject.QR_IP_DIR + GameProject.QR_IP_FILENAME);
 	}
 	
 	public Texture getAndroidAppQRCode()
 	{
-		return Manager.getInstance().getAssetManager().get(GameProject.QR_ANDROID_APP_DIR);
+		return Manager.getInstance().getAssetManager().get(GameProject.QR_ANDROID_APP_DIR + GameProject.QR_ANDROID_APP_FILENAME);
 	}
 	
 	public Texture getCue()

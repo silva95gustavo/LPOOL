@@ -8,6 +8,7 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
+import com.badlogic.gdx.Gdx;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -17,7 +18,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 public class QRGenerator {
 
-	public static boolean generateFromStringToFile(String text, String filepath, String filetype) {
+	public static boolean generateFromStringToFile(String text, String folder, String filename, String filetype) {
 		
 		int size = 125;
 		try {
@@ -44,16 +45,18 @@ public class QRGenerator {
 			}
 			
 			try {
-				File destFile = new File(filepath);
+				new File(folder).mkdirs();
+				File destFile = new File(Gdx.files.getLocalStoragePath() + folder + filename);
+
 				ImageIO.write(image, filetype, destFile);
 			} catch (Exception e) {
-				System.err.println("Unable to save generated QR code to specified file/filetype");
+				System.err.println("Unable to save generated QR code to specified file/filetype.");
 				e.printStackTrace();
 				return false;
 			}
 				
 		} catch (WriterException e) {
-			System.err.println("Unable to generate QR code");
+			System.err.println("Unable to generate QR code.");
 			e.printStackTrace();
 			return false;
 		}

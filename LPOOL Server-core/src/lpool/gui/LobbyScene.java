@@ -102,20 +102,14 @@ public class LobbyScene implements Screen, Observer {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -127,7 +121,7 @@ public class LobbyScene implements Screen, Observer {
 		renderPlayerStatus(batch);
 		renderQRCodes(batch);
 
-		if (player1 || player2) // TODO change to &&
+		if (player1 && player2)
 		{
 			if (readyTime <= 0)
 				GdxGame.setScreen(new MatchScene(game, GdxGame, width, height));
@@ -178,8 +172,19 @@ public class LobbyScene implements Screen, Observer {
 		batch.draw(AndroidAppQRCode, -200, -900, 400, 400);
 	}
 	
+	public void renderPlayerNames(Batch batch)
+	{
+		float displacement = 680;
+		BitmapFont font = Fonts.getInstance().getBritannicBold72();
+		font.setColor(Color.WHITE);
+		font.drawMultiLine(batch, game.getPlayerName(0), -displacement, -400, 0, BitmapFont.HAlignment.CENTER);
+		font.drawMultiLine(batch, game.getPlayerName(1), displacement, -400, 0, BitmapFont.HAlignment.CENTER);
+	}
+	
 	public void renderPlayerStatus(Batch batch)
 	{
+		renderPlayerNames(batch);
+		
 		Texture connected = Textures.getInstance().getConnected();
 		Texture disconnected = Textures.getInstance().getDisconnected();
 
@@ -215,13 +220,9 @@ public class LobbyScene implements Screen, Observer {
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
 	}
 }
