@@ -69,15 +69,9 @@ public class ControllerActivity extends Activity implements Receiver{
             finish();
         }
 
-        connector = new Connector(server_ip, server_port);
+        String connect_message = "" + Connector.ProtocolCmd.JOIN.ordinal() + " " + username + '\n';
+        connector = new Connector(server_ip, server_port, connect_message);
         connector.addReceiver(this);
-
-        while(!connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + username + " " + '\n')) {
-            try {
-                Thread.sleep(100);
-            }
-            catch (InterruptedException e) {e.printStackTrace();}
-        }
 
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
     }

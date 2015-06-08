@@ -67,6 +67,7 @@ public class Connector {
     private Boolean running = true;
 
     private ArrayList<Receiver> receivers;
+    private String firstMessage;
 
     public Connector(String ip, int port) {
         this.serverIP = ip;
@@ -76,6 +77,11 @@ public class Connector {
         receivers = new ArrayList<Receiver>();
         initializeClientThread(); // Initializes receiver/heartbeat thread
         System.out.println("Connecting to " + serverIP + " " + serverPort);
+    }
+
+    public Connector(String ip, int port, String firstMessage) {
+        this(ip, port);
+        this.firstMessage = firstMessage;
     }
 
     public Boolean sendUDPMessage(String message) {
@@ -141,7 +147,6 @@ public class Connector {
 
     class ClientThread implements Runnable {
         public void run() {
-            checkerThread();
             try {
                 System.out.println("Part 1");
                 InetAddress serverAddr = InetAddress.getByName(serverIP);
@@ -160,6 +165,7 @@ public class Connector {
                 System.out.println("Error 2");
                 e1.printStackTrace();
             }
+            checkerThread();
         }
     }
 
@@ -168,6 +174,11 @@ public class Connector {
         public void run() {
             System.out.println("Receiver");
             startHeartBeat();
+
+            if(firstMessage != null) {
+                sendTCPMessage(firstMessage);
+            }
+
             if(connectionChecker != null) {
                 connectionChecker.interrupt();
             }
