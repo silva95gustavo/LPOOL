@@ -230,4 +230,12 @@ public class Game implements Observer {
 		
 		match = null;
 	}
+	
+	public String getPlayerName(int playerID)
+	{
+		if (playerID >= 0 && playerID < playerNames.length)
+			return playerNames[playerID];
+		else
+			return null;
+	}
 }
