@@ -13,8 +13,8 @@ import lpool.network.ObservableConnection;
 import lpool.network.ObservableMessage;
 
 public class Game implements Observer {
-	public static final int numPlayers = Match.numPlayers;
-	public static final int maxNameLength = 16;
+	public static final int numPlayers = Match.numPlayers; /** Number of players. **/
+	public static final int maxNameLength = 10; /** Maximum length for the user-defined names. **/
 	private Network network;
 	private Match match;
 	private String playerNames[];
@@ -150,7 +150,6 @@ public class Game implements Observer {
 	
 	protected void commEvent(Message msg)
 	{
-		System.out.println("message: " + msg.body);
 		if (match != null) return; // Ignore if the match has already started
 		Scanner sc = new Scanner(msg.body);
 		ProtocolCmd cmd = Message.readCmd(sc);
@@ -206,15 +205,7 @@ public class Game implements Observer {
 	 */
 	public void startMatch()
 	{
-		String names = "";
-		for(int i = 0; i < playerNames.length; i++) {
-			names += playerNames[i];
-			if(i < playerNames.length - 1) {
-				names += ", ";
-			}
-		}
-		logger.log("Game started with players " + names);
-		match = new Match(network, playerNames);
+		match = new Match(network, playerNames, logger);
 	}
 	
 	/**
@@ -222,13 +213,6 @@ public class Game implements Observer {
 	 */
 	public void endMatch()
 	{
-		if((match != null) && (match.getStateMachine().getCurrentState() instanceof End)) {
-				int index = ((End) match.getStateMachine().getCurrentState()).getWinner();
-				logger.log("Game ended, won by " + playerNames[index]);
-		}
-		else 
-			logger.log("Game ended");
-		
 		match = null;
 	}
 	

@@ -34,9 +34,7 @@ public class BallsMoving implements State<Match>{
 	{
 		if (matchEnded(match))
 		{
-			Integer winner = new Integer(0);
-			End.Reason reason = whyMatchEnded(match, winner);
-			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new End(reason, winner)));
+			match.getStateMachine().changeState(new TransitionState<Match>(match.getStateMachine(), this, new End(whyMatchEnded(match), whoWon(match))));
 			return;
 		}
 		match.incrementPlayNum();
@@ -61,19 +59,21 @@ public class BallsMoving implements State<Match>{
 	{
 		return !match.getBlackBall().isOnTable();
 	}
-
-	private End.Reason whyMatchEnded(Match match, Integer winner)
+	
+	private int whoWon(Match match)
 	{
 		if (match.isBallInHand())
-		{
-			winner = (match.getCurrentPlayer() == 0 ? 1 : 0);
-			return End.Reason.BLACK_BALL_SCORED_ACCIDENTALLY;
-		}
+			return match.getCurrentPlayer() == 0 ? 1 : 0;
 		else
-		{
-			winner = match.getCurrentPlayer();
+			return match.getCurrentPlayer();
+	}
+
+	private End.Reason whyMatchEnded(Match match)
+	{
+		if (match.isBallInHand())
+			return End.Reason.BLACK_BALL_SCORED_ACCIDENTALLY;
+		else
 			return End.Reason.BLACK_BALL_SCORED_AS_LAST;
-		}
 	}
 
 	@Override

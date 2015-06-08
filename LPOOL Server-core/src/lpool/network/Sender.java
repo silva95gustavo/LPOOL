@@ -28,11 +28,17 @@ public class Sender extends Thread {
 			{
 				String msg = toBeSent.take();
 				Scanner sc = new Scanner(msg);
-				System.out.println("Sending msg " + msg);
+				System.out.println("Sending msg " + msg + ", cmd: " + Message.readCmd(sc));
+				sc.close();
+				sc = new Scanner(msg);
 				PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(s.getOutputStream())), true);
 				pw.println(msg);
 				if (Message.readCmd(sc) == Game.ProtocolCmd.KICK)
 					stopMe();
+				sc.close();
+				sc = new Scanner(msg);
+				if (Message.readCmd(sc) == Game.ProtocolCmd.PONG)
+					System.out.println("-------Sender has sent PONG ------");
 				sc.close();
 			}
 			catch (InterruptedException e) {

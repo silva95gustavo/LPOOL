@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import lpool.gui.assets.Sounds;
+import lpool.logger.Logger;
 import lpool.logic.BodyInfo;
 import lpool.logic.Game;
 import lpool.logic.ObservableCollision;
@@ -34,11 +35,13 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
 
 public class Match implements Observer {
 	public static int ballsPerPlayer = 7;
 	public static float physicsScaleFactor = 10;
 	public static int numPlayers = 2;
+	public static float stateSendingFrequency = 2;
 
 	private lpool.logic.state.Context<Match> stateMachine;
 	private Network network;
@@ -59,7 +62,9 @@ public class Match implements Observer {
 	private int playNum;
 	private int currentPlayer;
 	private PlayValidator playValidator;
-	
+	private float lastStateSendTime;
+	private Logger logger;
+
 	public enum PlayingForBall
 	{
 		NONE,
@@ -70,7 +75,7 @@ public class Match implements Observer {
 
 	private ObservableCollision observableCollision;
 
-	public Match(Network network, String[] playerNames) {
+	public Match(Network network, String[] playerNames, Logger logger) {
 		stateMachine = new Context<Match>(this, new FreezeTime());
 		this.network = network;
 		network.addConnObserver(this);
@@ -94,6 +99,27 @@ public class Match implements Observer {
 		createBalls();
 
 		Table table = new Table(world);
+		this.lastStateSendTime = 0;
+		this.logger = logger;
+		logStart();
+	}
+
+	void logStart()
+	{
+		String names = "";
+		for(int i = 0; i < playerNames.length; i++) {
+			names += playerNames[i];
+			if(i < playerNames.length - 1) {
+				names += ", ";
+			}
+		}
+		logger.log("Game started with players " + names);
+	}
+
+	void logEnd(int winner)
+	{
+		if (winner < 0 || winner >= numPlayers) return;
+		logger.log("Game ended, won by " + playerNames[winner]);
 	}
 
 	private Ball createBall(World world, int posID, int number)
@@ -151,6 +177,12 @@ public class Match implements Observer {
 
 	public void tick(float dt)
 	{
+		this.lastStateSendTime += dt;
+		if (this.lastStateSendTime >= stateSendingFrequency)
+		{
+			sendStateToClients();
+			this.lastStateSendTime = 0;
+		}
 		stateMachine.update(dt);
 	}
 
@@ -397,7 +429,7 @@ public class Match implements Observer {
 	public boolean isBallInHand() {
 		return !playValidator.isValid();
 	}
-	
+
 	public boolean currentPlayerPlaysAgain()
 	{
 		return playValidator.playsAgain();
@@ -487,17 +519,17 @@ public class Match implements Observer {
 		currentPlayer += 1;
 		currentPlayer %= Game.numPlayers;
 	}
-	
+
 	public void deleteCollisionObserver(Observer obs)
 	{
 		observableCollision.deleteObserver(obs);
 	}
-	
+
 	public void respawnCueBall(Vector2 pos)
 	{
 		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
 	}
-	
+
 	public PlayingForBall getPlayingForBall(int playerID)
 	{
 		if (playerID < 0 || playerID >= Match.numPlayers) return null;
@@ -511,7 +543,7 @@ public class Match implements Observer {
 			return PlayingForBall.STRIPE;
 		return null;
 	}
-	
+
 	boolean isPlayingForBlack(int playerID)
 	{
 		if (playerID < 0 || playerID >= Match.numPlayers) return false;
@@ -525,7 +557,7 @@ public class Match implements Observer {
 		}
 		return true;
 	}
-	
+
 	public String getPlayerName(int playerID)
 	{
 		if (playerID >= 0 && playerID < Game.numPlayers)
