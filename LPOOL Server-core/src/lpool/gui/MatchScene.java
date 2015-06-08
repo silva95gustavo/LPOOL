@@ -121,6 +121,7 @@ public class MatchScene implements Screen, Observer{
 		cueBallPredictionBlocked.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		for (int i = 0; i < 2 * Match.ballsPerPlayer + 2; i++)
 			Textures.getInstance().getBallIcon(i).setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		Textures.getInstance().getLogo().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		cue = new Sprite(Textures.getInstance().getCue());
 		cue.setSize(1.5f, 0.04f);
 		this.game = game;
@@ -457,7 +458,8 @@ public class MatchScene implements Screen, Observer{
 
 	private void ballTableCollisionHandler(int ballNumber, Vector2 contactPoint)
 	{
-		// TODO sound
+		Ball ball = game.getMatch().getBalls()[ballNumber];
+		Sounds.getInstance().getBallHittingBorder().play(ball.getVelocity().len() / 40, 1, 2 * (contactPoint.x - Table.width / 2) / Table.width);
 	}
 
 	private void ballHoleCollisionHandler()

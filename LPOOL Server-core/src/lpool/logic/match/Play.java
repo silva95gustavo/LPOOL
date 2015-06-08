@@ -29,7 +29,7 @@ public class Play implements State<Match>, Observer{
 		lastAngle = (float)Math.PI;
 		lastAngleTime = System.currentTimeMillis();
 		match.getNetwork().addMsgObserver(this);
-		match.setPlayValidator(new PlayValidator(match.isOpeningShot(), match.playerBallsDefined(), match.getPlayerBallsType(match.getCurrentPlayer()), match.getBalls())); // TODO opening shot
+		match.setPlayValidator(new PlayValidator(match.isOpeningShot(), match.playerBallsDefined(), match.getPlayerBallsType(match.getCurrentPlayer()), match.getBalls()));
 		match.sendStateToClients();
 	}
 
