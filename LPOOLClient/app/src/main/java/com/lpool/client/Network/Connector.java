@@ -291,8 +291,10 @@ public class Connector {
                 e.printStackTrace();
             }
 
-            if(!gotPONG)
+            if(!gotPONG) {
+                System.out.println("TIMEOUT");
                 stopReceivers();
+            }
             else {
                 timer.schedule(new HeartBeatTask(), HEARTBEAT_INTERVAL * 1000);
             }
@@ -301,6 +303,7 @@ public class Connector {
     }
 
     private void stopReceivers() {
+        System.out.println("Stopping receivers");
         for(int i = 0; i < receivers.size(); i++) {
             if(receivers.get(i) != null)
                 receivers.get(i).disconnect();

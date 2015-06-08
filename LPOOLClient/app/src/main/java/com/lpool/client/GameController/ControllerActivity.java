@@ -263,6 +263,13 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
     public void disconnect() {
+
+        try {
+            throw new Exception();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
         System.out.println("Controller disconnected");
         stop();
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
