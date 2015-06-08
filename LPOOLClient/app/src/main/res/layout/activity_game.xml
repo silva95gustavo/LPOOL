@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/lose_black_accident"
+                    android:text="@string/disconnected_quit"
                     android:id="@+id/end_event_description"
                     android:layout_gravity="center"
                     android:gravity="center" />

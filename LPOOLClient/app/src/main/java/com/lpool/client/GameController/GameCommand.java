@@ -46,12 +46,12 @@ public class GameCommand {
                 arguments.add(ball_type);
                 break;
             case END:
-                if (!sc.hasNextBoolean()) {
+                if (!sc.hasNextInt()) {
                     sc.close();
                     cmd = null;
                     return;
                 }
-                Boolean win = sc.nextBoolean();
+                Boolean win = (sc.nextInt() != 0) ? true : false;
                 arguments.add(win);
 
                 if (!sc.hasNextInt()) {

@@ -78,7 +78,7 @@ public class ControllerActivity extends Activity implements Receiver{
     public void getMessage(String message) {
         System.out.println("Got message " + message);
         GameCommand cmd = new GameCommand(message);
-        if(cmd.getCmd() == null || terminating) return;
+        if((cmd.getCmd() == null) || terminating) return;
 
         System.out.println("Received command " + cmd.getCmd());
 
@@ -123,11 +123,6 @@ public class ControllerActivity extends Activity implements Receiver{
     private void game_ended(GameCommand cmd) {
         stop();
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
-        runOnUiThread(new Runnable() {
-            public void run() {
-                end_layout.setVisibility(View.VISIBLE);
-            }
-        });
         final ImageView img = (ImageView) findViewById(R.id.picture_view);
         final TextView txt = (TextView) findViewById(R.id.end_event_description);
         final Activity act = this;
@@ -137,8 +132,6 @@ public class ControllerActivity extends Activity implements Receiver{
                 return true;
             }
         });
-
-        // TODO end screen
 
         if(cmd.getCmd() == Connector.ProtocolCmd.KICK) {
             runOnUiThread(new Runnable() {
@@ -204,6 +197,12 @@ public class ControllerActivity extends Activity implements Receiver{
                     break;
             }
         }
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                end_layout.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public GameState getCurrentState() {
@@ -267,12 +266,6 @@ public class ControllerActivity extends Activity implements Receiver{
 
     public void disconnect() {
 
-        try {
-            throw new Exception();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
         System.out.println("Controller disconnected");
         stop();
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
@@ -293,14 +286,14 @@ public class ControllerActivity extends Activity implements Receiver{
             });
         }
 
-        runOnUiThread(new Runnable() {
+        /*runOnUiThread(new Runnable() {
             public void run() {
                 if(img != null)
                     img.setImageResource(R.mipmap.terminated);
                 if(txt != null)
                     txt.setText(getResources().getString(R.string.disconnected_quit));
             }
-        });
+        });*/
     }
 
     public void onBackPressed() {
@@ -318,7 +311,5 @@ public class ControllerActivity extends Activity implements Receiver{
                 })
                 .setNegativeButton("No", null)
                 .show();
-
-        //disconnect();
     }
 }
