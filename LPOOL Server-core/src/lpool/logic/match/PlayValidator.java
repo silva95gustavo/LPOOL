@@ -97,6 +97,8 @@ public class PlayValidator {
 
 	private boolean isPlayingForBlack()
 	{
+		if (!playerBallsDefined)
+			return false;
 		for (int i = 0; i < balls.length; i++)
 		{
 			if (balls[i].isOnTable() && balls[i].getType().equals(currentPlayerBalls))

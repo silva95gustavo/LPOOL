@@ -14,6 +14,11 @@ import lpool.logic.ball.Ball;
 import lpool.logic.state.State;
 import lpool.network.Message;
 
+/**
+ * State representing the act of repositioning the cue ball when the other player commits a foul.
+ * @author Gustavo
+ *
+ */
 public class CueBallInHand implements State<Match>, Observer{
 	private Match match;
 	private boolean validPosition;
@@ -95,11 +100,19 @@ public class CueBallInHand implements State<Match>, Observer{
 	public void update(Match owner, float dt) {
 	}
 
+	/**
+	 * 
+	 * @return true if the current position doesn't overlap any other ball or hole, false otherwise.
+	 */
 	public boolean isValidPosition()
 	{
 		return validPosition;
 	}
 	
+	/**
+	 * 
+	 * @return the position that the player is choosing for the cue ball.
+	 */
 	public Vector2 getAttemptedPosition()
 	{
 		return attemptedPosition;
