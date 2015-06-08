@@ -6,12 +6,17 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Observer;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import javafx.concurrent.Task;
 import lpool.logic.Game;
 import lpool.logic.match.CueBallInHand;
 
@@ -77,7 +82,7 @@ public class Network {
 		{
 			Socket clientSocket = clientSockets.poll();
 			JoinReceiver jr = new JoinReceiver(this, clientSocket);
-			jr.run(); // TODO check for timeout in case the JoinReceiver receives nothing
+			jr.run();
 		}
 
 		for (int i = 0; i < maxClients; i++)
