@@ -178,7 +178,7 @@ public class Game implements Observer {
 	 * @param clientID The ID of the client whose default name to obtain.
 	 * @return A string containing the default player name if none has been specified by the client.
 	 */
-	public String defaultPlayerName(int clientID)
+	public static String defaultPlayerName(int clientID)
 	{
 		return new String("Player " + (clientID + 1));
 	}

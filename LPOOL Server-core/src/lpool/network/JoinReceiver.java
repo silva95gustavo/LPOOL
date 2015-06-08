@@ -52,6 +52,8 @@ public class JoinReceiver implements Runnable {
 									if (name.length() > Game.maxNameLength) {
 										name = name.substring(0, Game.maxNameLength);
 									}
+									if (name.equals("")) name = null;
+									System.out.println("name: " + name);
 								}
 								if (!n.addClient(s, name))
 								{
