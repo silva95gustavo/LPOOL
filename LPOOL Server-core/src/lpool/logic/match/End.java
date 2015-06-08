@@ -42,10 +42,18 @@ public class End implements State<Match> {
 		System.out.println("I'm ended");
 	}
 
+	/**
+	 * 
+	 * @return The winner of the match.
+	 */
 	public int getWinner() {
 		return winner;
 	}
 
+	/**
+	 * 
+	 * @return The reason why the match ended.
+	 */
 	public Reason getReason() {
 		return reason;
 	}

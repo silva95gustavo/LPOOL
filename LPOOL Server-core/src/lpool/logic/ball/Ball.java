@@ -43,14 +43,26 @@ public class Ball {
 	
 	private Queue<Body> ballsToBeDeleted;
 	
+	/**
+	 * The ball's type.
+	 * @author Gustavo
+	 *
+	 */
 	public enum Type
 	{
-		CUE,
-		SOLID,
-		BLACK,
-		STRIPE
+		CUE, /** Cue ball **/
+		SOLID, /** Solid ball (single color) **/
+		BLACK, /** Black ball **/
+		STRIPE /** Stripe ball (single color with a white stripe **/
 	}
 
+	/**
+	 * Constructor
+	 * @param world The world this ball should be added to.
+	 * @param position The position where to place this ball.
+	 * @param number The number of this ball.
+	 * @param ballsToBeDeleted A queue where to place the physics body of the ball to be deleted after the world time step ends.
+	 */
 	public Ball(World world, Vector2 position, int number, Queue<Body> ballsToBeDeleted) {
 		rotation = new Quaternion();
 		this.position = position;
@@ -89,10 +101,17 @@ public class Ball {
 		this.ballsToBeDeleted = ballsToBeDeleted;
 	}
 
+	/**
+	 * 
+	 * @return The number of this ball.
+	 */
 	public int getNumber() {
 		return number;
 	}
 	
+	/**
+	 * Updates the position of this ball according to its physical body.
+	 */
 	public void updatePosition()
 	{
 		if (body == null)
@@ -101,27 +120,47 @@ public class Ball {
 			this.position = body.getPosition().cpy();
 	}
 	
+	/**
+	 * Manually change the position of the ball (effect only visible when the ball has no physical body).
+	 * @param position The new position.
+	 */
 	public void setPosition(Vector2 position)
 	{
 		this.position = position;
 	}
 
+	/**
+	 * 
+	 * @return The ball's position.
+	 */
 	public Vector2 getPosition()
 	{
 		return position.cpy();
 	}
 
+	/**
+	 * 
+	 * @return The ball's rotation.
+	 */
 	public Quaternion getRotation()
 	{
 		return rotation.cpy();
 	}
 
+	/**
+	 * Changes the linear velocity of the physics of the ball.
+	 * @param The new velocity.
+	 */
 	public void setVelocity(Vector2 velocity)
 	{
 		if (body != null)
 			body.setLinearVelocity(velocity);
 	}
 	
+	/**
+	 * 
+	 * @return The ball's linear velocity.
+	 */
 	public Vector2 getVelocity()
 	{
 		if (body == null)
