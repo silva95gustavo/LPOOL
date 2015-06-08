@@ -89,8 +89,10 @@ public class Connector {
         if(!running)
             return false;
 
-        if (socket == null || datagramSocket == null)
+        if (socket == null || datagramSocket == null) {
+            System.out.println("UDP message not sent -> socket closed");
             return false;
+        }
         try {
             String data = message;
             byte[] msg = message.getBytes();
@@ -109,8 +111,10 @@ public class Connector {
         if(!running)
             return false;
 
-        if (socket == null)
+        if (socket == null) {
+            System.out.println("TCP message not sent -> socket closed");
             return false;
+        }
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
             pw.println(message);
@@ -151,11 +155,15 @@ public class Connector {
                 System.out.println("Part 1");
                 InetAddress serverAddr = InetAddress.getByName(serverIP);
                 System.out.println("Part 2");
-                if(socket == null)
+                if(socket == null) {
+                    System.out.println("Creating new TCP socket");
                     socket = new Socket(serverAddr, serverPort);
+                }
                 System.out.println("Part 3");
-                if(datagramSocket == null)
+                if(datagramSocket == null) {
+                    System.out.println("Creating new UDP socket");
                     datagramSocket = new DatagramSocket(serverPort);
+                }
                 System.out.println("Part 4");
                 initializeReceiverThread();
             } catch (UnknownHostException e1) {
@@ -252,10 +260,12 @@ public class Connector {
         stop();
         try {
             if(datagramSocket != null) {
+                System.out.println("UDP Socket closed");
                 datagramSocket.close();
                 datagramSocket = null;
             }
             if(socket != null) {
+                System.out.println("TCP Socket closed");
                 socket.close();
                 socket = null;
             }

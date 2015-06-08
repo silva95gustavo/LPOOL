@@ -135,6 +135,8 @@ public class ControllerActivity extends Activity implements Receiver{
             }
         });
 
+        // TODO end screen
+
         if(cmd.getCmd() == Connector.ProtocolCmd.KICK) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -248,17 +250,20 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
     private void stop() {
+        System.out.println("Controller stopped");
         terminating = true;
         currentState.interrupt();
         connector.disconnect();
     }
 
     public void terminate() {
+        System.out.println("Controller terminated");
         stop();
         this.finish();
     }
 
     public void disconnect() {
+        System.out.println("Controller disconnected");
         stop();
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
         runOnUiThread(new Runnable() {
@@ -289,6 +294,7 @@ public class ControllerActivity extends Activity implements Receiver{
     }
 
     public void onBackPressed() {
+        System.out.println("Back pressed");
         disconnect();
     }
 }
