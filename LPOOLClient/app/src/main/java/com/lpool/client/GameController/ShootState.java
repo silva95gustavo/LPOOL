@@ -5,7 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.Image;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +15,6 @@ import android.widget.TextView;
 
 import com.lpool.client.Network.Connector;
 import com.lpool.client.R;
-
-import org.w3c.dom.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -270,7 +267,7 @@ public class ShootState implements GameState, SensorEventListener {
             return;
         }
 
-        Connector.BallType btype = Connector.BallType.values()[type];
+        Connector.PlayingForBall btype = Connector.PlayingForBall.values()[type];
         switch (btype) {
             case NONE:
                 caller.runOnUiThread(new Runnable() {

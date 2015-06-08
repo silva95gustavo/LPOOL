@@ -50,7 +50,7 @@ public class Connector {
         END // winner(boolean) End.Reason
     }
 
-    public enum BallType {
+    public enum PlayingForBall {
         NONE,
         SOLID,
         STRIPE,
