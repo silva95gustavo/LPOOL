@@ -12,11 +12,11 @@ import java.util.Scanner;
 
 public class Logger {
 	
-	public static final String default_path = "./data/";
+	public static final String default_path = "./data/logs/";
 	public static final String log_extension = ".log";
 	public static final String datetime_header = "Timestamp";
 	public static final String event_header = "Event";
-	public static final String separator = " || ";
+	public static final String separator = "  ||  ";
 	private static final String initialized_event = "Log initialized";
 	private static final String log_print_start = "Previous events on current date:";
 	
@@ -34,6 +34,26 @@ public class Logger {
 	}
 
 	public Boolean initialize() {
+		
+		File theDir = new File(default_path);
+
+		if (!theDir.exists()) {
+		    System.out.println("creating directory: " + default_path);
+		    boolean result = false;
+
+		    try{
+		        theDir.mkdir();
+		        result = true;
+		    } 
+		    catch(SecurityException se){
+		        //handle it
+		    }        
+		    if(result) {    
+		        System.out.println("DIR created");  
+		    } else {
+		    	return false;
+		    }
+		}
 		
 		logfile = new File(logFileName);
 		
