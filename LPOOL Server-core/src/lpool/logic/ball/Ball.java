@@ -148,7 +148,7 @@ public class Ball {
 	}
 
 	/**
-	 * Changes the linear velocity of the physics of the ball.
+	 * Changes the linear velocity of the body physics of the ball.
 	 * @param The new velocity.
 	 */
 	public void setVelocity(Vector2 velocity)
@@ -169,6 +169,10 @@ public class Ball {
 			return body.getLinearVelocity();
 	}
 
+	/**
+	 * Should be called every frame.
+	 * @param deltaT Time passed since last frame in seconds.
+	 */
 	public void tick(float deltaT)
 	{
 		updatePosition();
@@ -214,6 +218,13 @@ public class Ball {
 		}
 	}
 
+	/**
+	 * Shoot the ball.
+	 * @param angle Direction of the shot.
+	 * @param force Force to be applied (should be between 0 and 1).
+	 * @param xSpin x coordinate of the point of contact on the ball (between -1 and 1).
+	 * @param ySpin y coordinate of the point of contact on the ball (between -1 and 1).
+	 */
 	public void makeShot(float angle, float force, float xSpin, float ySpin)
 	{
 		if (body == null)
@@ -224,10 +235,18 @@ public class Ball {
 		horSpin.scl(force * Match.physicsScaleFactor);
 	}
 
+	/**
+	 * 
+	 * @return True if the ball hasn't been scored yet, false otherwise.
+	 */
 	public boolean isOnTable() {
 		return onTable;
 	}
 
+	/**
+	 * Makes the ball enter a given hole.
+	 * @param holeNumber The hole number this ball should enter (for animation purposes).
+	 */
 	public void enterHole(int holeNumber) {
 		if (!this.visible || !this.onTable)
 			return;
@@ -237,6 +256,10 @@ public class Ball {
 		stateMachine.changeState(new EnteringHole(holeNumber));
 	}
 	
+	/**
+	 * Generates a ball-ball collision FixtureDef.
+	 * @return The new FixtureDef.
+	 */
 	public static FixtureDef createBallBallFixtureDef()
 	{	
 		CircleShape cs = new CircleShape();
@@ -253,6 +276,10 @@ public class Ball {
 		return ballBallFixtureDef;
 	}
 	
+	/**
+	 * Generates a ball-border collision FixtureDef.
+	 * @return The new FixtureDef.
+	 */
 	public static FixtureDef createBallBorderFixtureDef()
 	{
 		CircleShape cs = new CircleShape();
@@ -270,11 +297,18 @@ public class Ball {
 		return ballBorderFixtureDef;
 	}
 	
+	/**
+	 * 
+	 * @return This ball's state machine.
+	 */
 	public lpool.logic.state.Context<Ball> getStateMachine()
 	{
 		return stateMachine;
 	}
 	
+	/**
+	 * Sets this ball to be deleted after the world step ends.
+	 */
 	public void setToBeDeleted()
 	{
 		this.onTable = false;
@@ -283,14 +317,26 @@ public class Ball {
 		body = null;
 	}
 
+	/**
+	 * 
+	 * @return Whether or not this ball is visible.
+	 */
 	public boolean isVisible() {
 		return visible;
 	}
 
+	/**
+	 * Changes the ball visibility.
+	 * @param visible The new ball visibility status.
+	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
 	
+	/**
+	 * 
+	 * @return True if the ball is fully stopped (including spin), false otherwise.
+	 */
 	public boolean isStopped()
 	{
 		if (stateMachine.getCurrentState().getClass() == EnteringHole.class)
@@ -314,16 +360,28 @@ public class Ball {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @return True if this is a stripped ball, false otherwise.
+	 */
 	public boolean isStripped()
 	{
 		return number >= 9 && number <= 15;
 	}
 	
+	/**
+	 * 
+	 * @return True if this is a solid ball, false otherwise.
+	 */
 	public boolean isSolid()
 	{
 		return number >= 1 && number <= 7;
 	}
 	
+	/**
+	 * 
+	 * @return The type of this ball.
+	 */
 	public Type getType()
 	{
 		if (number == 0)
@@ -336,6 +394,10 @@ public class Ball {
 			return Type.STRIPE;
 		return null;
 	}
+	
+	/**
+	 * Forces the ball to stop moving and spinning.
+	 */
 	public void stop()
 	{
 		if (body == null)
