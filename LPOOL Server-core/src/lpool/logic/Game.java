@@ -27,19 +27,76 @@ public class Game implements Observer {
 	 *
 	 */
 	public enum ProtocolCmd {
-		ANGLE, // angle
-		FIRE, // force[0, 1] x-spin[-1, 1] y-spin[-1, 1]
+		/**
+		 * Sent by the client during a play to inform where the player wants to aim the cue.
+		 * Arguments: angle(float).
+		 */
+		ANGLE,
+		
+		/**
+		 * 
+		 * Arguments: force(float(0 to 1)), x-spin(float(-1 to 1)), y-spin(float(-1 to 1)).
+		 */
+		FIRE,
+		
+		/**
+		 * Echo request message.
+		 */
 		PING,
+		
+		/**
+		 * {@link ProtocolCmd#PING} response.
+		 */
 		PONG,
+		
+		/**
+		 * Must be sent by the client in order to join the server.
+		 * Arguments: name(String).
+		 */
 		JOIN, // name
+		
+		/**
+		 * Sent by the client when he wants to leave the game.
+		 */
 		QUIT,
+		
+		/**
+		 * Sent by the server to inform a client he has been kicked.
+		 */
 		KICK,
+		
+		/**
+		 * Sent by the client to move the cue ball when it is being repositioned.
+		 * Arguments: x-pos(float(0 to 1)), y-pos(float(0 to 1)).
+		 */
 		MOVECB, // x-pos[0, 1] y-pos[0, 1]
+		
+		/**
+		 * Sent by the client to place the cue ball when it is being repositioned.
+		 * Arguments: x-pos(float(0 to 1)), y-pos(float(0 to 1)).
+		 */
 		PLACECB, // x-pos[0, 1] y-pos[0, 1]
+		
+		/**
+		 * Sent by the server to notify the player that it's his turn to make a shot.
+		 */
 		PLAY,
+		
+		/**
+		 * Sent by the server to inform the player he has to wait for his turn.
+		 */
 		WAIT,
+		
+		/**
+		 * Sent by the server to inform the player he has to reposition the cue ball because the other player committed a foul.
+		 */
 		BIH,
-		END // winner(boolean) End.Reason
+		
+		/**
+		 * Sent by the server to inform a client that the match has ended.
+		 * Arguments: winner(boolean), reason({@link lpool.logic.match.End.Reason}).
+		 */
+		END
 	};
 
 	/**
