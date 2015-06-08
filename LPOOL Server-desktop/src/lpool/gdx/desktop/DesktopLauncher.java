@@ -10,7 +10,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.fullscreen = false; // TODO set to true
+		config.fullscreen = true;
 		config.samples = 2;
 		new LwjglApplication(new GameProject(), config);
 	}

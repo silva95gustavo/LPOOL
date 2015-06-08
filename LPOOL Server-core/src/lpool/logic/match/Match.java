@@ -65,16 +65,27 @@ public class Match implements Observer {
 	private float lastStateSendTime;
 	private Logger logger;
 
+	/**
+	 * The balls a player has to target.
+	 * @author Gustavo
+	 *
+	 */
 	public enum PlayingForBall
 	{
-		NONE,
-		SOLID,
-		STRIPE,
-		BLACK
+		NONE, /** Not yet defined **/
+		SOLID, /** Solid balls **/
+		STRIPE, /** Stripe balls **/
+		BLACK /** The black ball **/
 	}
 
 	private ObservableCollision observableCollision;
 
+	/**
+	 * Constructor.
+	 * @param network The network this match is associated to.
+	 * @param playerNames Array containing the names of the players.
+	 * @param logger The game logger, used for logging the start and end of the match.
+	 */
 	public Match(Network network, String[] playerNames, Logger logger) {
 		stateMachine = new Context<Match>(this, new FreezeTime());
 		this.network = network;
@@ -88,7 +99,7 @@ public class Match implements Observer {
 		world = new World(gravity, false);
 		World.setVelocityThreshold(0.00001f);
 		world.setContactListener(observableCollision = new ObservableCollision());
-		addColisionObserver(this);
+		addCollisionObserver(this);
 		ballsToBeDeleted = new LinkedList<Body>();
 
 		ballsSolid = new Ball[ballsPerPlayer];
@@ -175,6 +186,10 @@ public class Match implements Observer {
 		}
 	}
 
+	/**
+	 * Should be called every frame.
+	 * @param dt Time passed since last frame in seconds.
+	 */
 	public void tick(float dt)
 	{
 		this.lastStateSendTime += dt;
@@ -186,12 +201,12 @@ public class Match implements Observer {
 		stateMachine.update(dt);
 	}
 
-	public void worldStep(float dt)
+	void worldStep(float dt)
 	{
 		world.step(dt, 60, 20);
 	}
 
-	public void tickBalls(float dt)
+	void tickBalls(float dt)
 	{
 		for (int i = 0; i < balls.length; i++)
 		{
@@ -199,7 +214,7 @@ public class Match implements Observer {
 		}
 	}
 
-	public void deleteRemovedBalls()
+	void deleteRemovedBalls()
 	{
 		while (!ballsToBeDeleted.isEmpty())
 		{
@@ -207,44 +222,88 @@ public class Match implements Observer {
 		}
 	}
 
+	/**
+	 * 
+	 * @return The black ball.
+	 */
 	public Ball getBlackBall() {
 		return blackBall;
 	}
 
+	/**
+	 * 
+	 * @return An array containing all solid balls.
+	 */
 	public Ball[] getBallsSolid()
 	{
 		return ballsSolid;
 	}
 
+	/**
+	 * 
+	 * @return An array containing all stripe balls.
+	 */
 	public Ball[] getBallsStripe()
 	{
 		return ballsStripe;
 	}
 
+	/**
+	 * 
+	 * @return The cue ball.
+	 */
 	public Ball getCueBall() {
 		return cueBall;
 	}
 
+	/**
+	 * 
+	 * @return An array containing all balls.
+	 */
 	public Ball[] getBalls()
 	{
 		return balls;
 	}
 
+	/**
+	 * Changes the cue aiming direction.
+	 * @param angle The angle the cue should be aiming to.
+	 */
 	public void setCueAngle(float angle)
 	{
 		cueAngle = angle;
 	}
 
+	/**
+	 * Shoot the cue ball.
+	 * @param force Force to apply on the cue ball.
+	 * @param xSpin x coordinate of the point of contact on the cue ball (between -1 and 1).
+	 * @param ySpin y coordinate of the point of contact on the cue ball (between -1 and 1)
+	 */
 	public void makeShot(float force, float xSpin, float ySpin)
 	{
 		cueBall.makeShot(cueAngle, force, xSpin, ySpin);
 	}
 
+	/**
+	 * 
+	 * @return The current cue angle.
+	 */
 	public float getCueAngle()
 	{
 		return cueAngle;
 	}
 
+	/**
+	 * Predicts a shot according to the current cue angle.
+	 * @return An array of length 5:
+	 * 0 - cue ball position;
+	 * 1 - 2nd ball position;
+	 * 2 - cue ball prediction;
+	 * 3 - 2nd ball prediction;
+	 * 4 - aiming point.
+	 * All results must be checked for not being null
+	 */
 	public Vector2[] predictShot()
 	{
 		/*
@@ -316,7 +375,13 @@ public class Match implements Observer {
 		return result;
 	}
 
-	public void addColisionObserver(Observer o)
+	/**
+	 * Add a collision observer.
+	 * @param o The observer to add.
+	 * 
+	 * @see #deleteCollisionObserver(Observer)
+	 */
+	public void addCollisionObserver(Observer o)
 	{
 		observableCollision.addObserver(o);
 	}
@@ -412,29 +477,53 @@ public class Match implements Observer {
 		playValidator.actionBallScore(balls[ballNumber].getType());
 	}
 
+	/**
+	 * 
+	 * @return The state machine of the match.
+	 */
 	public lpool.logic.state.Context<Match> getStateMachine() {
 		return stateMachine;
 	}
 
+	/**
+	 * 
+	 * @return The network the match is associated to.
+	 */
 	public Network getNetwork()
 	{
 		return network;
 	}
 
+	/**
+	 * 
+	 * @return The physics world.
+	 */
 	public World getWorld()
 	{
 		return world;
 	}
 
+	/**
+	 * 
+	 * @return True if the last play was a foul, false otherwise.
+	 */
 	public boolean isBallInHand() {
 		return !playValidator.isValid();
 	}
 
+	/**
+	 * 
+	 * @return True if the current player should play again.
+	 */
 	public boolean currentPlayerPlaysAgain()
 	{
 		return playValidator.playsAgain();
 	}
 
+	/**
+	 * 
+	 * @return The number of the current play. Starts at 0.
+	 */
 	public int getPlayNum()
 	{
 		return playNum;
@@ -461,23 +550,43 @@ public class Match implements Observer {
 		return ballsPlayer[0] != null;
 	}
 
+	/**
+	 * 
+	 * @return The ID of the current player.
+	 */
 	public int getCurrentPlayer()
 	{
 		return currentPlayer;
 	}
 
+	/**
+	 * 
+	 * @return True if this is the first shot, false otherwise.
+	 */
 	public boolean isOpeningShot() {
 		return playNum == 0;
 	}
 
-	public PlayValidator getPlayValidator() {
+	/**
+	 * 
+	 * @return The {@link PlayValidator} this match uses.
+	 */
+	PlayValidator getPlayValidator() {
 		return playValidator;
 	}
 
-	public void setPlayValidator(PlayValidator playValidator) {
+	/**
+	 * 
+	 * @param playValidator The new {@link PlayValidator}
+	 */
+	void setPlayValidator(PlayValidator playValidator) {
 		this.playValidator = playValidator;
 	}
 
+	/**
+	 * Sends the current state to a client.
+	 * @param clientID The ID of the client.
+	 */
 	public void sendStateToClient(int clientID)
 	{
 		State<Match> currentState = stateMachine.getCurrentState();
@@ -506,6 +615,9 @@ public class Match implements Observer {
 		}
 	}
 
+	/**
+	 * Sends the current state to all clients.
+	 */
 	public void sendStateToClients()
 	{
 		for (int i = 0; i < Game.numPlayers; i++)
@@ -514,22 +626,40 @@ public class Match implements Observer {
 		}
 	}
 
-	public void changeCurrentPlayer()
+	/**
+	 * Changes the current player.
+	 */
+	void changeCurrentPlayer()
 	{
 		currentPlayer += 1;
 		currentPlayer %= Game.numPlayers;
 	}
 
+	/**
+	 * Deletes a collision observer.
+	 * @param obs The observer to be deleted.
+	 * 
+	 * @see #addCollisionObserver(Observer)
+	 */
 	public void deleteCollisionObserver(Observer obs)
 	{
 		observableCollision.deleteObserver(obs);
 	}
 
+	/**
+	 * Respawns the cue ball at the given position.
+	 * @param pos New cue ball position.
+	 */
 	public void respawnCueBall(Vector2 pos)
 	{
 		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
 	}
 
+	/**
+	 * 
+	 * @param playerID The ID of the player.
+	 * @return What ball the player has to aim to.
+	 */
 	public PlayingForBall getPlayingForBall(int playerID)
 	{
 		if (playerID < 0 || playerID >= Match.numPlayers) return null;
@@ -544,6 +674,11 @@ public class Match implements Observer {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param playerID The ID of the player.
+	 * @return Whether or not the player is playing for the black ball.
+	 */
 	boolean isPlayingForBlack(int playerID)
 	{
 		if (playerID < 0 || playerID >= Match.numPlayers) return false;
@@ -558,6 +693,11 @@ public class Match implements Observer {
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param playerID The ID of the player.
+	 * @return The name of the player.
+	 */
 	public String getPlayerName(int playerID)
 	{
 		if (playerID >= 0 && playerID < Game.numPlayers)
