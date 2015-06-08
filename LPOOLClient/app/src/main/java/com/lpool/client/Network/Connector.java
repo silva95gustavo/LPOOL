@@ -208,10 +208,6 @@ public class Connector {
                         System.out.println("Got PING");
                         sendTCPMessage("" + ProtocolCmd.PONG.ordinal());
                         System.out.println("Sent PONG");
-                    }
-                    else if(str.equals(ProtocolCmd.PONG.ordinal() + "")) {
-                        System.out.println("Got PONG");
-                        gotPONG = true;
                     } else
                         spreadMessage(str);
                 } catch (IOException e) {
@@ -275,15 +271,19 @@ public class Connector {
     }
 
     public void startHeartBeat() {
-        timer.schedule(new HeartBeatTask(), 1000);
+        timer.schedule(new HeartBeatTask(), 1000, 1000);
     }
 
-    private class HeartBeatTask extends TimerTask {
+
+
+    private class HeartBeatTask extends TimerTask implements Receiver {
+        private Boolean gotPong = false;
         @Override
         public void run() {
+            addReceiver(this);
             System.out.println("Sending PING");
             sendTCPMessage(ProtocolCmd.PING.ordinal() + "");
-            gotPONG = false;
+            gotPong = false;
 
             try {
                 Thread.sleep(HEARTBEAT_TIMEOUT * 1000);
@@ -291,14 +291,29 @@ public class Connector {
                 e.printStackTrace();
             }
 
-            if(!gotPONG) {
+            if(!gotPong) {
                 System.out.println("TIMEOUT");
                 stopReceivers();
             }
-            else {
-                timer.schedule(new HeartBeatTask(), HEARTBEAT_INTERVAL * 1000);
-            }
 
+            removeReceiver(this);
+        }
+
+        public void getMessage(String message) {
+            if(message != null) {
+                System.out.println("PING RESPONSE");
+                gotPong = true;
+                disconnect();
+            }
+        }
+
+        public void disconnect() {
+            try {
+                this.finalize();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            removeReceiver(this);
         }
     }
 
