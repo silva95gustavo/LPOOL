@@ -217,7 +217,10 @@ public class Network {
 		Game.ProtocolCmd cmd = Message.readCmd(sc);
 		sc.close();
 		if (cmd.equals(Game.ProtocolCmd.PING))
+		{
+			System.out.println("----- Read PING, sending PONG, clientID: " + clientID + " -----");
 			send(new Message(clientID, Game.ProtocolCmd.PONG.ordinal()));
+		}
 		return msg;
 	}
 

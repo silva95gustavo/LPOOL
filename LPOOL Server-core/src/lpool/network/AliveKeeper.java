@@ -22,6 +22,6 @@ public class AliveKeeper {
 	{
 		System.out.println("Reseting heartbeat");
 		timer.clear();
-		timer.scheduleTask(new Heartbeat(network, comm), periodicity);
+		timer.scheduleTask(new Heartbeat(network, comm), periodicity, periodicity);
 	}
 }

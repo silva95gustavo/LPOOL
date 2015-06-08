@@ -254,6 +254,9 @@ public class Ball {
 	
 	public boolean isStopped()
 	{
+		if (stateMachine.getCurrentState().getClass() == EnteringHole.class)
+			return false;
+		
 		if (body == null)
 			return true;
 		

@@ -22,6 +22,7 @@ public class End implements State<Match> {
 
 	@Override
 	public void enter(Match match) {
+		match.logEnd(winner);
 		match.sendStateToClients();
 		match.deleteCollisionObserver(match);
 		match.getWorld().dispose();
