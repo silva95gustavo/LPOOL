@@ -4,6 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 
+import lpool.logger.Logger;
+import lpool.logic.match.End;
 import lpool.logic.match.Match;
 import lpool.network.Message;
 import lpool.network.Network;
@@ -16,6 +18,7 @@ public class Game implements Observer {
 	private Network network;
 	private Match match;
 	private String playerNames[];
+	private Logger logger;
 
 	public enum ProtocolCmd {
 		ANGLE, // angle
@@ -42,6 +45,8 @@ public class Game implements Observer {
 		
 		for(int i = 0; i < playerNames.length; i++)
 			playerNames[i] = defaultPlayerName(i);
+		
+		logger = new Logger();
 	}
 
 	public void tick(float dt)
@@ -113,11 +118,26 @@ public class Game implements Observer {
 	
 	public void startMatch()
 	{
+		String names = "";
+		for(int i = 0; i < playerNames.length; i++) {
+			names += playerNames[i];
+			if(i < playerNames.length - 1) {
+				names += ", ";
+			}
+		}
+		logger.log("Game started with players " + names);
 		match = new Match(network, playerNames);
 	}
 	
 	public void endMatch()
 	{
+		if((match != null) && (match.getStateMachine().getCurrentState() instanceof End)) {
+				int index = ((End) match.getStateMachine().getCurrentState()).getWinner();
+				logger.log("Game ended, won by " + playerNames[index]);
+		}
+		else 
+			logger.log("Game ended");
+		
 		match = null;
 	}
 }
