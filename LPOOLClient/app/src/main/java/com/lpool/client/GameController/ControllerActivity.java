@@ -1,6 +1,8 @@
 package com.lpool.client.GameController;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -98,6 +100,7 @@ public class ControllerActivity extends Activity implements Receiver{
                     break;
                 case END:
                 case KICK:
+                    terminating = true;
                     game_ended(cmd);
                     return;
                 default:
@@ -302,6 +305,20 @@ public class ControllerActivity extends Activity implements Receiver{
 
     public void onBackPressed() {
         System.out.println("Back pressed");
-        disconnect();
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Leaving game")
+                .setMessage("Are you sure you want to leave the game?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        disconnect();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+
+        //disconnect();
     }
 }

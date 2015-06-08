@@ -301,6 +301,7 @@ public class Connector {
 
         public void getMessage(String message) {
             if(message != null) {
+                System.out.println("PING RESPONSE");
                 gotPong = true;
                 disconnect();
             }

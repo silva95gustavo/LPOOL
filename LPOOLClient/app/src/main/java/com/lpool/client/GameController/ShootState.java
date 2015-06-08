@@ -239,6 +239,8 @@ public class ShootState implements GameState, SensorEventListener {
                 horizontal.setY(cueBall.getY()+cueBall.getHeight()/2);
             }
         });
+        spinY = 0;
+        spinX = 0;
         initializeSensors();
         initializeAngleSender();
         initializeElements();
