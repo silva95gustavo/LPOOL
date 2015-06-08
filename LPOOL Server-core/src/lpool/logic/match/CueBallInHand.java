@@ -81,7 +81,7 @@ public class CueBallInHand implements State<Match>, Observer{
 		else if (dest.y > 1) dest.y = 1;
 
 		dest.y = 1 - dest.y;		
-		dest.scl(Table.width - 2 * Ball.radius, Table.height - 2 * Ball.radius).add(new Vector2(Ball.radius, Ball.radius));
+		dest.scl(Table.width - 2 * Table.border - 2 * Ball.radius, Table.height - 2 * Table.border - 2 * Ball.radius).add(new Vector2(Table.border + Ball.radius, Table.border + Ball.radius));
 
 		for (int i = 1; i < match.getBalls().length; i++)
 		{

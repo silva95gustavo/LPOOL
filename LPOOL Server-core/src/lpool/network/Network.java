@@ -146,7 +146,7 @@ public class Network {
 				numClients++;
 				comms[i] = new Communication(this, client, i);
 				clientConnEvents.add(i);
-				comms[i].getClientCommEvents().add(new Message(i, Game.ProtocolCmd.JOIN.ordinal(), name == null ? "" : name).body);
+				comms[i].getClientCommEvents().add(new Message(i, Game.ProtocolCmd.JOIN.ordinal(), name == null ? Game.defaultPlayerName(i) : name).body);
 				return true; // Success
 			}
 		}

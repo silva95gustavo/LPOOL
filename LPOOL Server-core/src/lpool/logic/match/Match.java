@@ -59,6 +59,14 @@ public class Match implements Observer {
 	private int playNum;
 	private int currentPlayer;
 	private PlayValidator playValidator;
+	
+	public enum PlayingForBall
+	{
+		NONE,
+		SOLID,
+		STRIPE,
+		BLACK
+	}
 
 	private ObservableCollision observableCollision;
 
@@ -448,7 +456,7 @@ public class Match implements Observer {
 		else if (currentState instanceof Play)
 		{
 			if (currentPlayer == clientID)
-				network.send(new Message(clientID, Game.ProtocolCmd.PLAY.ordinal()));
+				network.send(new Message(clientID, Game.ProtocolCmd.PLAY.ordinal(), getPlayingForBall(clientID).ordinal()));
 			else network.send(new Message(clientID, Game.ProtocolCmd.WAIT.ordinal()));
 		}
 		else if (currentState instanceof CueBallInHand)
@@ -488,6 +496,34 @@ public class Match implements Observer {
 	public void respawnCueBall(Vector2 pos)
 	{
 		balls[0] = cueBall = new Ball(world, pos, 0, ballsToBeDeleted);
+	}
+	
+	public PlayingForBall getPlayingForBall(int playerID)
+	{
+		if (playerID < 0 || playerID >= Match.numPlayers) return null;
+		if (!playerBallsDefined())
+			return PlayingForBall.NONE;
+		if (isPlayingForBlack(playerID))
+			return PlayingForBall.BLACK;
+		if (ballsPlayer[playerID] == Ball.Type.SOLID)
+			return PlayingForBall.SOLID;
+		if (ballsPlayer[playerID] == Ball.Type.STRIPE)
+			return PlayingForBall.STRIPE;
+		return null;
+	}
+	
+	boolean isPlayingForBlack(int playerID)
+	{
+		if (playerID < 0 || playerID >= Match.numPlayers) return false;
+		if (!playerBallsDefined()) return false;
+		for (int i = 0; i < balls.length; i++)
+		{
+			if (balls[i].isOnTable() && balls[i].getType().equals(ballsPlayer[playerID]))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public String getPlayerName(int playerID)
