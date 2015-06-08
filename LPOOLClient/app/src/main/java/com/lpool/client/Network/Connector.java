@@ -300,8 +300,7 @@ public class Connector {
         }
 
         public void getMessage(String message) {
-            if(message.equals(ProtocolCmd.PONG.ordinal() + "")) {
-                System.out.println("Got PONG on thread");
+            if(message != null) {
                 gotPong = true;
                 disconnect();
             }
@@ -309,7 +308,6 @@ public class Connector {
 
         public void disconnect() {
             try {
-                this.cancel();
                 this.finalize();
             } catch (Throwable e) {
                 e.printStackTrace();
