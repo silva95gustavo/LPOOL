@@ -11,7 +11,8 @@ import java.util.Date;
 
 public class Logger {
 	
-	public static final String default_pathname = "./data/events.log";
+	public static final String default_path = "./data/";
+	public static final String log_extension = ".log";
 	public static final String datetime_header = "Timestamp";
 	public static final String event_header = "Event";
 	public static final String separator = " || ";
@@ -21,16 +22,9 @@ public class Logger {
 	private Boolean validFile = true;
 	private File logfile;
 	
-	public Logger(String filename) {
-		logFileName = filename;
-		validFile = initialize();
-		if(!validFile) {
-			System.err.println("Unable to create log file");
-		}
-	}
-	
 	public Logger() {
-		logFileName = default_pathname;
+		String date = new SimpleDateFormat("dd-MM-yy-HH-mm-ss").format(new Date());
+		logFileName = default_path + date + log_extension;
 		validFile = initialize();
 		if(!validFile) {
 			System.err.println("Unable to create log file");
@@ -84,6 +78,14 @@ public class Logger {
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
+	}
+	
+	public String toString() {
+		String result = "";
+		
+		
+		
+		return result;
 	}
 	
 }

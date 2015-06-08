@@ -47,6 +47,7 @@ public class Game implements Observer {
 			playerNames[i] = defaultPlayerName(i);
 		
 		logger = new Logger();
+		System.out.println(logger.toString());
 	}
 
 	public void tick(float dt)
