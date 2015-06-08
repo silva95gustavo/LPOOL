@@ -3,13 +3,10 @@ package com.lpool.client.GameController;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,15 +66,9 @@ public class ControllerActivity extends Activity implements Receiver{
             finish();
         }
 
-        connector = new Connector(server_ip, server_port);
+        String connect_message = "" + Connector.ProtocolCmd.JOIN.ordinal() + " " + username + '\n';
+        connector = new Connector(server_ip, server_port, connect_message);
         connector.addReceiver(this);
-
-        while(!connector.sendTCPMessage("" + Connector.ProtocolCmd.JOIN.ordinal() + " " + username + " " + '\n')) {
-            try {
-                Thread.sleep(100);
-            }
-            catch (InterruptedException e) {e.printStackTrace();}
-        }
 
         end_layout = (LinearLayout) findViewById(R.id.final_layout);
     }
