@@ -16,6 +16,7 @@ public class AliveKeeper {
 	private Communication comm;
 	
 	private Timer timer;
+	public boolean finished = false;
 	
 	public AliveKeeper(Network network, Communication comm) {
 		this.network = network;
@@ -29,8 +30,15 @@ public class AliveKeeper {
 	 */
 	public synchronized void reset()
 	{
+		if (this.finished) return; 
 		System.out.println("Reseting heartbeat");
 		timer.clear();
 		timer.scheduleTask(new Heartbeat(network, comm), periodicity, periodicity);
+	}
+	
+	public void stopMe()
+	{
+		timer.clear();
+		finished = true;
 	}
 }

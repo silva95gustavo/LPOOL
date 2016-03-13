@@ -66,6 +66,7 @@ public class Communication {
 		System.out.println("Closing communication");
 		rec.stopMe();
 		sen.stopMe();
+		ak.stopMe();
 		alive = false;
 		Timer.schedule(new SocketCloseTask(s), 1000);
 	}
