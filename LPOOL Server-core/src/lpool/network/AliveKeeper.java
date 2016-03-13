@@ -30,9 +30,9 @@ public class AliveKeeper {
 	 */
 	public synchronized void reset()
 	{
+		timer.clear();
 		if (this.finished) return; 
 		System.out.println("Reseting heartbeat");
-		timer.clear();
 		timer.scheduleTask(new Heartbeat(network, comm), periodicity, periodicity);
 	}
 	
