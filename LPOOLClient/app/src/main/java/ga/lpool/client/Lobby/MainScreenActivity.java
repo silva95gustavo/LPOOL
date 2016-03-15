@@ -1,4 +1,4 @@
-package com.lpool.client.Lobby;
+package ga.lpool.client.Lobby;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -14,10 +14,9 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.lpool.client.GameController.ControllerActivity;
-import com.lpool.client.Network.Connector;
-import com.lpool.client.Network.Utilities;
-import com.lpool.client.R;
+import ga.lpool.client.GameController.ControllerActivity;
+import ga.lpool.client.Network.Utilities;
+import ga.lpool.client.R;
 
 /**
  * Created by André on 03/06/2015.

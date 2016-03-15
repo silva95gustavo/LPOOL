@@ -1,4 +1,4 @@
-package com.lpool.client.Lobby;
+package ga.lpool.client.Lobby;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.lpool.client.R;
+import ga.lpool.client.R;
 
 
 public class AboutActivity extends Activity {

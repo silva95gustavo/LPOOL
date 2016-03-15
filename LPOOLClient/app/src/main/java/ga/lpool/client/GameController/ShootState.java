@@ -1,4 +1,4 @@
-package com.lpool.client.GameController;
+package ga.lpool.client.GameController;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -13,8 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lpool.client.Network.Connector;
-import com.lpool.client.R;
+import ga.lpool.client.Network.Connector;
+import ga.lpool.client.R;
 
 import java.util.Timer;
 import java.util.TimerTask;

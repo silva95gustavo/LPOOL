@@ -1,4 +1,4 @@
-package com.lpool.client.GameController;
+package ga.lpool.client.GameController;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.lpool.client.Network.Connector;
-import com.lpool.client.R;
+import ga.lpool.client.Network.Connector;
+import ga.lpool.client.R;
 
 /**
  * Created by André on 05/06/2015.

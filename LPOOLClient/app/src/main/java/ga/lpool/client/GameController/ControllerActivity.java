@@ -1,4 +1,4 @@
-package com.lpool.client.GameController;
+package ga.lpool.client.GameController;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,12 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lpool.client.Network.Connector;
-import com.lpool.client.Network.Receiver;
-import com.lpool.client.Network.Utilities;
-import com.lpool.client.R;
-
-import org.w3c.dom.Text;
+import ga.lpool.client.Network.Connector;
+import ga.lpool.client.Network.Receiver;
+import ga.lpool.client.Network.Utilities;
+import ga.lpool.client.R;
 
 /**
  * Created by André on 03/06/2015.

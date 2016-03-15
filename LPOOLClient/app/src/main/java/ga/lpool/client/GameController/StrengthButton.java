@@ -1,4 +1,4 @@
-package com.lpool.client.GameController;
+package ga.lpool.client.GameController;
 
 import android.graphics.Color;
 import android.view.MotionEvent;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lpool.client" >
+    package="ga.lpool.client" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Lobby.MainScreenActivity"
+            android:name="ga.lpool.client.Lobby.MainScreenActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -25,20 +25,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GameController.ControllerActivity"
+            android:name="ga.lpool.client.GameController.ControllerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/shot_act_name"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".Lobby.InstructionsActivity"
+            android:name="ga.lpool.client.Lobby.InstructionsActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/title_activity_instructions"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".Lobby.AboutActivity"
+            android:name="ga.lpool.client.Lobby.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
     </application>

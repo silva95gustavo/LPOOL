@@ -1,4 +1,4 @@
-package com.lpool.client.Network;
+package ga.lpool.client.Network;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

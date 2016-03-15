@@ -6,7 +6,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:configChanges="keyboardHidden|orientation"
     android:screenOrientation="landscape"
-    tools:context="com.lpool.client.Lobby.AboutActivity">
+    tools:context="ga.lpool.client.Lobby.AboutActivity">
 
     <LinearLayout
         android:orientation="vertical"

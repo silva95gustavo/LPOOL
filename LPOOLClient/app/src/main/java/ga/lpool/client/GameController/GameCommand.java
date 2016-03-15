@@ -1,6 +1,6 @@
-package com.lpool.client.GameController;
+package ga.lpool.client.GameController;
 
-import com.lpool.client.Network.Connector;
+import ga.lpool.client.Network.Connector;
 
 import java.util.ArrayList;
 import java.util.Locale;
