@@ -7,6 +7,7 @@ import java.util.Scanner;
 import lpool.logger.Logger;
 import lpool.logic.match.End;
 import lpool.logic.match.Match;
+import lpool.network.Info;
 import lpool.network.Message;
 import lpool.network.Network;
 import lpool.network.ObservableConnection;
@@ -104,7 +105,7 @@ public class Game implements Observer {
 	 * Constructor.
 	 */
 	public Game() {
-		network = new Network(2);
+		network = Info.network;
 		network.startConnecting();
 		network.addConnObserver(this);
 		network.addMsgObserver(this);

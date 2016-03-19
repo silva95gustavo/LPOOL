@@ -166,7 +166,7 @@ public class LobbyScene implements Screen, Observer {
 	public void renderQRCodes(Batch batch)
 	{
 		Fonts.getInstance().getArial32().setColor(Color.WHITE);
-		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP() + ":" + Network.port, 0, -180, 0, BitmapFont.HAlignment.CENTER);
+		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.getServerIP() + ":" + Info.getServerPort(), 0, -180, 0, BitmapFont.HAlignment.CENTER);
 		Fonts.getInstance().getArial32().drawMultiLine(batch, Info.androidAppUrl, 0, -920, 0, BitmapFont.HAlignment.CENTER);
 		batch.draw(QRCode, -300, -160, 600, 600);
 		batch.draw(AndroidAppQRCode, -200, -900, 400, 400);

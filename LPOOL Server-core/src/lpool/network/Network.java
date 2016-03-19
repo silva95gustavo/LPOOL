@@ -6,19 +6,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Observer;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import javafx.concurrent.Task;
 import lpool.logic.Game;
-import lpool.logic.match.CueBallInHand;
 
 /**
  * Responsible for handling all network connections of the game.
@@ -27,7 +21,6 @@ import lpool.logic.match.CueBallInHand;
  */
 public class Network {
 	public final int maxClients;
-	public static final int port = 6900;
 	private int numClients;
 	private ServerSocket serverSocket;
 	private DatagramSocket UDPServerSocket;
@@ -56,14 +49,14 @@ public class Network {
 
 	public Network(int maxClients) {
 		try {
-			this.serverSocket = new ServerSocket(port);
-			this.UDPServerSocket = new DatagramSocket(port);
+			this.serverSocket = new ServerSocket(Info.getServerPort());
+			Info.setServerPort(this.serverSocket.getLocalPort());
+			this.UDPServerSocket = new DatagramSocket(Info.getServerPort());
 			UDPServerSocket.setTrafficClass(IPTOS_LOWDELAY);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		new Info();
 		System.out.println("Server socket successfully started.");
 		this.clientSockets = new ConcurrentLinkedQueue<Socket>();
 		this.con = new Connector(serverSocket, maxClients, clientSockets);

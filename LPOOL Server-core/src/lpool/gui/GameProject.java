@@ -1,10 +1,7 @@
 package lpool.gui;
 
-import java.net.Inet4Address;
-
 import lpool.gui.zxing.QRGenerator;
 import lpool.network.Info;
-import lpool.network.Network;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -29,15 +26,9 @@ public class GameProject extends Game {
 	@Override
 	public void create () {
 
-		String ip_address = "";
+		new Info();
 
-		try {
-			ip_address = Inet4Address.getLocalHost().getHostAddress();
-		} catch(Exception e) {
-			System.out.println("Unable to get IP address");
-		}
-
-		QRGenerator.generateFromStringToFile(ip_address + "\n" + Network.port, QR_IP_DIR, QR_IP_FILENAME, QR_IP_TYPE);
+		QRGenerator.generateFromStringToFile(Info.getServerIP() + "\n" + Info.getServerPort(), QR_IP_DIR, QR_IP_FILENAME, QR_IP_TYPE);
 		QRGenerator.generateFromStringToFile(Info.androidAppUrl, QR_ANDROID_APP_DIR, QR_ANDROID_APP_FILENAME, QR_ANDROID_APP_TYPE);
 
 		width = Gdx.graphics.getDesktopDisplayMode().width;
